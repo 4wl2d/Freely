@@ -1,0 +1,92 @@
+[
+  {
+    "file": "Benchmarks/STT/results/fluid-tdt-noise-floor001.jsonl",
+    "engine": "fluid-tdt",
+    "rmsFloor": 0.0010000000474974513,
+    "inferenceCalls": 179,
+    "inferenceSeconds": 10.139550458523445,
+    "nonemptyPartials": 6,
+    "nonemptyFinals": 0,
+    "finalAnnotations": [],
+    "digitalSilenceCalls": 0,
+    "note": "cppoutputsareexplicitnon-speechannotations,notverifiedspokenwords; TDTpartialutterancesduringnoisearefalsehypotheses."
+  },
+  {
+    "file": "Benchmarks/STT/results/whisper-cpp-noise-floor0005.jsonl",
+    "engine": "whisper.cpp",
+    "rmsFloor": 0.0005,
+    "inferenceCalls": 269,
+    "inferenceSeconds": 4.407270037,
+    "nonemptyPartials": 269,
+    "nonemptyFinals": 6,
+    "finalAnnotations": [
+      {
+        "sourceEnd": 76.8,
+        "text": " [silence]"
+      },
+      {
+        "sourceEnd": 90.46,
+        "text": " [silence]"
+      },
+      {
+        "sourceEnd": 106.8,
+        "text": " [BLANK_AUDIO]"
+      },
+      {
+        "sourceEnd": 120.46,
+        "text": " [silence]"
+      },
+      {
+        "sourceEnd": 136.8,
+        "text": " [SOUND]"
+      },
+      {
+        "sourceEnd": 150,
+        "text": " [sound of running]"
+      }
+    ],
+    "digitalSilenceCalls": 0,
+    "note": "cppoutputsareexplicitnon-speechannotations,notverifiedspokenwords; TDTpartialutterancesduringnoisearefalsehypotheses."
+  },
+  {
+    "file": "Benchmarks/STT/results/whisper-cpp-noise-floor001.jsonl",
+    "engine": "whisper.cpp",
+    "rmsFloor": 0.001,
+    "inferenceCalls": 179,
+    "inferenceSeconds": 2.988208906,
+    "nonemptyPartials": 179,
+    "nonemptyFinals": 4,
+    "finalAnnotations": [
+      {
+        "sourceEnd": 106.8,
+        "text": " [BLANK_AUDIO]"
+      },
+      {
+        "sourceEnd": 120.46,
+        "text": " [silence]"
+      },
+      {
+        "sourceEnd": 136.8,
+        "text": " [SOUND]"
+      },
+      {
+        "sourceEnd": 150,
+        "text": " [sound of running]"
+      }
+    ],
+    "digitalSilenceCalls": 0,
+    "note": "cppoutputsareexplicitnon-speechannotations,notverifiedspokenwords; TDTpartialutterancesduringnoisearefalsehypotheses."
+  },
+  {
+    "file": "Benchmarks/STT/results/fluid-tdt-noise-floor0005.jsonl",
+    "engine": "fluid-tdt",
+    "rmsFloor": 0.0005000000237487257,
+    "inferenceCalls": 269,
+    "inferenceSeconds": 16.450209625123534,
+    "nonemptyPartials": 10,
+    "nonemptyFinals": 0,
+    "finalAnnotations": [],
+    "digitalSilenceCalls": 0,
+    "note": "cppoutputsareexplicitnon-speechannotations,notverifiedspokenwords; TDTpartialutterancesduringnoisearefalsehypotheses."
+  }
+]

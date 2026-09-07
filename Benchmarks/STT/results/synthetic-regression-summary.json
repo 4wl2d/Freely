@@ -1,0 +1,122 @@
+[
+  {
+    "engine": "fluid-tdt",
+    "syntheticOnly": true,
+    "excludedFromSelection": true,
+    "voice": "macOS Samantha en_US",
+    "audioSeconds": 34.796437499999996,
+    "fixtures": 5,
+    "referenceWords": 91,
+    "WER": 0.25274725274725274,
+    "caseSensitiveIdentifierRecall": 0.375,
+    "caseSensitiveIdentifierPrecision": 1.0,
+    "identifierReferenceOccurrences": 16,
+    "identifiers": [
+      "Kotlin",
+      "StateFlow",
+      "SharedFlow",
+      "Compose",
+      "Gradle",
+      "CoroutineScope",
+      "MutableStateFlow",
+      "REST",
+      "API",
+      "JSON",
+      "SwiftUI",
+      "ScreenCaptureKit",
+      "AVFoundation",
+      "URLSession",
+      "Keychain",
+      "macOS"
+    ],
+    "negationCorrectionContainsNot": true,
+    "perFixture": [
+      {
+        "id": "kotlin-flow",
+        "reference": "In Kotlin, how should StateFlow differ from SharedFlow when a Jetpack Compose screen resumes after cancellation?",
+        "hypothesis": "In Kotlin, how should state flow differ from shared flow when a jetpack compose screen resumes after cancellation?"
+      },
+      {
+        "id": "build-and-api",
+        "reference": "Can Gradle run a test for CoroutineScope, MutableStateFlow, and a REST API that streams JSON with server sent events?",
+        "hypothesis": "Can Gradle run a test for coreouting scope, mutable state flow, and a REST API that streams JSON with server sent events?"
+      },
+      {
+        "id": "macos-frameworks",
+        "reference": "Should SwiftUI use an actor to own ScreenCaptureKit, AVFoundation, URLSession, and Keychain state on macOS?",
+        "hypothesis": "Should Swift UI use an actor to own screen capture kit, A V Foundation, Earl Session, and Keychain State on Mac OS?"
+      },
+      {
+        "id": "negation-correction",
+        "reference": "Should we cancel the old coroutine before saving? I meant, should we not cancel it until the save has completed?",
+        "hypothesis": "Should we cancel the old co-routine before saving? I meant, should we not cancel it until the save has completed?"
+      },
+      {
+        "id": "followup",
+        "reference": "How should the repository cache that response? What changes if the screen is paused? And should it keep the previous value?",
+        "hypothesis": "How should the repository cache that response? What changes if the screen is paused? And should it keep the previous value?"
+      }
+    ],
+    "limitations": "System-voice regression, not human framework-name accuracy. The spoken correction does not prove a particular late ASR revision or correct automatic generation; those have separate domain tests."
+  },
+  {
+    "engine": "whisper.cpp",
+    "syntheticOnly": true,
+    "excludedFromSelection": true,
+    "voice": "macOS Samantha en_US",
+    "audioSeconds": 34.79644,
+    "fixtures": 5,
+    "referenceWords": 91,
+    "WER": 0.2087912087912088,
+    "caseSensitiveIdentifierRecall": 0.4375,
+    "caseSensitiveIdentifierPrecision": 1.0,
+    "identifierReferenceOccurrences": 16,
+    "identifiers": [
+      "Kotlin",
+      "StateFlow",
+      "SharedFlow",
+      "Compose",
+      "Gradle",
+      "CoroutineScope",
+      "MutableStateFlow",
+      "REST",
+      "API",
+      "JSON",
+      "SwiftUI",
+      "ScreenCaptureKit",
+      "AVFoundation",
+      "URLSession",
+      "Keychain",
+      "macOS"
+    ],
+    "negationCorrectionContainsNot": true,
+    "perFixture": [
+      {
+        "id": "kotlin-flow",
+        "reference": "In Kotlin, how should StateFlow differ from SharedFlow when a Jetpack Compose screen resumes after cancellation?",
+        "hypothesis": " In Kotlin, how should state flow differ from shared flow when a jetpack compose screen resumes after cancellation?"
+      },
+      {
+        "id": "build-and-api",
+        "reference": "Can Gradle run a test for CoroutineScope, MutableStateFlow, and a REST API that streams JSON with server sent events?",
+        "hypothesis": " can Gradle run a test for Coroutine Scode, Mutable State Flow, and a REST API that streams JSON with server sent events?"
+      },
+      {
+        "id": "macos-frameworks",
+        "reference": "Should SwiftUI use an actor to own ScreenCaptureKit, AVFoundation, URLSession, and Keychain state on macOS?",
+        "hypothesis": " Should SwiftUI use an actor to own screen capture kit, AV foundation, herbal session, and keychain state on macOS?"
+      },
+      {
+        "id": "negation-correction",
+        "reference": "Should we cancel the old coroutine before saving? I meant, should we not cancel it until the save has completed?",
+        "hypothesis": " Should we cancel the old coroutine before saving? I'm end. Should we not cancel it until the save has completed?"
+      },
+      {
+        "id": "followup",
+        "reference": "How should the repository cache that response? What changes if the screen is paused? And should it keep the previous value?",
+        "hypothesis": " How should the repository cache that responds? What changes if the screen is paused? And should it keep the previous value?"
+      }
+    ],
+    "limitations": "System-voice regression, not human framework-name accuracy. The spoken correction does not prove a particular late ASR revision or correct automatic generation; those have separate domain tests."
+  }
+]

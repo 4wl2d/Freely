@@ -1,0 +1,12 @@
+{
+  "engine": "fluid-tdt",
+  "durationSeconds": 1200.548805792001,
+  "rssPeakBytes": 180666368,
+  "rssWarmMedianBytes": 171540480.0,
+  "rssFinalMedianBytes": 177815552,
+  "cpuMeanPercent": 50.19605704697987,
+  "physicalFootprintPeakBytes": 82625376,
+  "neuralPeakBytes": 490487808,
+  "thermalStateStartEnd": "nominal (raw0) in both source streams",
+  "soakLimitation": "20min dual STT-only replay, not a four-hour integrated application soak"
+}

@@ -1,0 +1,22 @@
+[
+  {
+    "engine": "fluid-tdt",
+    "samples": 9,
+    "activeSamples": 9,
+    "p50Seconds": 0.01757683331379667,
+    "p95Seconds": 0.04005420830799267,
+    "normalResultsAfterActiveCancel": 0,
+    "corpus": "EN2001a0045-0060,15secondsdenseconversation",
+    "scope": "Native in-flight inference, not capture/fullsessionstop"
+  },
+  {
+    "engine": "whisper.cpp",
+    "samples": 9,
+    "activeSamples": 9,
+    "p50Seconds": 0.00099625,
+    "p95Seconds": 0.00984271,
+    "normalResultsAfterActiveCancel": 0,
+    "corpus": "EN2001a0045-0060,15secondsdenseconversation",
+    "scope": "Native in-flight inference, not capture/fullsessionstop"
+  }
+]

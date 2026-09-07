@@ -1,0 +1,56 @@
+{
+  "rubric": "endpoint-selection-criteria.json",
+  "frozenAt": "2026-09-07T03:47:42.230328+00:00",
+  "results": [
+    {
+      "engine": "fluid-tdt",
+      "eligibleForRanking": true,
+      "score": 0.899044171352912,
+      "components": {
+        "wordError": 0.08182326621923937,
+        "technicalError": 0.029999999999999992,
+        "questionTailMiss": 0.075,
+        "questionFinalDelay": 0.6999436718799739,
+        "memoryProxy": 0.010675064921379089,
+        "cancellation": 0.0016021683323197066
+      },
+      "memoryRankingProxyBytes": 573113184,
+      "remoteHeldoutWER": 0.23378076062639822,
+      "technicalF1": 0.8,
+      "questionTailRecall": 0.5,
+      "heldoutQuestionTailSamples": 1,
+      "heldoutAnnotatedQuestions": 2,
+      "heldoutTechnicalOccurrences": 3
+    },
+    {
+      "engine": "whisper.cpp",
+      "eligibleForRanking": true,
+      "score": 0.9024441106759826,
+      "components": {
+        "wordError": 0.10218120805369128,
+        "technicalError": 0.029999999999999992,
+        "questionTailMiss": 0.075,
+        "questionFinalDelay": 0.6809195833333334,
+        "memoryProxy": 0.013949610888957978,
+        "cancellation": 0.00039370839999999997
+      },
+      "memoryRankingProxyBytes": 748914032,
+      "remoteHeldoutWER": 0.29194630872483224,
+      "technicalF1": 0.8,
+      "questionTailRecall": 0.5,
+      "heldoutQuestionTailSamples": 1,
+      "heldoutAnnotatedQuestions": 2,
+      "heldoutTechnicalOccurrences": 3
+    }
+  ],
+  "withinQualitativeTieBand": true,
+  "selectedBackend": "fluid-tdt",
+  "rationale": "Scores are within the frozen0.02 tie band. fluid-tdt has lower remote heldout WER and measured memory without lower measured question-tail or technical F1. Both showed adequate throughput and fast cancellation. cpp has faster first-word delivery and cancellation; selection follows accuracy/resource evidence, not integration convenience.",
+  "requiredLimitations": [
+    "One real meeting; heldout contains onlyone recognized substantivequestion and3technical-term occurrences; no populationp95 guarantee.",
+    "Both miss initial question-end finalization objective: ongoing remote speech delays the source VAD endpoint by about3.3seconds.",
+    "Initial first-correct-word p95 objective not met in the fixed-window stress test.",
+    "20min STT-only replay does not prove four-hour integrated retention, live capture, or provider latency.",
+    "Memory ranking formula is a proxy from separate accounting categories, not exact total resident application memory."
+  ]
+}

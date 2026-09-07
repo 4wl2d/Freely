@@ -1,0 +1,1134 @@
+{
+  "method": "AMI manual word-end timestamps; exact normalized matching blocks >=2 words within available audio; paced monotonic emission clock. Includes cadence and processing. Repeated words may align ambiguously.",
+  "referenceWords": 8036,
+  "matchedWords": 6668,
+  "coverage": 0.8297660527625684,
+  "firstCorrectWordLatencyP50Seconds": 0.3837177916756218,
+  "firstCorrectWordLatencyP95Seconds": 3.082126874995879,
+  "stableCorrectWordLatencyP50Seconds": 0.6751762499823144,
+  "stableCorrectWordLatencyP95Seconds": 10.644810750028114,
+  "negativeSamplesRejected": 0,
+  "notMeasured": "Remote utterance-end to application final event. Fixed 15-second window flushes do not test the application VAD finalization policy.",
+  "perFixture": [
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0000-0015",
+      "referenceWords": 14,
+      "firstMatchedWords": 10,
+      "finalStableMatchedWords": 10
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0000-0015",
+      "referenceWords": 14,
+      "firstMatchedWords": 10,
+      "finalStableMatchedWords": 10
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0015-0030",
+      "referenceWords": 50,
+      "firstMatchedWords": 35,
+      "finalStableMatchedWords": 26
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0015-0030",
+      "referenceWords": 50,
+      "firstMatchedWords": 35,
+      "finalStableMatchedWords": 26
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0030-0045",
+      "referenceWords": 29,
+      "firstMatchedWords": 24,
+      "finalStableMatchedWords": 24
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0030-0045",
+      "referenceWords": 29,
+      "firstMatchedWords": 24,
+      "finalStableMatchedWords": 24
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0045-0060",
+      "referenceWords": 47,
+      "firstMatchedWords": 40,
+      "finalStableMatchedWords": 40
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0045-0060",
+      "referenceWords": 47,
+      "firstMatchedWords": 40,
+      "finalStableMatchedWords": 40
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0060-0075",
+      "referenceWords": 64,
+      "firstMatchedWords": 62,
+      "finalStableMatchedWords": 62
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0060-0075",
+      "referenceWords": 64,
+      "firstMatchedWords": 62,
+      "finalStableMatchedWords": 62
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0075-0090",
+      "referenceWords": 39,
+      "firstMatchedWords": 32,
+      "finalStableMatchedWords": 24
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0075-0090",
+      "referenceWords": 39,
+      "firstMatchedWords": 32,
+      "finalStableMatchedWords": 24
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0090-0105",
+      "referenceWords": 55,
+      "firstMatchedWords": 44,
+      "finalStableMatchedWords": 26
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0090-0105",
+      "referenceWords": 55,
+      "firstMatchedWords": 44,
+      "finalStableMatchedWords": 26
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0105-0120",
+      "referenceWords": 63,
+      "firstMatchedWords": 56,
+      "finalStableMatchedWords": 56
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0105-0120",
+      "referenceWords": 63,
+      "firstMatchedWords": 56,
+      "finalStableMatchedWords": 56
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0120-0135",
+      "referenceWords": 33,
+      "firstMatchedWords": 28,
+      "finalStableMatchedWords": 28
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0120-0135",
+      "referenceWords": 33,
+      "firstMatchedWords": 28,
+      "finalStableMatchedWords": 28
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0135-0150",
+      "referenceWords": 69,
+      "firstMatchedWords": 60,
+      "finalStableMatchedWords": 57
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0135-0150",
+      "referenceWords": 69,
+      "firstMatchedWords": 60,
+      "finalStableMatchedWords": 57
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0150-0165",
+      "referenceWords": 50,
+      "firstMatchedWords": 33,
+      "finalStableMatchedWords": 28
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0150-0165",
+      "referenceWords": 50,
+      "firstMatchedWords": 33,
+      "finalStableMatchedWords": 28
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0165-0180",
+      "referenceWords": 57,
+      "firstMatchedWords": 51,
+      "finalStableMatchedWords": 51
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0165-0180",
+      "referenceWords": 57,
+      "firstMatchedWords": 51,
+      "finalStableMatchedWords": 51
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0180-0195",
+      "referenceWords": 49,
+      "firstMatchedWords": 41,
+      "finalStableMatchedWords": 41
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0180-0195",
+      "referenceWords": 49,
+      "firstMatchedWords": 41,
+      "finalStableMatchedWords": 41
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0195-0210",
+      "referenceWords": 11,
+      "firstMatchedWords": 8,
+      "finalStableMatchedWords": 8
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0195-0210",
+      "referenceWords": 11,
+      "firstMatchedWords": 8,
+      "finalStableMatchedWords": 8
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0210-0225",
+      "referenceWords": 40,
+      "firstMatchedWords": 32,
+      "finalStableMatchedWords": 30
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0210-0225",
+      "referenceWords": 40,
+      "firstMatchedWords": 32,
+      "finalStableMatchedWords": 30
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0225-0240",
+      "referenceWords": 46,
+      "firstMatchedWords": 38,
+      "finalStableMatchedWords": 19
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0225-0240",
+      "referenceWords": 46,
+      "firstMatchedWords": 38,
+      "finalStableMatchedWords": 19
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0240-0255",
+      "referenceWords": 45,
+      "firstMatchedWords": 41,
+      "finalStableMatchedWords": 40
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0240-0255",
+      "referenceWords": 45,
+      "firstMatchedWords": 41,
+      "finalStableMatchedWords": 40
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0255-0270",
+      "referenceWords": 51,
+      "firstMatchedWords": 41,
+      "finalStableMatchedWords": 33
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0255-0270",
+      "referenceWords": 51,
+      "firstMatchedWords": 41,
+      "finalStableMatchedWords": 33
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0270-0285",
+      "referenceWords": 54,
+      "firstMatchedWords": 52,
+      "finalStableMatchedWords": 52
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0270-0285",
+      "referenceWords": 54,
+      "firstMatchedWords": 52,
+      "finalStableMatchedWords": 52
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0285-0300",
+      "referenceWords": 46,
+      "firstMatchedWords": 40,
+      "finalStableMatchedWords": 40
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0285-0300",
+      "referenceWords": 46,
+      "firstMatchedWords": 40,
+      "finalStableMatchedWords": 40
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0300-0315",
+      "referenceWords": 41,
+      "firstMatchedWords": 40,
+      "finalStableMatchedWords": 40
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0300-0315",
+      "referenceWords": 41,
+      "firstMatchedWords": 40,
+      "finalStableMatchedWords": 40
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0315-0330",
+      "referenceWords": 45,
+      "firstMatchedWords": 45,
+      "finalStableMatchedWords": 45
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0315-0330",
+      "referenceWords": 45,
+      "firstMatchedWords": 45,
+      "finalStableMatchedWords": 45
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0330-0345",
+      "referenceWords": 46,
+      "firstMatchedWords": 43,
+      "finalStableMatchedWords": 43
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0330-0345",
+      "referenceWords": 46,
+      "firstMatchedWords": 43,
+      "finalStableMatchedWords": 43
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0345-0360",
+      "referenceWords": 56,
+      "firstMatchedWords": 43,
+      "finalStableMatchedWords": 42
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0345-0360",
+      "referenceWords": 56,
+      "firstMatchedWords": 43,
+      "finalStableMatchedWords": 42
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0360-0375",
+      "referenceWords": 48,
+      "firstMatchedWords": 48,
+      "finalStableMatchedWords": 48
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0360-0375",
+      "referenceWords": 48,
+      "firstMatchedWords": 48,
+      "finalStableMatchedWords": 48
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0375-0390",
+      "referenceWords": 58,
+      "firstMatchedWords": 48,
+      "finalStableMatchedWords": 48
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0375-0390",
+      "referenceWords": 58,
+      "firstMatchedWords": 48,
+      "finalStableMatchedWords": 48
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0390-0405",
+      "referenceWords": 49,
+      "firstMatchedWords": 36,
+      "finalStableMatchedWords": 36
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0390-0405",
+      "referenceWords": 49,
+      "firstMatchedWords": 36,
+      "finalStableMatchedWords": 36
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0405-0420",
+      "referenceWords": 47,
+      "firstMatchedWords": 40,
+      "finalStableMatchedWords": 40
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0405-0420",
+      "referenceWords": 47,
+      "firstMatchedWords": 40,
+      "finalStableMatchedWords": 40
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0420-0435",
+      "referenceWords": 42,
+      "firstMatchedWords": 41,
+      "finalStableMatchedWords": 41
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0420-0435",
+      "referenceWords": 42,
+      "firstMatchedWords": 41,
+      "finalStableMatchedWords": 41
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0435-0450",
+      "referenceWords": 50,
+      "firstMatchedWords": 48,
+      "finalStableMatchedWords": 48
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0435-0450",
+      "referenceWords": 50,
+      "firstMatchedWords": 48,
+      "finalStableMatchedWords": 48
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0450-0465",
+      "referenceWords": 61,
+      "firstMatchedWords": 57,
+      "finalStableMatchedWords": 57
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0450-0465",
+      "referenceWords": 61,
+      "firstMatchedWords": 57,
+      "finalStableMatchedWords": 57
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0465-0480",
+      "referenceWords": 59,
+      "firstMatchedWords": 55,
+      "finalStableMatchedWords": 26
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0465-0480",
+      "referenceWords": 59,
+      "firstMatchedWords": 55,
+      "finalStableMatchedWords": 26
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0480-0495",
+      "referenceWords": 49,
+      "firstMatchedWords": 43,
+      "finalStableMatchedWords": 38
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0480-0495",
+      "referenceWords": 49,
+      "firstMatchedWords": 43,
+      "finalStableMatchedWords": 38
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0495-0510",
+      "referenceWords": 58,
+      "firstMatchedWords": 45,
+      "finalStableMatchedWords": 45
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0495-0510",
+      "referenceWords": 58,
+      "firstMatchedWords": 45,
+      "finalStableMatchedWords": 45
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0510-0525",
+      "referenceWords": 31,
+      "firstMatchedWords": 26,
+      "finalStableMatchedWords": 26
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0510-0525",
+      "referenceWords": 31,
+      "firstMatchedWords": 26,
+      "finalStableMatchedWords": 26
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0525-0540",
+      "referenceWords": 47,
+      "firstMatchedWords": 44,
+      "finalStableMatchedWords": 33
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0525-0540",
+      "referenceWords": 47,
+      "firstMatchedWords": 44,
+      "finalStableMatchedWords": 33
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0540-0555",
+      "referenceWords": 47,
+      "firstMatchedWords": 34,
+      "finalStableMatchedWords": 24
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0540-0555",
+      "referenceWords": 47,
+      "firstMatchedWords": 34,
+      "finalStableMatchedWords": 24
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0555-0570",
+      "referenceWords": 60,
+      "firstMatchedWords": 50,
+      "finalStableMatchedWords": 48
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0555-0570",
+      "referenceWords": 60,
+      "firstMatchedWords": 50,
+      "finalStableMatchedWords": 48
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0570-0585",
+      "referenceWords": 52,
+      "firstMatchedWords": 49,
+      "finalStableMatchedWords": 49
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0570-0585",
+      "referenceWords": 52,
+      "firstMatchedWords": 49,
+      "finalStableMatchedWords": 49
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0585-0600",
+      "referenceWords": 40,
+      "firstMatchedWords": 31,
+      "finalStableMatchedWords": 29
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0585-0600",
+      "referenceWords": 40,
+      "firstMatchedWords": 31,
+      "finalStableMatchedWords": 29
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0600-0615",
+      "referenceWords": 50,
+      "firstMatchedWords": 39,
+      "finalStableMatchedWords": 39
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0600-0615",
+      "referenceWords": 50,
+      "firstMatchedWords": 39,
+      "finalStableMatchedWords": 39
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0615-0630",
+      "referenceWords": 51,
+      "firstMatchedWords": 43,
+      "finalStableMatchedWords": 41
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0615-0630",
+      "referenceWords": 51,
+      "firstMatchedWords": 43,
+      "finalStableMatchedWords": 41
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0630-0645",
+      "referenceWords": 60,
+      "firstMatchedWords": 53,
+      "finalStableMatchedWords": 52
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0630-0645",
+      "referenceWords": 60,
+      "firstMatchedWords": 53,
+      "finalStableMatchedWords": 52
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0645-0660",
+      "referenceWords": 47,
+      "firstMatchedWords": 32,
+      "finalStableMatchedWords": 26
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0645-0660",
+      "referenceWords": 47,
+      "firstMatchedWords": 32,
+      "finalStableMatchedWords": 26
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0660-0675",
+      "referenceWords": 38,
+      "firstMatchedWords": 36,
+      "finalStableMatchedWords": 35
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0660-0675",
+      "referenceWords": 38,
+      "firstMatchedWords": 36,
+      "finalStableMatchedWords": 35
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0675-0690",
+      "referenceWords": 62,
+      "firstMatchedWords": 43,
+      "finalStableMatchedWords": 43
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0675-0690",
+      "referenceWords": 62,
+      "firstMatchedWords": 43,
+      "finalStableMatchedWords": 43
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0690-0705",
+      "referenceWords": 73,
+      "firstMatchedWords": 58,
+      "finalStableMatchedWords": 53
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0690-0705",
+      "referenceWords": 73,
+      "firstMatchedWords": 58,
+      "finalStableMatchedWords": 53
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0705-0720",
+      "referenceWords": 88,
+      "firstMatchedWords": 52,
+      "finalStableMatchedWords": 51
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0705-0720",
+      "referenceWords": 88,
+      "firstMatchedWords": 52,
+      "finalStableMatchedWords": 51
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0720-0735",
+      "referenceWords": 37,
+      "firstMatchedWords": 32,
+      "finalStableMatchedWords": 29
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0720-0735",
+      "referenceWords": 37,
+      "firstMatchedWords": 32,
+      "finalStableMatchedWords": 29
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0735-0750",
+      "referenceWords": 52,
+      "firstMatchedWords": 35,
+      "finalStableMatchedWords": 28
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0735-0750",
+      "referenceWords": 52,
+      "firstMatchedWords": 35,
+      "finalStableMatchedWords": 28
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0750-0765",
+      "referenceWords": 46,
+      "firstMatchedWords": 40,
+      "finalStableMatchedWords": 40
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0750-0765",
+      "referenceWords": 46,
+      "firstMatchedWords": 40,
+      "finalStableMatchedWords": 40
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0765-0780",
+      "referenceWords": 41,
+      "firstMatchedWords": 33,
+      "finalStableMatchedWords": 24
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0765-0780",
+      "referenceWords": 41,
+      "firstMatchedWords": 33,
+      "finalStableMatchedWords": 24
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0780-0795",
+      "referenceWords": 59,
+      "firstMatchedWords": 47,
+      "finalStableMatchedWords": 0
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0780-0795",
+      "referenceWords": 59,
+      "firstMatchedWords": 47,
+      "finalStableMatchedWords": 0
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0795-0810",
+      "referenceWords": 72,
+      "firstMatchedWords": 66,
+      "finalStableMatchedWords": 51
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0795-0810",
+      "referenceWords": 72,
+      "firstMatchedWords": 66,
+      "finalStableMatchedWords": 51
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0810-0825",
+      "referenceWords": 59,
+      "firstMatchedWords": 49,
+      "finalStableMatchedWords": 30
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0810-0825",
+      "referenceWords": 59,
+      "firstMatchedWords": 49,
+      "finalStableMatchedWords": 30
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0825-0840",
+      "referenceWords": 48,
+      "firstMatchedWords": 47,
+      "finalStableMatchedWords": 47
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0825-0840",
+      "referenceWords": 48,
+      "firstMatchedWords": 47,
+      "finalStableMatchedWords": 47
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0840-0855",
+      "referenceWords": 67,
+      "firstMatchedWords": 61,
+      "finalStableMatchedWords": 41
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0840-0855",
+      "referenceWords": 67,
+      "firstMatchedWords": 61,
+      "finalStableMatchedWords": 41
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0855-0870",
+      "referenceWords": 47,
+      "firstMatchedWords": 35,
+      "finalStableMatchedWords": 30
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0855-0870",
+      "referenceWords": 47,
+      "firstMatchedWords": 35,
+      "finalStableMatchedWords": 30
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0870-0885",
+      "referenceWords": 75,
+      "firstMatchedWords": 57,
+      "finalStableMatchedWords": 37
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0870-0885",
+      "referenceWords": 75,
+      "firstMatchedWords": 57,
+      "finalStableMatchedWords": 37
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0885-0900",
+      "referenceWords": 51,
+      "firstMatchedWords": 42,
+      "finalStableMatchedWords": 19
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0885-0900",
+      "referenceWords": 51,
+      "firstMatchedWords": 42,
+      "finalStableMatchedWords": 19
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0900-0915",
+      "referenceWords": 42,
+      "firstMatchedWords": 30,
+      "finalStableMatchedWords": 23
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0900-0915",
+      "referenceWords": 42,
+      "firstMatchedWords": 30,
+      "finalStableMatchedWords": 23
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0915-0930",
+      "referenceWords": 41,
+      "firstMatchedWords": 39,
+      "finalStableMatchedWords": 36
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0915-0930",
+      "referenceWords": 41,
+      "firstMatchedWords": 39,
+      "finalStableMatchedWords": 36
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0930-0945",
+      "referenceWords": 66,
+      "firstMatchedWords": 56,
+      "finalStableMatchedWords": 56
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0930-0945",
+      "referenceWords": 66,
+      "firstMatchedWords": 56,
+      "finalStableMatchedWords": 56
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0945-0960",
+      "referenceWords": 41,
+      "firstMatchedWords": 40,
+      "finalStableMatchedWords": 40
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0945-0960",
+      "referenceWords": 41,
+      "firstMatchedWords": 40,
+      "finalStableMatchedWords": 40
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0960-0975",
+      "referenceWords": 69,
+      "firstMatchedWords": 39,
+      "finalStableMatchedWords": 34
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0960-0975",
+      "referenceWords": 69,
+      "firstMatchedWords": 39,
+      "finalStableMatchedWords": 34
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0975-0990",
+      "referenceWords": 67,
+      "firstMatchedWords": 43,
+      "finalStableMatchedWords": 35
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0975-0990",
+      "referenceWords": 67,
+      "firstMatchedWords": 43,
+      "finalStableMatchedWords": 35
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-0990-1005",
+      "referenceWords": 53,
+      "firstMatchedWords": 49,
+      "finalStableMatchedWords": 28
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-0990-1005",
+      "referenceWords": 53,
+      "firstMatchedWords": 49,
+      "finalStableMatchedWords": 28
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-1005-1020",
+      "referenceWords": 57,
+      "firstMatchedWords": 55,
+      "finalStableMatchedWords": 11
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-1005-1020",
+      "referenceWords": 57,
+      "firstMatchedWords": 55,
+      "finalStableMatchedWords": 11
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-1020-1035",
+      "referenceWords": 51,
+      "firstMatchedWords": 43,
+      "finalStableMatchedWords": 43
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-1020-1035",
+      "referenceWords": 51,
+      "firstMatchedWords": 43,
+      "finalStableMatchedWords": 43
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-1035-1050",
+      "referenceWords": 68,
+      "firstMatchedWords": 63,
+      "finalStableMatchedWords": 62
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-1035-1050",
+      "referenceWords": 68,
+      "firstMatchedWords": 63,
+      "finalStableMatchedWords": 62
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-1050-1065",
+      "referenceWords": 52,
+      "firstMatchedWords": 51,
+      "finalStableMatchedWords": 51
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-1050-1065",
+      "referenceWords": 52,
+      "firstMatchedWords": 51,
+      "finalStableMatchedWords": 51
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-1065-1080",
+      "referenceWords": 52,
+      "firstMatchedWords": 42,
+      "finalStableMatchedWords": 0
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-1065-1080",
+      "referenceWords": 52,
+      "firstMatchedWords": 42,
+      "finalStableMatchedWords": 0
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-1080-1095",
+      "referenceWords": 42,
+      "firstMatchedWords": 30,
+      "finalStableMatchedWords": 29
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-1080-1095",
+      "referenceWords": 42,
+      "firstMatchedWords": 30,
+      "finalStableMatchedWords": 29
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-1095-1110",
+      "referenceWords": 35,
+      "firstMatchedWords": 30,
+      "finalStableMatchedWords": 29
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-1095-1110",
+      "referenceWords": 35,
+      "firstMatchedWords": 30,
+      "finalStableMatchedWords": 29
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-1110-1125",
+      "referenceWords": 21,
+      "firstMatchedWords": 19,
+      "finalStableMatchedWords": 19
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-1110-1125",
+      "referenceWords": 21,
+      "firstMatchedWords": 19,
+      "finalStableMatchedWords": 19
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-1125-1140",
+      "referenceWords": 52,
+      "firstMatchedWords": 34,
+      "finalStableMatchedWords": 0
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-1125-1140",
+      "referenceWords": 52,
+      "firstMatchedWords": 34,
+      "finalStableMatchedWords": 0
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-1140-1155",
+      "referenceWords": 46,
+      "firstMatchedWords": 18,
+      "finalStableMatchedWords": 0
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-1140-1155",
+      "referenceWords": 46,
+      "firstMatchedWords": 18,
+      "finalStableMatchedWords": 0
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-1155-1170",
+      "referenceWords": 74,
+      "firstMatchedWords": 68,
+      "finalStableMatchedWords": 66
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-1155-1170",
+      "referenceWords": 74,
+      "firstMatchedWords": 68,
+      "finalStableMatchedWords": 66
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-1170-1185",
+      "referenceWords": 39,
+      "firstMatchedWords": 24,
+      "finalStableMatchedWords": 16
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-1170-1185",
+      "referenceWords": 39,
+      "firstMatchedWords": 24,
+      "finalStableMatchedWords": 16
+    },
+    {
+      "source": "localUser",
+      "fixture": "EN2001a-1185-1200",
+      "referenceWords": 29,
+      "firstMatchedWords": 27,
+      "finalStableMatchedWords": 26
+    },
+    {
+      "source": "systemAudio",
+      "fixture": "EN2001a-1185-1200",
+      "referenceWords": 29,
+      "firstMatchedWords": 27,
+      "finalStableMatchedWords": 26
+    }
+  ]
+}

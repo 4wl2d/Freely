@@ -1,0 +1,10 @@
+{
+  "engine": "whisper.cpp",
+  "durationSeconds": 1200.9419457920012,
+  "rssPeakBytes": 636485632,
+  "rssWarmMedianBytes": 528220160,
+  "rssFinalMedianBytes": 528662528,
+  "cpuMeanPercent": 14.456759026028548,
+  "physicalFootprintPeakBytes": 748914032,
+  "soakLimitation": "20min dual STT-only replay, not a four-hour integrated application soak"
+}

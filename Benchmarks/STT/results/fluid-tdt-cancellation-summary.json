@@ -1,0 +1,14 @@
+{
+  "engine": "fluid-tdt",
+  "samples": 9,
+  "activeRequests": 9,
+  "completedNormallyAfterCancel": 0,
+  "cancelToTerminationP50Seconds": 0.01760954165365547,
+  "cancelToTerminationP95Seconds": 0.03960479161469266,
+  "delaysMilliseconds": [
+    5,
+    20,
+    50
+  ],
+  "scope": "Actual15s-window AsrManager requests, checked active before cancellation. Does not measure native capture stop or full session teardown."
+}

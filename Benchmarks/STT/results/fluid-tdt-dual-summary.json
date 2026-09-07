@@ -1,0 +1,42 @@
+[
+  {
+    "input": "Benchmarks/STT/results/fluid-tdt-dual-1200s-0.32s-dual.jsonl",
+    "engine": "fluid-tdt",
+    "complete": true,
+    "fixtures": 160,
+    "audioSeconds": 2400,
+    "referenceWords": 8194,
+    "wordErrors": 2430,
+    "WER": 0.2965584574078594,
+    "normalization": "Lowercase; ASCII alphanumeric words; internal apostrophes retained; punctuation/hyphens split; fillers/repetitions retained. No numeric expansion.",
+    "caseSensitiveTechnicalTermRecall": 0.95,
+    "caseSensitiveTechnicalTermPrecision": 0.5757575757575758,
+    "technicalTermOccurrences": 40,
+    "technicalTerms": [
+      "XML",
+      "API",
+      "Java",
+      "database",
+      "interface",
+      "specification",
+      "prototype",
+      "annotation"
+    ],
+    "partialUpdates": 7520,
+    "replacedHypothesisWords": 39912,
+    "processingRTF": 0.27524682144159063,
+    "sourceAudioSeconds": {
+      "systemAudio": 1200,
+      "localUser": 1200
+    },
+    "summedProcessingSecondsPerSourceTimelineSecond": 0.5504931400704663,
+    "dispatchSecondsP50": 0.08727687498321757,
+    "dispatchSecondsP95": 0.12307354167569429,
+    "maximumPacedBacklogSeconds": 0.017906333347809777,
+    "loadSeconds": 0.17019512498518452,
+    "cleanupSeconds": 0.0008139583515003324,
+    "speechAlignedPartialLatency": null,
+    "speechAlignedFinalizationLatency": null,
+    "limitations": "Dispatch duration excludes capture cadence and lookahead; speech-aligned latency is unmeasured. Technical-term recall is literal surface form and sparse in one meeting. Overlapping AMI references interleave concurrent speakers."
+  }
+]

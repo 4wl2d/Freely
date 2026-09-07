@@ -1,0 +1,42 @@
+[
+  {
+    "input": "Benchmarks/STT/results/whisper.cpp-dual-1200s-0.32s-dual.jsonl",
+    "engine": "whisper.cpp",
+    "complete": true,
+    "fixtures": 160,
+    "audioSeconds": 2400,
+    "referenceWords": 8194,
+    "wordErrors": 2534,
+    "WER": 0.309250671222846,
+    "normalization": "Lowercase; ASCII alphanumeric words; internal apostrophes retained; punctuation/hyphens split; fillers/repetitions retained. No numeric expansion.",
+    "caseSensitiveTechnicalTermRecall": 0.85,
+    "caseSensitiveTechnicalTermPrecision": 0.6296296296296297,
+    "technicalTermOccurrences": 40,
+    "technicalTerms": [
+      "XML",
+      "API",
+      "Java",
+      "database",
+      "interface",
+      "specification",
+      "prototype",
+      "annotation"
+    ],
+    "partialUpdates": 7520,
+    "replacedHypothesisWords": 32132,
+    "processingRTF": 0.19481076991666665,
+    "sourceAudioSeconds": {
+      "systemAudio": 1200,
+      "localUser": 1200
+    },
+    "summedProcessingSecondsPerSourceTimelineSecond": 0.3896215398333333,
+    "dispatchSecondsP50": 0.0590028,
+    "dispatchSecondsP95": 0.111222,
+    "maximumPacedBacklogSeconds": 0.0113944,
+    "loadSeconds": 0.126069,
+    "cleanupSeconds": 0.00491454,
+    "speechAlignedPartialLatency": null,
+    "speechAlignedFinalizationLatency": null,
+    "limitations": "Dispatch duration excludes capture cadence and lookahead; speech-aligned latency is unmeasured. Technical-term recall is literal surface form and sparse in one meeting. Overlapping AMI references interleave concurrent speakers."
+  }
+]

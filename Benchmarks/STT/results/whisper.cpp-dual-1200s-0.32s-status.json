@@ -1,0 +1,12 @@
+{
+  "engine": "whisper.cpp",
+  "secondsPerSource": 1200.0,
+  "stepSeconds": 0.32,
+  "exitCodes": [
+    0
+  ],
+  "processIsolation": false,
+  "scope": "Both independent decoders receive the same licensed mixed-meeting fixture concurrently at wall-clock pace. This doubles compute load but is not a recording of independent local and remote speakers.",
+  "memoryMethod": "ps RSS sampled each second for one process containing two independently constructed decoders",
+  "hardwareCounterLimit": "No GPU/ANE utilization or joules measured; Core ML use does not establish ANE execution"
+}

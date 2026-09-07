@@ -1,0 +1,80 @@
+[
+  {
+    "input": "Benchmarks/STT/results/fluid-tdt-calibration.jsonl",
+    "engine": "fluid-tdt",
+    "complete": true,
+    "fixtures": 80,
+    "audioSeconds": 1200,
+    "referenceWords": 4097,
+    "wordErrors": 1215,
+    "WER": 0.2965584574078594,
+    "normalization": "Lowercase; ASCII alphanumeric words; internal apostrophes retained; punctuation/hyphens split; fillers/repetitions retained. No numeric expansion.",
+    "caseSensitiveTechnicalTermRecall": 0.95,
+    "caseSensitiveTechnicalTermPrecision": 0.5757575757575758,
+    "technicalTermOccurrences": 20,
+    "technicalTerms": [
+      "XML",
+      "API",
+      "Java",
+      "database",
+      "interface",
+      "specification",
+      "prototype",
+      "annotation"
+    ],
+    "partialUpdates": 1200,
+    "replacedHypothesisWords": 6580,
+    "processingRTF": 0.07038494444437675,
+    "sourceAudioSeconds": {
+      "systemAudio": 1200
+    },
+    "summedProcessingSecondsPerSourceTimelineSecond": 0.07038288072886643,
+    "dispatchSecondsP50": 0.06862541666487232,
+    "dispatchSecondsP95": 0.09803195833228528,
+    "maximumPacedBacklogSeconds": 0,
+    "loadSeconds": 0.12677162501495332,
+    "cleanupSeconds": 0.007211458345409483,
+    "speechAlignedPartialLatency": null,
+    "speechAlignedFinalizationLatency": null,
+    "limitations": "Dispatch duration excludes capture cadence and lookahead; speech-aligned latency is unmeasured. Technical-term recall is literal surface form and sparse in one meeting. Overlapping AMI references interleave concurrent speakers."
+  },
+  {
+    "input": "Benchmarks/STT/results/whisper-cpp-calibration.jsonl",
+    "engine": "whisper.cpp",
+    "complete": true,
+    "fixtures": 80,
+    "audioSeconds": 1200,
+    "referenceWords": 4097,
+    "wordErrors": 1267,
+    "WER": 0.309250671222846,
+    "normalization": "Lowercase; ASCII alphanumeric words; internal apostrophes retained; punctuation/hyphens split; fillers/repetitions retained. No numeric expansion.",
+    "caseSensitiveTechnicalTermRecall": 0.85,
+    "caseSensitiveTechnicalTermPrecision": 0.6296296296296297,
+    "technicalTermOccurrences": 20,
+    "technicalTerms": [
+      "XML",
+      "API",
+      "Java",
+      "database",
+      "interface",
+      "specification",
+      "prototype",
+      "annotation"
+    ],
+    "partialUpdates": 1200,
+    "replacedHypothesisWords": 7210,
+    "processingRTF": 0.03837661416666667,
+    "sourceAudioSeconds": {
+      "systemAudio": 1200
+    },
+    "summedProcessingSecondsPerSourceTimelineSecond": 0.03837661416666667,
+    "dispatchSecondsP50": 0.0356751,
+    "dispatchSecondsP95": 0.0720208,
+    "maximumPacedBacklogSeconds": 0,
+    "loadSeconds": 0.107514,
+    "cleanupSeconds": 0.00239746,
+    "speechAlignedPartialLatency": null,
+    "speechAlignedFinalizationLatency": null,
+    "limitations": "Dispatch duration excludes capture cadence and lookahead; speech-aligned latency is unmeasured. Technical-term recall is literal surface form and sparse in one meeting. Overlapping AMI references interleave concurrent speakers."
+  }
+]

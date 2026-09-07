@@ -1,0 +1,38 @@
+[
+  {
+    "file": "results/fluid-tdt-dual-1200s-0.32s-dual.jsonl",
+    "bytes": 3189867,
+    "sha256": "4e1ae96dfc99e2c492bc59912c4ac399fe1df7d8a2ce4ca468147d0ac36bec42",
+    "storage": "local ignored raw evidence; regenerate with documented scripts"
+  },
+  {
+    "file": "results/whisper.cpp-dual-1200s-0.32s-dual.jsonl",
+    "bytes": 2690170,
+    "sha256": "638627e01971aeaff6c57b99916dce3e91ab3eccb41c220ee5e8617251060386",
+    "storage": "local ignored raw evidence; regenerate with documented scripts"
+  },
+  {
+    "file": "results/fluid-tdt-paired-endpoint-heldout-frozen.jsonl",
+    "bytes": 408004,
+    "sha256": "539b2ab1731b578cf1555b57de3c22762798694e416473f3479c83e51a1c649c",
+    "storage": "local ignored raw evidence; regenerate with documented scripts"
+  },
+  {
+    "file": "results/whisper-cpp-paired-endpoint-heldout-frozen.jsonl",
+    "bytes": 351212,
+    "sha256": "7e688b80ca9fb598e01ea11bed23b3560273afa432a6059c30f8d134b9205b0e",
+    "storage": "local ignored raw evidence; regenerate with documented scripts"
+  },
+  {
+    "file": "results/fluid-tdt-synthetic-regression.jsonl",
+    "bytes": 42845,
+    "sha256": "cd1741bde067790e3680944d907cd798f02d4bd37d58207f626314c5d996b4b0",
+    "storage": "local ignored raw evidence; regenerate with documented scripts"
+  },
+  {
+    "file": "results/whisper-cpp-synthetic-regression.jsonl",
+    "bytes": 34254,
+    "sha256": "da08973f2e2127f75f30b56036ef254c7a744c08ffc1dc52d4b86cfd3b0ba143",
+    "storage": "local ignored raw evidence; regenerate with documented scripts"
+  }
+]
