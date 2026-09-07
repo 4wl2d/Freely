@@ -41,7 +41,7 @@ jobs:
       - name: Test domain package
         run: swift test --package-path Packages/CopilotCore -c '${{ matrix.configuration }}' --jobs 2
       - name: Build native tests
-        run: swift build --build-tests -c '${{ matrix.configuration }}' --arch arm64 --jobs 2
+        run: swift build --build-tests -c '${{ matrix.configuration }}' --arch arm64 --jobs 2 -Xswiftc -enable-testability
       - name: Test native integrations
         timeout-minutes: 4
         run: python3 script/ci_tests.py '${{ matrix.configuration }}'
