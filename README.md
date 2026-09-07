@@ -11,6 +11,8 @@
   · <a href="LICENSE">Apache-2.0</a>
 </p>
 
+[![macOS CI](https://github.com/4wl2d/MeetingCopilot/actions/workflows/ci.yml/badge.svg)](https://github.com/4wl2d/MeetingCopilot/actions/workflows/ci.yml)
+
 MeetingCopilot is a native SwiftUI/AppKit meeting companion. It transcribes audio locally, keeps a bounded conversation context, and streams Grok suggestions into a passive companion panel. You choose the audio sources and the context that may leave your Mac.
 
 > [!IMPORTANT]
