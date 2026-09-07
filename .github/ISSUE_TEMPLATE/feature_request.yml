@@ -1,0 +1,18 @@
+name: Feature request
+description: Suggest a focused improvement to the native meeting workflow.
+title: "Feature: "
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What would this help you do?
+      description: Describe the meeting workflow and the current limitation.
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Proposed behavior
+      description: Explain the outcome and any alternatives you considered.
+    validations:
+      required: true

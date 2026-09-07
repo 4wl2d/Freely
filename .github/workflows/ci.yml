@@ -1,0 +1,57 @@
+name: macOS CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Swift · ${{ matrix.configuration }}
+    runs-on: macos-26
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        configuration: [debug, release]
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_26.6.app/Contents/Developer
+      MEETINGCOPILOT_SOAK: '0'
+      MEETINGCOPILOT_FOCUS_TEST: '0'
+      MEETINGCOPILOT_KEYCHAIN_TEST: '0'
+      MEETINGCOPILOT_HOTKEY_TEST: '0'
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Show toolchain
+        run: |
+          test "$(uname -m)" = arm64
+          xcodebuild -version
+          swift --version
+      - name: Test domain package
+        run: swift test --package-path Packages/CopilotCore -c '${{ matrix.configuration }}' --jobs 2
+      - name: Test native integrations
+        run: swift test -c '${{ matrix.configuration }}' --arch arm64 --jobs 2
+      - name: Package local preview
+        if: matrix.configuration == 'release'
+        run: ./script/package.sh
+      - name: Upload preview artifact
+        if: matrix.configuration == 'release'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: MeetingCopilot-macos-arm64
+          path: |
+            dist/MeetingCopilot-1.0.0-macOS-arm64.zip
+            dist/MeetingCopilot-1.0.0-macOS-arm64.zip.sha256
+          if-no-files-found: error
+          retention-days: 14

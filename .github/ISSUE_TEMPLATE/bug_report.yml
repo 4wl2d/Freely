@@ -1,0 +1,34 @@
+name: Bug report
+description: Report a reproducible app or build problem.
+title: "Bug: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Check the verification ledger before filing an account or capture limitation.
+        Include diagnostic metadata only; do not post tokens, private meeting text, or personal audio.
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: macOS version, Apple chip, and app release or source commit.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Include selected source, connection mode, and relevant permission state.
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Expected and observed behavior
+    validations:
+      required: true
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Relevant diagnostic metadata
+      description: Error codes, source state, counters, or a small sanitized build log.

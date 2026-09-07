@@ -1,0 +1,41 @@
+# xAI transport evidence
+
+Access date for the source ledger: 2026-09-07. These are documentation checks, independent of live endpoint verification.
+
+| Official source | Verified contract and implementation decision | Remaining uncertainty |
+| --- | --- | --- |
+| [Grok 4.6](https://docs.x.ai/developers/grok-4-6) | `grok-4.6`, text and images, Responses, 500,000-token model context, `prompt_cache_key`. Keep application request limits substantially smaller. | Actual access depends on the user's API team; cache routing never guarantees a hit. |
+| [Reasoning](https://docs.x.ai/developers/model-capabilities/text/reasoning) | `reasoning.effort=low` defaults for latency. Low still reasons. Low/medium/high/xhigh supported for 4.6; no reasoning-off option. Usage includes reasoning consumption. | Live billed usage and detailed-mode output sufficiency require a funded credential. |
+| [Generate text](https://docs.x.ai/developers/model-capabilities/text/generate-text) | POST `/v1/responses`; `store:false`; construct bounded selected client context and omit previous response IDs/encrypted reasoning. | `store:false` controls stateful response storage, not every provider retention mechanism. |
+| [Streaming](https://docs.x.ai/developers/model-capabilities/text/streaming) and [Responses delta example](https://docs.x.ai/developers/tools/overview) | Native SSE, `stream:true`, `response.output_text.delta`. The examples using Chat Completions were not used as a Responses parser. No tool declarations are sent. | xAI's guide does not enumerate every terminal SSE shape; interoperability with the configured live model remains blocked until the live smoke test. |
+| [REST Responses reference](https://docs.x.ai/developers/rest-api-reference/inference/chat) and [parameter mapping](https://docs.x.ai/developers/model-capabilities/text/comparison) | Typed response status/usage, cached input and reasoning token details; `max_output_tokens` request cap. Normal 4,096 and explicit detailed 8,192 caps. | Output cap exhaustion is shown as incomplete and never silently retried with a larger cap. |
+| [Responses streaming event schema](https://platform.openai.com/docs/api-reference/responses-streaming) | Compatibility schema for `response.completed`, `response.incomplete`, `response.failed`, error envelopes, sequence numbers and output deltas. | Primary compatibility reference; this is not a substitute for actual xAI terminal-event recordings. |
+| [Image understanding](https://docs.x.ai/developers/model-capabilities/images/understanding) | PNG/JPEG inline `input_image.image_url` data URLs; no public upload. Provider limit 20 MiB; application accepts at most 5 MiB and an estimated 8,000-token image allocation. | Image allocation is a conservative application allowance, not measured provider tokenization; UI must enforce crop/dimensions and session consent. |
+| [API billing](https://docs.x.ai/developers/faq/billing) | API requests consume prepaid credits or invoiced API usage; consumer subscription ownership is not treated as this application's API entitlement. | Actual team balances/spending limits are not read. |
+| [Official OpenCode integration](https://x.ai/news/grok-opencode) | Subscription-backed OAuth is supported for the named integration. Following user steering, MeetingCopilot now offers its own registered-client OAuth path as primary and API keys as optional, without borrowing another client's identity. | Own-client registration and custom-application subscription inference remain unverified; see [OAuth evidence](oauth-evidence.md). |
+| [API data/privacy](https://docs.x.ai/developers/faq/security) | Provider documentation states default 30-day abuse-audit retention, independent team-level ZDR, and `x-zero-data-retention` response header. Header is exposed as true/false/unknown without inference. | This application's user/team retention policy has not been inspected. |
+
+Implementation is in `MeetingCopilot/Infrastructure/XAI` and `Keychain`. Requests use an ephemeral Foundation `URLSession`, no URL cache/cookie/credential store, reject redirects, and read `AsyncBytes` while the response is arriving. No provider body, credential, observed context, screenshot or reasoning trace enters error descriptions. Missing/denied keys, 429, HTTP errors, network errors, malformed streams and incomplete answers retain distinct states.
+
+The parser frames bytes before strict UTF-8 decoding, handles LF/CRLF/CR, BOM, multiline data, comments, unknown additive events and split Unicode, and requires a typed terminal response. Early EOF and a legacy `[DONE]` without completion remain interrupted. The buffer holds at most 256 application events; overflow fails visibly instead of silently dropping text. SSE lines/events are capped at 256 KiB and each response at 4 MiB. At most two transport producers can be owned simultaneously.
+
+Default failure limits are 10 s to non-whitespace answer text, 15 s stream inactivity and 60 s total (120 s detailed). First-output timing does not reset on heartbeats/reasoning. Retryable pre-output failures get at most two cancellation-aware retries with jitter within the total deadline. Retry-After seconds and HTTP dates are honored; after answer text, failure never automatically retries. The provider limits all its starts, including retries, to 12/minute. The composition root must retain its shared limiter across provider reconfiguration and pass its approval callback if other semantic operations share the allowance.
+
+Consumers must check task cancellation and current generation identity before every UI mutation: cancellation does not erase already-buffered stream elements. `cancelAll()` cancels and awaits all owned producers, URLSession requests and retry timers; session teardown must await it. Client cancellation cannot promise charge reversal or instantaneous provider-side termination.
+
+Keychain operations are serialized, use a service/account generic-password item, disable synchronization, and store device-bound access metadata. Nonsecret preferences never hold API key contents. Ordinary tests do not read the user's configured API key. The optional roundtrip test creates and removes only a unique synthetic test item.
+
+## Verification
+
+Executed on 2026-09-07:
+
+```sh
+DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer MEETINGCOPILOT_KEYCHAIN_TEST=1 \
+  swift test --filter 'SSEParserTests|ResponsesRequestTests|XAITransportTests|KeychainTests'
+```
+
+**25 tests passed, zero failures, 3.289 s test execution.** This includes the real macOS Keychain synthetic save/update/read/delete/idempotent-delete roundtrip (0.025 s), all byte-fragmentation boundaries, SSE correctness, selected text/image request encoding, bounded producer buffering, native Foundation incremental delivery, first/inactivity/total watchdogs, 401/403/400 without retry, bounded 503 retry, Retry-After backoff, early EOF, mid-answer disconnect, cancellation during backoff, underlying URLSession cancellation and stop during credential loading. URLProtocol fixtures are exclusively in the test target and cannot be constructed by Release application code. The test delayed completion by 250 ms and verified the first text arrived before 240 ms; this establishes transport incrementality under a fixture, not internet/provider latency.
+
+Application-owned adapter files also emitted a standalone module with Swift 6 strict concurrency and deployment target macOS 15. The local environment's default Command Line Tools lack the `Testing` module; the installed Xcode toolchain supplies it. Neither test run changed the globally selected toolchain.
+
+Live text streaming and transcript-plus-image reasoning: **BLOCKED — no authorized connection was configured for this task**. No existing application credentials or unrelated client credentials were read and no paid requests were made. The primary subscription path requires this application's provider-issued registration and verified subscription inference route/entitlement; the optional API-key path requires an authorized API key. After configuring the chosen supported connection, run both smoke tests separately and verify incremental answer text, usage, terminal handling, selected text/image payload and cancellation.
