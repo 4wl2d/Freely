@@ -142,7 +142,8 @@ struct SourcePipelineTests {
     }
 
     @Test func windowBoundaryKeepsTailOfNondivisibleNativeFrame() async throws {
-        let origin = ProcessInfo.processInfo.systemUptime - 100
+        // A fixed past clock also exercises a boundary rounded just below 15 seconds.
+        let origin = -100.0
         let ingress = AudioIngress()
         let transcriber = PipelineFixtureTranscriber()
         let pipeline = SourcePipeline(source: .localUser, streamEpoch: .init(2), ingress: ingress, transcriber: transcriber, sessionOrigin: origin)
@@ -159,15 +160,18 @@ struct SourcePipelineTests {
             }
         }
         for _ in 0..<100 {
-            if await events.segments.contains(where: { $0.startTime >= 15 && $0.endTime >= 15.9 }) { break }
+            // Identical hypotheses suppress later partial events, so wait for decoded
+            // audio coverage instead of requiring a newer displayed timestamp.
+            if await pipeline.snapshot().analysisSeconds >= 16 - 0.00001 { break }
             try await Task.sleep(for: .milliseconds(5))
         }
         worker.cancel(); await worker.value; await pipeline.stop()
         let segments = await events.segments
         let final = try #require(segments.first { $0.finality == .final })
-        let continuation = try #require(segments.first { $0.startTime >= 15 })
+        let continuation = try #require(segments.first { $0.sequence == final.sequence + 1 })
         #expect(abs(final.endTime - 15) < 0.00001)
         #expect(abs(continuation.startTime - 15) < 0.00001)
+        #expect(abs(await pipeline.snapshot().analysisSeconds - 16) < 0.00001)
         #expect(await events.gaps.isEmpty)
         #expect(ingress.snapshot().droppedSeconds == 0)
         #expect(await pipeline.snapshot().retainedBatchSeconds == 0)
