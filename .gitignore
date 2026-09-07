@@ -1,0 +1,16 @@
+.build/
+.swiftpm/
+dist/
+.DS_Store
+**/.cache/
+**/results/local/
+*.xcuserstate
+xcuserdata/
+.env
+*.wav
+*.mp3
+*.flac
+*.mlmodelc/
+*.mlpackage/
+*.gguf
+*.bin
