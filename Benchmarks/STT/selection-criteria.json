@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "frozenBeforeHeldout": "2026-09-07T02:08:00Z",
+  "initialDataExamined": "EN2001a first 60 seconds only",
+  "nativeDistributionRequired": true,
+  "minimumOS": "macOS 15.0",
+  "audioWindowMaximumSeconds": 15,
+  "sourceDecoderStateMustBeIndependent": true,
+  "pacedIngressMaximumSeconds": 2,
+  "dualStreamMaximumAverageProcessingRTF": 0.8,
+  "residentMemoryObjectiveBytes": 4294967296,
+  "initialPartialLatencyP50ObjectiveSeconds": 0.4,
+  "initialPartialLatencyP95ObjectiveSeconds": 0.9,
+  "initialStableLatencyP50ObjectiveSeconds": 0.65,
+  "initialStableLatencyP95ObjectiveSeconds": 1.2,
+  "ranking": "Reject incompatible distribution or unbounded state first; compare normalized WER on calibration, then heldout using unchanged settings. Prefer lower WER among native candidates that meet bounded processing/backlog and resource constraints. Do not call source-aligned speech latency passed using dispatch duration.",
+  "latencyPolicy": "Increased cadence must be evaluated separately from the 1-second initial comparison. Missing source-aligned latency, cancellation, silence, or energy data remains unmeasured, not passed.",
+  "testPolicy": "All five candidates get identical initial fixtures. Strongest two viable native candidates get the longer paced dual-source replay. Model/backend selection remains provisional until application integration, source-aligned latency, cancellation and soak requirements are verified."
+}

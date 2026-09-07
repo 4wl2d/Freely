@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "corpus": "AMI EN2001a independent headset sources",
+  "license": "CC-BY-4.0",
+  "attribution": "AMI Consortium, University of Edinburgh and partner institutions",
+  "licenseEvidence": "https://groups.inf.ed.ac.uk/ami/download/",
+  "sources": [
+    {
+      "file": "EN2001a.Headset-0.wav",
+      "url": "https://groups.inf.ed.ac.uk/ami/AMICorpusMirror/amicorpus/EN2001a/audio/EN2001a.Headset-0.wav",
+      "bytes": 168007726,
+      "sha256": "5a2dae41c60bcbc8f2230c31509da03383f68007b48bbcf8973b1c408061c0cb"
+    },
+    {
+      "file": "EN2001a.Headset-1.wav",
+      "url": "https://groups.inf.ed.ac.uk/ami/AMICorpusMirror/amicorpus/EN2001a/audio/EN2001a.Headset-1.wav",
+      "bytes": 168007726,
+      "sha256": "e8f5253d04ff2b544b578d3a94ec16554a0477e095d153e1d39dda21d15a43ac"
+    },
+    {
+      "file": "EN2001a.Headset-2.wav",
+      "url": "https://groups.inf.ed.ac.uk/ami/AMICorpusMirror/amicorpus/EN2001a/audio/EN2001a.Headset-2.wav",
+      "bytes": 168007726,
+      "sha256": "9090a55c646fea4cbb259583cba3fd427bcea078e242440472fd585c23ceb01a"
+    },
+    {
+      "file": "EN2001a.Headset-3.wav",
+      "url": "https://groups.inf.ed.ac.uk/ami/AMICorpusMirror/amicorpus/EN2001a/audio/EN2001a.Headset-3.wav",
+      "bytes": 168007726,
+      "sha256": "c0ce724ee451e2ad0b1d2d9871cb980689bd7bc1653d19ff998c3ed37a096d43"
+    },
+    {
+      "file": "EN2001a.Headset-4.wav",
+      "url": "https://groups.inf.ed.ac.uk/ami/AMICorpusMirror/amicorpus/EN2001a/audio/EN2001a.Headset-4.wav",
+      "bytes": 168007726,
+      "sha256": "8c8aad352aa96433368563e8440f33daeadf5ff71e4c4fb75773be11597455d6"
+    }
+  ],
+  "mappingEvidence": "AMI manual annotations1.6.2 corpusResources/meetings.xml: EN2001a A=0 B=1 C=2 D=3 E=4",
+  "sourceMapping": {
+    "localUser": "Headset0, annotation channelA",
+    "systemAudio": "Normalized mix of Headsets1-4, annotation channelsB-E"
+  },
+  "secondsPerSource": 1500,
+  "calibrationSeconds": 1200,
+  "heldoutSeconds": 300,
+  "scope": "Synchronous naturally recorded independent microphones from one AMI meeting. Simulated source roles; acoustic bleed remains possible. No user device capture evidence."
+}

@@ -1,0 +1,68 @@
+{
+  "version": 1,
+  "seed": 20260907,
+  "sampleFormat": "monoFloat32littleEndian16000Hz",
+  "purpose": "Synthetic VAD/noise controls, not human accuracy evidence",
+  "fixtures": [
+    {
+      "id": "digital-silence",
+      "file": "digital-silence.f32",
+      "duration": 30,
+      "sourceStart": 0,
+      "split": "synthetic-control",
+      "reference": "",
+      "words": [],
+      "questions": [],
+      "rmsAfterTwoSeconds": 0,
+      "sha256": "124617c1f65e92d3bc895fbd869e4bb16a30754b198f59e6e973949b9aaa1b01"
+    },
+    {
+      "id": "quiet-white",
+      "file": "quiet-white.f32",
+      "duration": 30,
+      "sourceStart": 30,
+      "split": "synthetic-control",
+      "reference": "",
+      "words": [],
+      "questions": [],
+      "rmsAfterTwoSeconds": 0.0003,
+      "sha256": "001711865aee8d091e98d2c7a582cfb4a1402e7080ebb8657f928509800559a9"
+    },
+    {
+      "id": "moderate-noise-step",
+      "file": "moderate-noise-step.f32",
+      "duration": 30,
+      "sourceStart": 60,
+      "split": "synthetic-control",
+      "reference": "",
+      "words": [],
+      "questions": [],
+      "rmsAfterTwoSeconds": 0.00075,
+      "sha256": "bc6f54358e6d005640fbae2b722a4d14ad7e7dee20d81f9596656ae7337dca36"
+    },
+    {
+      "id": "room-noise-step",
+      "file": "room-noise-step.f32",
+      "duration": 30,
+      "sourceStart": 90,
+      "split": "synthetic-control",
+      "reference": "",
+      "words": [],
+      "questions": [],
+      "rmsAfterTwoSeconds": 0.002,
+      "sha256": "ac3a2fcbb862da2e09c952e988effdb95700d247c990f9cb2a83406896e547e5"
+    },
+    {
+      "id": "louder-room-noise-step",
+      "file": "louder-room-noise-step.f32",
+      "duration": 30,
+      "sourceStart": 120,
+      "split": "synthetic-control",
+      "reference": "",
+      "words": [],
+      "questions": [],
+      "rmsAfterTwoSeconds": 0.01,
+      "sha256": "9303317d9cccf57e77b8d93643871107dd8d7834e283e36f1af149b27f46f454"
+    }
+  ]
+}

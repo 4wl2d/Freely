@@ -1,0 +1,55 @@
+{
+  "version": 2,
+  "frozenBeforeEndpointAndPairedHeldout": "2026-09-07T03:10:18.558682+00:00",
+  "extends": "selection-criteria.json",
+  "reason": "Add equal20ms causal endpoint policy and question-end finalization comparison requested before heldout; no latency thresholds increased.",
+  "VAD": {
+    "frameMilliseconds": 20,
+    "prerollMilliseconds": 200,
+    "silenceMilliseconds": 450,
+    "maxWindowSeconds": 15,
+    "voicedMinimumMilliseconds": 160,
+    "minimumAnalysisMilliseconds": 320,
+    "noiseInitialRMS": 0.001,
+    "threshold": "max(sourceFloor,min(.012,noiseRMS*3))",
+    "noiseUpdate": ".98*old+.02*frameRMS while inactive",
+    "inferenceStepSeconds": 0.32,
+    "systemAudioRMSFloor": 0.001,
+    "localUserRMSFloor": 0.004,
+    "calibrationReason": "System floor.004 lost29.6%of annotatedwordstarts;.001 covers99.30%,while.0005 covers99.84%but addsfalseactive windows and a transientnoisequestion. Microphonefloor retained.004 tolimitbleed/background activation."
+  },
+  "hardGates": {
+    "nativeMacOS15Arm64Distribution": true,
+    "independentDecoderState": true,
+    "maxWindowSeconds": 15,
+    "maxIngressSeconds": 2,
+    "dualSummedProcessingRTF": 0.8,
+    "memoryObjectiveBytes": 4294967296,
+    "activeCancelP95Seconds": 0.5
+  },
+  "ranking": {
+    "data": "paired heldout systemAudio; localUser reported separately because headset bleed differs from target-speaker annotations",
+    "lowerIsBetter": true,
+    "weights": {
+      "WER": 0.35,
+      "oneMinusTechnicalF1": 0.15,
+      "oneMinusQuestionTailRecall": 0.15,
+      "questionFinalP95DividedBy1Point2SecondsCappedAt4": 0.25,
+      "conservativeModelMemoryDividedBy4GiB": 0.08,
+      "activeCancelP95DividedByPoint5Seconds": 0.02
+    },
+    "missingData": "No score when required component absent; report inconclusive. Sparse question/term counts preclude general p95 guarantees.",
+    "memory": "phys_footprint_peak plus separatelyreportedneural_peak as conservative uppercount; maydoublecount allocations.",
+    "tie": "Scoreswithin.02 require qualitative review of accuracy,question coverage and distribution; do not treat small sample margins as definitive."
+  },
+  "unchangedObjectives": {
+    "partialP50": 0.4,
+    "partialP95": 0.9,
+    "stableP50": 0.65,
+    "stableP95": 1.2
+  },
+  "questionMetric": "AMI manually annotated question mark time to first finalized interval covering that time whose bounded transcript suffix contains the final2normalizedreferencewords; tailrecognition is proxy notsemantic correctness.",
+  "finalPolicyFrozenBeforePairedHeldout": "2026-09-07T03:47:42.230328+00:00",
+  "metricVersion": 2,
+  "metricCorrections": "AMI acronymspellingcanonicalization preservescase; question-tail online/offlineorthographycanonicalization; retain20priorwordsacross emptysegments; emptyfinaltextcannotcountasusefulfinalization. GlobalWERnormalizationunchanged."
+}

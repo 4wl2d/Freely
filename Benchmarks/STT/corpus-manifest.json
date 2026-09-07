@@ -1,0 +1,832 @@
+{
+  "version": 1,
+  "corpus": "AMI Meeting Corpus EN2001a",
+  "license": "CC-BY-4.0",
+  "attribution": "AMI Consortium; University of Edinburgh and partner institutions",
+  "licenseEvidence": "https://groups.inf.ed.ac.uk/ami/download/",
+  "sources": [
+    {
+      "file": "EN2001a.Mix-Headset.wav",
+      "url": "https://groups.inf.ed.ac.uk/ami/AMICorpusMirror/amicorpus/EN2001a/audio/EN2001a.Mix-Headset.wav",
+      "bytes": 168007726,
+      "sha256": "81e06be816e9d94d0bee410bef1b158b2cdfba8e2b80f44a6e62cf6b9fd780f9"
+    },
+    {
+      "file": "ami_public_manual_1.6.2.zip",
+      "url": "https://groups.inf.ed.ac.uk/ami/AMICorpusAnnotations/ami_public_manual_1.6.2.zip",
+      "bytes": 22887865,
+      "sha256": "b56e5babb2496b8795deeeda7e71178d7fbc9963f94276cf2a3f4b56ebbc9f9d"
+    }
+  ],
+  "audioSeconds": 1500.0,
+  "calibrationSeconds": 1200,
+  "heldoutSeconds": 300,
+  "referencePolicy": "Manual annotation words ordered by source start time and channel; punctuation-only annotations excluded. Words assigned by start timestamp; overlap produces interleaved references.",
+  "limitations": [
+    "One naturally recorded technical meeting, not a representative population of meetings",
+    "Fixed 15-second boundaries can cut words; all engines receive identical cuts",
+    "Modern framework names and consented user meeting fixtures remain additional required coverage"
+  ],
+  "fixtures": [
+    {
+      "id": "EN2001a-0000-0015",
+      "file": "EN2001a-0000-0015.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 0,
+      "sha256": "ed2c9c8c80c9bcb722f685e3b0cc506671b43873e915dea3dab352c3275a1e7a"
+    },
+    {
+      "id": "EN2001a-0015-0030",
+      "file": "EN2001a-0015-0030.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 15,
+      "sha256": "3ee50fa4de9e16673464f0998fd8d97862f9a3723c015b0d7add2e9b9124e4e6"
+    },
+    {
+      "id": "EN2001a-0030-0045",
+      "file": "EN2001a-0030-0045.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 30,
+      "sha256": "0d5b57b7a6b9d4bfd396ec8680a3762dcdabc265bc2f785f50130430d604c7d1"
+    },
+    {
+      "id": "EN2001a-0045-0060",
+      "file": "EN2001a-0045-0060.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 45,
+      "sha256": "10eb0e0fdd1dd0bffe2ef5f81872bd3862a66124f9d54056f51a60232a1ced4d"
+    },
+    {
+      "id": "EN2001a-0060-0075",
+      "file": "EN2001a-0060-0075.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 60,
+      "sha256": "45605dfdd0195b88df699493b01bdb8a6e25c003efec669e157157a90e4156f6"
+    },
+    {
+      "id": "EN2001a-0075-0090",
+      "file": "EN2001a-0075-0090.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 75,
+      "sha256": "66c34a1fcc1a8c4fd5cedcbe4f5dc6976eac6412128493bf08a3b17e3aeca9cf"
+    },
+    {
+      "id": "EN2001a-0090-0105",
+      "file": "EN2001a-0090-0105.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 90,
+      "sha256": "365ac8758db6a69d9d71ca135d0edb32b54e4fe4246cf5c8ae22919f7e4449fe"
+    },
+    {
+      "id": "EN2001a-0105-0120",
+      "file": "EN2001a-0105-0120.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 105,
+      "sha256": "f8444cfe6de5990c4bd0916c2de8a16070cf8eb25647683a335dbc1e2f275925"
+    },
+    {
+      "id": "EN2001a-0120-0135",
+      "file": "EN2001a-0120-0135.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 120,
+      "sha256": "86050bc3b53f5f398fa9a80b1073da0e30a8488ac5b76d6a28a4d08139cfa18f"
+    },
+    {
+      "id": "EN2001a-0135-0150",
+      "file": "EN2001a-0135-0150.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 135,
+      "sha256": "3e6bdb1bccf29fe1da8d452ff62731fbc021b17e5b7e4186a4132ac89820f4e4"
+    },
+    {
+      "id": "EN2001a-0150-0165",
+      "file": "EN2001a-0150-0165.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 150,
+      "sha256": "76df1b627cd8e4665f2e458b95ca4b002233ddfbd53ad99a34e09658bd53979e"
+    },
+    {
+      "id": "EN2001a-0165-0180",
+      "file": "EN2001a-0165-0180.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 165,
+      "sha256": "aef46e9f337751d246ed408e3fd56d255d7b94f8d48db0b777c4bac3f1b55307"
+    },
+    {
+      "id": "EN2001a-0180-0195",
+      "file": "EN2001a-0180-0195.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 180,
+      "sha256": "660160cc1602a257ddb5364888d4584c8fdcb07dfea3efb92dfb67961fff230d"
+    },
+    {
+      "id": "EN2001a-0195-0210",
+      "file": "EN2001a-0195-0210.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 195,
+      "sha256": "5cdf4c909993a57bdaebadb270c2a789c2520ef4abd5c4a8387d12653fe5c8d2"
+    },
+    {
+      "id": "EN2001a-0210-0225",
+      "file": "EN2001a-0210-0225.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 210,
+      "sha256": "a4f391e43080ebf9f09c1857ec17aee9e16a32afca125a1fc388f77f2b30d63b"
+    },
+    {
+      "id": "EN2001a-0225-0240",
+      "file": "EN2001a-0225-0240.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 225,
+      "sha256": "92b5034b0e4274d4da257120c186a93b82b5c8162813d5ed8468e7e37f30be12"
+    },
+    {
+      "id": "EN2001a-0240-0255",
+      "file": "EN2001a-0240-0255.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 240,
+      "sha256": "78ba03309b042849d65e4f5c9134581153e45b7d85ac1905948437af03f49a2e"
+    },
+    {
+      "id": "EN2001a-0255-0270",
+      "file": "EN2001a-0255-0270.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 255,
+      "sha256": "1cf49656e92dec1b19c482fca67e5a3479a90e594f1bfbf0d827bf8c57907d51"
+    },
+    {
+      "id": "EN2001a-0270-0285",
+      "file": "EN2001a-0270-0285.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 270,
+      "sha256": "acdf53c505b6bc6d736e7f0cab198e206912fea0ab482a23c6e37a5d9e521de2"
+    },
+    {
+      "id": "EN2001a-0285-0300",
+      "file": "EN2001a-0285-0300.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 285,
+      "sha256": "f63679eab21270015386ed7b26f9feb40a7579a3bc7cded831123903a8e4feba"
+    },
+    {
+      "id": "EN2001a-0300-0315",
+      "file": "EN2001a-0300-0315.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 300,
+      "sha256": "430bed88021824730ff7590926e3066931190a3841ab59e13ff6b5998974b5b5"
+    },
+    {
+      "id": "EN2001a-0315-0330",
+      "file": "EN2001a-0315-0330.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 315,
+      "sha256": "7ed5d6ee6d42e9658de3d61b6aa72c928f01b179e0d7b24008ef936d08ea02ee"
+    },
+    {
+      "id": "EN2001a-0330-0345",
+      "file": "EN2001a-0330-0345.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 330,
+      "sha256": "7798293e3540e496de9ed16e982cd6f516b7491c528d2f18e9d36e9e0d03622a"
+    },
+    {
+      "id": "EN2001a-0345-0360",
+      "file": "EN2001a-0345-0360.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 345,
+      "sha256": "eb275fed818a1b149cf96e24f3c242a5b0c4db9584491a8bf18a215113b74562"
+    },
+    {
+      "id": "EN2001a-0360-0375",
+      "file": "EN2001a-0360-0375.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 360,
+      "sha256": "c7a168d7259a2d6e0f6ec55fde58904f6d47d1f4e8d7a01dd99c625d6ee4c65b"
+    },
+    {
+      "id": "EN2001a-0375-0390",
+      "file": "EN2001a-0375-0390.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 375,
+      "sha256": "31ed146bf35a706ac3bbe98a97523580e7959be7f39da6e38f4a75f2c89bd0ae"
+    },
+    {
+      "id": "EN2001a-0390-0405",
+      "file": "EN2001a-0390-0405.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 390,
+      "sha256": "653a673867092db1a56781ce2d7babb44f3146467ed9c4d506137056dd97cc14"
+    },
+    {
+      "id": "EN2001a-0405-0420",
+      "file": "EN2001a-0405-0420.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 405,
+      "sha256": "fd83d4d561a2559ef713632b738376f4607462dc349b7297b0085e9509054f04"
+    },
+    {
+      "id": "EN2001a-0420-0435",
+      "file": "EN2001a-0420-0435.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 420,
+      "sha256": "cda4bd23b202219ae17aadd3676ecc4dadaf9fff3ea50d74c2df8cb8bf98e4b0"
+    },
+    {
+      "id": "EN2001a-0435-0450",
+      "file": "EN2001a-0435-0450.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 435,
+      "sha256": "00bbe5934a2fc6a512a25b5732334f1abe6fe1c163385c35c7b3224c9f460305"
+    },
+    {
+      "id": "EN2001a-0450-0465",
+      "file": "EN2001a-0450-0465.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 450,
+      "sha256": "50d5a082025940af5d503531eaca89b05d9d97130d20a81209f17ba0832dd51b"
+    },
+    {
+      "id": "EN2001a-0465-0480",
+      "file": "EN2001a-0465-0480.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 465,
+      "sha256": "e978ad16731d06a651fa71ecfb6f6f446b1e4f204514f077157d741300248b00"
+    },
+    {
+      "id": "EN2001a-0480-0495",
+      "file": "EN2001a-0480-0495.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 480,
+      "sha256": "e5a2934113b0d0828333566cc9b9d86c696308668826485e78933a66a41a418f"
+    },
+    {
+      "id": "EN2001a-0495-0510",
+      "file": "EN2001a-0495-0510.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 495,
+      "sha256": "58fde14a695a17ae7b73b2663f2b3992d151c0281ff2f29e696851059aa20120"
+    },
+    {
+      "id": "EN2001a-0510-0525",
+      "file": "EN2001a-0510-0525.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 510,
+      "sha256": "3d80a2449369483a06c46e1db8d1e8b215ce5abd9579ef8ff2fc81d4a5f6d001"
+    },
+    {
+      "id": "EN2001a-0525-0540",
+      "file": "EN2001a-0525-0540.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 525,
+      "sha256": "da76a6d98d0d59eb237370b1dc5e8325b607d2732876894edced9ff80da75cf7"
+    },
+    {
+      "id": "EN2001a-0540-0555",
+      "file": "EN2001a-0540-0555.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 540,
+      "sha256": "5b1dcfe8f3d7549bd0368f7e82adcd8ae6239d2f5612721b72d9261b92df288b"
+    },
+    {
+      "id": "EN2001a-0555-0570",
+      "file": "EN2001a-0555-0570.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 555,
+      "sha256": "98745afe2aab30e08aa5804a008ae1aace3053757c1c428e094393892f675919"
+    },
+    {
+      "id": "EN2001a-0570-0585",
+      "file": "EN2001a-0570-0585.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 570,
+      "sha256": "a78f6bf3728d38bba6ae9f9eed1fbda0773978b280cf8452b482cf2a504d1fa4"
+    },
+    {
+      "id": "EN2001a-0585-0600",
+      "file": "EN2001a-0585-0600.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 585,
+      "sha256": "04f4ecf35ffa3d2be7cc378179411f9fd83529de6d4ffc4f648a5d522e81fd31"
+    },
+    {
+      "id": "EN2001a-0600-0615",
+      "file": "EN2001a-0600-0615.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 600,
+      "sha256": "bdbad1ff5d3c271a3eafbf4fe1cd7df6835bcdc9d7ab18519d322b00a8626e15"
+    },
+    {
+      "id": "EN2001a-0615-0630",
+      "file": "EN2001a-0615-0630.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 615,
+      "sha256": "686b66d9f0a0aa0a36606c536548abec4cf1aeece8ceac522c111412a7c2454d"
+    },
+    {
+      "id": "EN2001a-0630-0645",
+      "file": "EN2001a-0630-0645.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 630,
+      "sha256": "950d64be31b4f6f9d35f752fd6a67a66bbfb7cf622a5c05d281b801682cc954c"
+    },
+    {
+      "id": "EN2001a-0645-0660",
+      "file": "EN2001a-0645-0660.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 645,
+      "sha256": "4288dde25c0a97a05bb0f2fe9f6a98cd8e95d698994687c985c07be96e242566"
+    },
+    {
+      "id": "EN2001a-0660-0675",
+      "file": "EN2001a-0660-0675.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 660,
+      "sha256": "37a7479bbc5f9c8ed48108c78f7cd4735a01fc93a8db72fd37f2192912ad9fa6"
+    },
+    {
+      "id": "EN2001a-0675-0690",
+      "file": "EN2001a-0675-0690.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 675,
+      "sha256": "aedd00e5bbb986c6ca0e86491f6f17328a83b3ba7cf2daa60cf35ce522882845"
+    },
+    {
+      "id": "EN2001a-0690-0705",
+      "file": "EN2001a-0690-0705.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 690,
+      "sha256": "be5d6bdbd52fa528e0dae2606d23199c1454501ae7221bc71a68df796bce918c"
+    },
+    {
+      "id": "EN2001a-0705-0720",
+      "file": "EN2001a-0705-0720.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 705,
+      "sha256": "a1f9dfb94716c9d091a7fa7f8beee9850c1cf99c194f78329d4fc6328cdfb16f"
+    },
+    {
+      "id": "EN2001a-0720-0735",
+      "file": "EN2001a-0720-0735.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 720,
+      "sha256": "98ae1c35c472cf60e49f46de9c2ea7f443058ad84bead998c219dbaf51370a12"
+    },
+    {
+      "id": "EN2001a-0735-0750",
+      "file": "EN2001a-0735-0750.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 735,
+      "sha256": "888e3aa7951ac7240e8e23d5f748e980e0d7e7176315cf815a08a4e14605e9c3"
+    },
+    {
+      "id": "EN2001a-0750-0765",
+      "file": "EN2001a-0750-0765.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 750,
+      "sha256": "3055bbdbdb429e3b6c58a205fdfa1a8b7c984db0d02d157aa75c39fe8f0a1b64"
+    },
+    {
+      "id": "EN2001a-0765-0780",
+      "file": "EN2001a-0765-0780.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 765,
+      "sha256": "83cc4e87e79c46f5cb2eecffcc194ca88b8c7e3f2f4ec157c909c42c5676221b"
+    },
+    {
+      "id": "EN2001a-0780-0795",
+      "file": "EN2001a-0780-0795.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 780,
+      "sha256": "ced7089f38f85011b6d6e762222bf8470cdf16ad0c9bc49c08e70fffec5381d6"
+    },
+    {
+      "id": "EN2001a-0795-0810",
+      "file": "EN2001a-0795-0810.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 795,
+      "sha256": "1391e309074b71c3388dab89a7a621d2b8453bf3988d84d5807305577cf34827"
+    },
+    {
+      "id": "EN2001a-0810-0825",
+      "file": "EN2001a-0810-0825.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 810,
+      "sha256": "877f5b1fd217d9899d5efd8eacab38b50f5f7c133a0933f4ce7c7c440c719b06"
+    },
+    {
+      "id": "EN2001a-0825-0840",
+      "file": "EN2001a-0825-0840.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 825,
+      "sha256": "a786a701d1b7fdc69ca5f2f5951b4fe037af5e60eb91ea65113f888d4c9e6926"
+    },
+    {
+      "id": "EN2001a-0840-0855",
+      "file": "EN2001a-0840-0855.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 840,
+      "sha256": "bbae71b8d560ca46f8d91ad1b16a0905f0041b801deed7217aa9e7e5b522f30a"
+    },
+    {
+      "id": "EN2001a-0855-0870",
+      "file": "EN2001a-0855-0870.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 855,
+      "sha256": "4914ec0687c35148e3b9d975a8e5e391974c63ab40526ba09753b69c6003057c"
+    },
+    {
+      "id": "EN2001a-0870-0885",
+      "file": "EN2001a-0870-0885.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 870,
+      "sha256": "04f780482046b53977b0c0385d842a5d55676aa0cc4927bcc4babd1729cc1035"
+    },
+    {
+      "id": "EN2001a-0885-0900",
+      "file": "EN2001a-0885-0900.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 885,
+      "sha256": "12af5fc7eca2d5a7d1297c65e634e77792f4a36a5aa249a6c231ac0dae458048"
+    },
+    {
+      "id": "EN2001a-0900-0915",
+      "file": "EN2001a-0900-0915.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 900,
+      "sha256": "d3658ed91c3f7d71ca90f200b9b7565b1cf5dd0f6fff74025fe016bf7d00a0f7"
+    },
+    {
+      "id": "EN2001a-0915-0930",
+      "file": "EN2001a-0915-0930.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 915,
+      "sha256": "67c33ea77974b0c31d7cf057183614c5429f64fb6fdc707fc422b9eb2f64d38a"
+    },
+    {
+      "id": "EN2001a-0930-0945",
+      "file": "EN2001a-0930-0945.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 930,
+      "sha256": "b6cfba869be3adb3e54f16fe0caa7a36d13f3fdadad7e2ad4d7358a6e7da8071"
+    },
+    {
+      "id": "EN2001a-0945-0960",
+      "file": "EN2001a-0945-0960.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 945,
+      "sha256": "089e486ed36c3aa563ab78baa908f3fd0928b7a6da793405e76c566c8ad534bd"
+    },
+    {
+      "id": "EN2001a-0960-0975",
+      "file": "EN2001a-0960-0975.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 960,
+      "sha256": "f1cea5fa104c40e893ea696e98eb53f5f0cd42f7804456284f09343b27ff765e"
+    },
+    {
+      "id": "EN2001a-0975-0990",
+      "file": "EN2001a-0975-0990.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 975,
+      "sha256": "681ff9a7f280f6b0b62d83fe217b9ea25448aaf3fd63467225b5377723f96582"
+    },
+    {
+      "id": "EN2001a-0990-1005",
+      "file": "EN2001a-0990-1005.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 990,
+      "sha256": "3053800b15d57612ba74c8447bd57b7a309d4b49ec3aacdddbd20431873e8d18"
+    },
+    {
+      "id": "EN2001a-1005-1020",
+      "file": "EN2001a-1005-1020.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 1005,
+      "sha256": "99cc946ccb27167826f10deba57700de568f8e3c9e7a91d73aaa9953324f146d"
+    },
+    {
+      "id": "EN2001a-1020-1035",
+      "file": "EN2001a-1020-1035.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 1020,
+      "sha256": "b10ec2bd0c12585045b024c09c69d093a59fd577ea9611102dec63e4af00b115"
+    },
+    {
+      "id": "EN2001a-1035-1050",
+      "file": "EN2001a-1035-1050.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 1035,
+      "sha256": "e8463c6370ade00bf762511e10ca5097788e9b6e6e7ce4836e921c26bc913686"
+    },
+    {
+      "id": "EN2001a-1050-1065",
+      "file": "EN2001a-1050-1065.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 1050,
+      "sha256": "4ab25b2c007e15945bb976eb3a1486751e63f46c6a2efb1fb8e847dd8a2cc9cb"
+    },
+    {
+      "id": "EN2001a-1065-1080",
+      "file": "EN2001a-1065-1080.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 1065,
+      "sha256": "d879e33fbd9533aac50446422702972aee8336ccbd83d32e3ac78c51420c48ee"
+    },
+    {
+      "id": "EN2001a-1080-1095",
+      "file": "EN2001a-1080-1095.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 1080,
+      "sha256": "d640ee604a79facebd6df116b4bfc57a0ca018c064f9eada45a1c2e08fa99168"
+    },
+    {
+      "id": "EN2001a-1095-1110",
+      "file": "EN2001a-1095-1110.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 1095,
+      "sha256": "24ee74350decf9b864fd25155d69daaea4cd104b5c8443c8ba4d0e6dc8933d33"
+    },
+    {
+      "id": "EN2001a-1110-1125",
+      "file": "EN2001a-1110-1125.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 1110,
+      "sha256": "7da5bdbaa109e969c8fcd9532292e1dade9973f8365fb7997c2e1bec53a2f50d"
+    },
+    {
+      "id": "EN2001a-1125-1140",
+      "file": "EN2001a-1125-1140.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 1125,
+      "sha256": "fae347f6b5a2443baa0297b4a9d7a30453224b7a53d41f880103a14c1b2e255d"
+    },
+    {
+      "id": "EN2001a-1140-1155",
+      "file": "EN2001a-1140-1155.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 1140,
+      "sha256": "9249e8a4e8358c48ff84884446c1158b4a642bea103e284fd6465994543bcbea"
+    },
+    {
+      "id": "EN2001a-1155-1170",
+      "file": "EN2001a-1155-1170.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 1155,
+      "sha256": "320e8767db5246535747dd5a4f2f7c1950fd3e8c558c1f2c8596182a1869b27e"
+    },
+    {
+      "id": "EN2001a-1170-1185",
+      "file": "EN2001a-1170-1185.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 1170,
+      "sha256": "cf858b8c4fb9f50eaa67abcd53094cbcdd750464d6e2ca23c50c87568d4f189f"
+    },
+    {
+      "id": "EN2001a-1185-1200",
+      "file": "EN2001a-1185-1200.f32",
+      "duration": 15.0,
+      "split": "calibration",
+      "sourceStart": 1185,
+      "sha256": "e9cc9bd9867b0e06e8061428b41b12ab71b6a8e5228cbdc2ca2fb774767da559"
+    },
+    {
+      "id": "EN2001a-1200-1215",
+      "file": "EN2001a-1200-1215.f32",
+      "duration": 15.0,
+      "split": "heldout",
+      "sourceStart": 1200,
+      "sha256": "52461d148c78dee0dbcb773dc9d1392d61f37c380496ccd3ab4d09814c9930be"
+    },
+    {
+      "id": "EN2001a-1215-1230",
+      "file": "EN2001a-1215-1230.f32",
+      "duration": 15.0,
+      "split": "heldout",
+      "sourceStart": 1215,
+      "sha256": "7a2ded6458fc3a3771ae191da595b3bb6014a17bec5a67aaec8d839210d0571a"
+    },
+    {
+      "id": "EN2001a-1230-1245",
+      "file": "EN2001a-1230-1245.f32",
+      "duration": 15.0,
+      "split": "heldout",
+      "sourceStart": 1230,
+      "sha256": "7d56ea9577e4df750bed7d3fc38fedc4b8f92a09a8450e2ff9f00b9bb42f866e"
+    },
+    {
+      "id": "EN2001a-1245-1260",
+      "file": "EN2001a-1245-1260.f32",
+      "duration": 15.0,
+      "split": "heldout",
+      "sourceStart": 1245,
+      "sha256": "d01bed365422e36be0cca322f4120aeafe7f2abf627cf45c9f5bf9e76ace3a52"
+    },
+    {
+      "id": "EN2001a-1260-1275",
+      "file": "EN2001a-1260-1275.f32",
+      "duration": 15.0,
+      "split": "heldout",
+      "sourceStart": 1260,
+      "sha256": "24ed18a67924ac7262dda14451d1f92a1357991419ea5c1bed15a35edb04810f"
+    },
+    {
+      "id": "EN2001a-1275-1290",
+      "file": "EN2001a-1275-1290.f32",
+      "duration": 15.0,
+      "split": "heldout",
+      "sourceStart": 1275,
+      "sha256": "a8918247c64a3f1ce7d395be20f3320f5f54a0c645338dfdc2c5ce0b1299f332"
+    },
+    {
+      "id": "EN2001a-1290-1305",
+      "file": "EN2001a-1290-1305.f32",
+      "duration": 15.0,
+      "split": "heldout",
+      "sourceStart": 1290,
+      "sha256": "aa6282cc9f1df74c958fa0c28bf33d0bf89f088e844eb1457c0f6d6e19e77625"
+    },
+    {
+      "id": "EN2001a-1305-1320",
+      "file": "EN2001a-1305-1320.f32",
+      "duration": 15.0,
+      "split": "heldout",
+      "sourceStart": 1305,
+      "sha256": "d8909df15dc793a249766ccc954efd59500ff3e7d15c0651257e7b49e4ac7124"
+    },
+    {
+      "id": "EN2001a-1320-1335",
+      "file": "EN2001a-1320-1335.f32",
+      "duration": 15.0,
+      "split": "heldout",
+      "sourceStart": 1320,
+      "sha256": "00dc6009971ebe02f0215f6bea0c449768ea4d7a1bd50b046b09400c443dbaa5"
+    },
+    {
+      "id": "EN2001a-1335-1350",
+      "file": "EN2001a-1335-1350.f32",
+      "duration": 15.0,
+      "split": "heldout",
+      "sourceStart": 1335,
+      "sha256": "f4b7b78a48abd4d02810e3144f3a493005de05dd03a1ab9a8ff77fd83ee4a65f"
+    },
+    {
+      "id": "EN2001a-1350-1365",
+      "file": "EN2001a-1350-1365.f32",
+      "duration": 15.0,
+      "split": "heldout",
+      "sourceStart": 1350,
+      "sha256": "66bc4c1bd7203773998065cf489f2bfcd92d9382c0837c3e2a72b48461069146"
+    },
+    {
+      "id": "EN2001a-1365-1380",
+      "file": "EN2001a-1365-1380.f32",
+      "duration": 15.0,
+      "split": "heldout",
+      "sourceStart": 1365,
+      "sha256": "1b9a88578e528b279bc5672f19904d795a0a4b41e5799831ba90f11f2cd42b90"
+    },
+    {
+      "id": "EN2001a-1380-1395",
+      "file": "EN2001a-1380-1395.f32",
+      "duration": 15.0,
+      "split": "heldout",
+      "sourceStart": 1380,
+      "sha256": "50b507a702a7f781fe062278b4e248a44c90c5d1db23698fedcc71707dce2ac0"
+    },
+    {
+      "id": "EN2001a-1395-1410",
+      "file": "EN2001a-1395-1410.f32",
+      "duration": 15.0,
+      "split": "heldout",
+      "sourceStart": 1395,
+      "sha256": "7b04566f64f57d12181b22ee727595a17da3fee84ef11a1ddafd9d0a351d70ce"
+    },
+    {
+      "id": "EN2001a-1410-1425",
+      "file": "EN2001a-1410-1425.f32",
+      "duration": 15.0,
+      "split": "heldout",
+      "sourceStart": 1410,
+      "sha256": "1ae2e3b3eca4dff69709ac606cc26824bbb1021c24c5c702d81f364f5994f253"
+    },
+    {
+      "id": "EN2001a-1425-1440",
+      "file": "EN2001a-1425-1440.f32",
+      "duration": 15.0,
+      "split": "heldout",
+      "sourceStart": 1425,
+      "sha256": "35640dc0fb13e0d7ecaa7a2a084c6d0024a0452487ec2f19e9b5658cae2e3233"
+    },
+    {
+      "id": "EN2001a-1440-1455",
+      "file": "EN2001a-1440-1455.f32",
+      "duration": 15.0,
+      "split": "heldout",
+      "sourceStart": 1440,
+      "sha256": "de0227b9805bf678994e53fad1fa052f46dae7453d086b782d1f5fbfa25c88fa"
+    },
+    {
+      "id": "EN2001a-1455-1470",
+      "file": "EN2001a-1455-1470.f32",
+      "duration": 15.0,
+      "split": "heldout",
+      "sourceStart": 1455,
+      "sha256": "1074bb57f7b90a32ef59c1c0e107039d654f45e9a48370091af14055107de8eb"
+    },
+    {
+      "id": "EN2001a-1470-1485",
+      "file": "EN2001a-1470-1485.f32",
+      "duration": 15.0,
+      "split": "heldout",
+      "sourceStart": 1470,
+      "sha256": "65f7f4a4ca7fb4e762081e6378a9a057be0b47af676957a86dbc0d18c34123b3"
+    },
+    {
+      "id": "EN2001a-1485-1500",
+      "file": "EN2001a-1485-1500.f32",
+      "duration": 15.0,
+      "split": "heldout",
+      "sourceStart": 1485,
+      "sha256": "098d3c94bcb7f4e0c19dfe881829cfcbc0cdbd56f568abcb21037525db0c883e"
+    }
+  ]
+}

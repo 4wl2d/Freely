@@ -1,0 +1,6 @@
+.cache/
+.build/
+__pycache__/
+# Full public-corpus partial hypotheses and resource timelines are local evidence.
+# Compact summaries, provenance and checksums remain versioned.
+results/*.jsonl

@@ -1,0 +1,129 @@
+{
+  "version": 1,
+  "purpose": "Supplemental regression only; excluded from natural-corpus ranking and human accuracy claims",
+  "voice": "Installed macOS Samantha en_US",
+  "synthesis": "/usr/bin/say -v Samantha -r160; ffmpeg16kHzmonoFloat32",
+  "machineOS": "macOS26.6.2",
+  "provenance": "Project-authored synthetic text and seeded numerical controls; no human recording. Generated audio and Apple voice assets are not redistributed.",
+  "noiseSeed": 20260907,
+  "noise": [
+    {
+      "id": "digital-silence",
+      "file": "digital-silence.f32",
+      "duration": 30,
+      "sourceStart": 0,
+      "split": "synthetic-control",
+      "reference": "",
+      "words": [],
+      "questions": [],
+      "rmsAfterTwoSeconds": 0,
+      "sha256": "124617c1f65e92d3bc895fbd869e4bb16a30754b198f59e6e973949b9aaa1b01"
+    },
+    {
+      "id": "quiet-white",
+      "file": "quiet-white.f32",
+      "duration": 30,
+      "sourceStart": 30,
+      "split": "synthetic-control",
+      "reference": "",
+      "words": [],
+      "questions": [],
+      "rmsAfterTwoSeconds": 0.0003,
+      "sha256": "001711865aee8d091e98d2c7a582cfb4a1402e7080ebb8657f928509800559a9"
+    },
+    {
+      "id": "moderate-noise-step",
+      "file": "moderate-noise-step.f32",
+      "duration": 30,
+      "sourceStart": 60,
+      "split": "synthetic-control",
+      "reference": "",
+      "words": [],
+      "questions": [],
+      "rmsAfterTwoSeconds": 0.00075,
+      "sha256": "bc6f54358e6d005640fbae2b722a4d14ad7e7dee20d81f9596656ae7337dca36"
+    },
+    {
+      "id": "room-noise-step",
+      "file": "room-noise-step.f32",
+      "duration": 30,
+      "sourceStart": 90,
+      "split": "synthetic-control",
+      "reference": "",
+      "words": [],
+      "questions": [],
+      "rmsAfterTwoSeconds": 0.002,
+      "sha256": "ac3a2fcbb862da2e09c952e988effdb95700d247c990f9cb2a83406896e547e5"
+    },
+    {
+      "id": "louder-room-noise-step",
+      "file": "louder-room-noise-step.f32",
+      "duration": 30,
+      "sourceStart": 120,
+      "split": "synthetic-control",
+      "reference": "",
+      "words": [],
+      "questions": [],
+      "rmsAfterTwoSeconds": 0.01,
+      "sha256": "9303317d9cccf57e77b8d93643871107dd8d7834e283e36f1af149b27f46f454"
+    }
+  ],
+  "speech": [
+    {
+      "id": "kotlin-flow",
+      "file": "kotlin-flow.f32",
+      "duration": 6.3705,
+      "sourceStart": 0,
+      "split": "synthetic-regression",
+      "reference": "In Kotlin, how should StateFlow differ from SharedFlow when a Jetpack Compose screen resumes after cancellation?",
+      "words": [],
+      "questions": [],
+      "sha256": "5c20b971b4db48e997d056301aebb31e1babaa77114bd8af551cc99f2753353c"
+    },
+    {
+      "id": "build-and-api",
+      "file": "build-and-api.f32",
+      "duration": 7.6275,
+      "sourceStart": 6.3705,
+      "split": "synthetic-regression",
+      "reference": "Can Gradle run a test for CoroutineScope, MutableStateFlow, and a REST API that streams JSON with server sent events?",
+      "words": [],
+      "questions": [],
+      "sha256": "98fc7ca17f05c80004b608eb4e3b0dcc0cbd412d5781308f122e661131398a56"
+    },
+    {
+      "id": "macos-frameworks",
+      "file": "macos-frameworks.f32",
+      "duration": 7.59125,
+      "sourceStart": 13.998000000000001,
+      "split": "synthetic-regression",
+      "reference": "Should SwiftUI use an actor to own ScreenCaptureKit, AVFoundation, URLSession, and Keychain state on macOS?",
+      "words": [],
+      "questions": [],
+      "sha256": "368fa8a77dca7abd868e943977b8594b93b0c7257138f246c094321f35af1b67"
+    },
+    {
+      "id": "negation-correction",
+      "file": "negation-correction.f32",
+      "duration": 6.3605,
+      "sourceStart": 21.58925,
+      "split": "synthetic-regression",
+      "reference": "Should we cancel the old coroutine before saving? I meant, should we not cancel it until the save has completed?",
+      "words": [],
+      "questions": [],
+      "sha256": "cc08fb817504c7abe643f1435b0a0eb8135a6befae3b859db1c7fe140d3419b4"
+    },
+    {
+      "id": "followup",
+      "file": "followup.f32",
+      "duration": 6.8466875,
+      "sourceStart": 27.94975,
+      "split": "synthetic-regression",
+      "reference": "How should the repository cache that response? What changes if the screen is paused? And should it keep the previous value?",
+      "words": [],
+      "questions": [],
+      "sha256": "a1c114471c21d7dbd0e2433e70efca90d750a9949ea913762ab0ebbddf02037e"
+    }
+  ],
+  "limitations": "Spoken negation correction does not guarantee that any engine will emit a late ASR revision. Follow-up semantics and generation fencing require domain/integration tests."
+}

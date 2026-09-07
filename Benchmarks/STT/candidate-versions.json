@@ -1,0 +1,76 @@
+{
+  "accessed": "2026-09-07",
+  "machine": "Apple M5 Max, 18-core CPU, 128 GiB unified memory",
+  "os": "macOS26.6.2 (25G83)",
+  "initialCompiler": "Apple Swift6.3.3 from CommandLineTools",
+  "laterCompiler": "Xcode26.6 (17F113), Swift6.3.3",
+  "power": "AC power, battery100% charged",
+  "models": [
+    {
+      "engine": "tdt",
+      "repository": "FluidInference/parakeet-tdt-0.6b-v3-coreml",
+      "revision": "7dd20fe6b1797d35f5e3307e8b1732d9a178edfe",
+      "license": "cc-by-4.0",
+      "licenseName": null
+    },
+    {
+      "engine": "eou",
+      "repository": "FluidInference/parakeet-realtime-eou-120m-coreml",
+      "revision": "40a23f4c0b333aa17ad8c0f2ea47ec2347f2f355",
+      "license": "other",
+      "licenseName": "nvidia-open-model-license"
+    },
+    {
+      "engine": "mlx",
+      "repository": "mlx-community/parakeet-tdt-0.6b-v3",
+      "revision": "ed2b7e8c15f9aaa0b5772e2efb986255eaef7e15",
+      "license": "cc-by-4.0",
+      "licenseName": null
+    },
+    {
+      "engine": "whisperkit",
+      "repository": "argmaxinc/whisperkit-coreml",
+      "revision": "0f63a7800b00dd0226abd051b906c246e1907482",
+      "license": "mit",
+      "licenseName": null
+    },
+    {
+      "engine": "whisper-cpp",
+      "repository": "ggerganov/whisper.cpp",
+      "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
+      "license": "mit",
+      "licenseName": null
+    }
+  ],
+  "whisperCppModel": {
+    "file": "ggml-base.en.bin",
+    "bytes": 147964211,
+    "sha256": "a03779c86df3323075f5e796cb2ce5029f00ec8869eee3fdfb897afe36c6d002",
+    "url": "https://huggingface.co/ggerganov/whisper.cpp/resolve/5359861c739e955e79d9a303bcbc70fb988958b1/ggml-base.en.bin"
+  },
+  "code": {
+    "FluidAudio": {
+      "version": "0.15.6",
+      "revision": "4dbf4f9f9a5ff3a53ade848d7ba4e3df13db859b",
+      "license": "Apache-2.0"
+    },
+    "WhisperKit": {
+      "version": "1.1.0",
+      "revision": "1e2a163736dfa5a198e637ae44c114e1c6d5cc2d",
+      "license": "MIT"
+    },
+    "parakeet-mlx": {
+      "version": "0.5.2",
+      "inspectedRevision": "b78130e3aa1788e89707ec164adbea8865316aaf",
+      "license": "Apache-2.0"
+    },
+    "whisper.cpp": {
+      "version": "1.9.3",
+      "revision": "371b5a7561823ab2bb32142d2751e35e7534727b",
+      "license": "MIT"
+    }
+  },
+  "builtMacOSSDK": "26.5",
+  "verifiedMachOMinimumOS": "15.0",
+  "verifiedArchitecture": "arm64"
+}
