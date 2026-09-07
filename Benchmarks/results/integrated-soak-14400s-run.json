@@ -1,0 +1,91 @@
+{
+  "startedCommandAt": "2026-09-07T14:07:26.665838+00:00",
+  "status": "passed",
+  "sourceSnapshot": "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/release-validation/20260907-packaging-01/source",
+  "command": "MEETINGCOPILOT_SOAK_UI=1 ./script/benchmark.sh --soak 14400",
+  "configuration": "Release",
+  "requestedSeconds": 14400,
+  "modelAndAudioAreLocal": true,
+  "capture": "paced licensed AMI PCM, separate source tracks",
+  "provider": "recorded test-only LLM",
+  "ui": "hidden NSWindow with production SetupView and NativeAnswerView",
+  "fixtureHashes": {
+    "localUser.json": "b4f2fd3f2f01f101a41d0bebcc950fa8d900e7f9556d599ab8a5db477165e477",
+    "systemAudio.json": "b8f4c091c40230ed2a9685ed29abddf87a5297da5010c2569de2e93fc4ae1cbc"
+  },
+  "power": "Now drawing from 'AC Power'\n -InternalBattery-0 (id=22675555)\t100%; charged; 0:00 remaining present: true\n",
+  "thermal": "Note: No thermal warning level has been recorded\nNote: No performance warning level has been recorded\nNote: No CPU power status has been recorded\n",
+  "sourceManifest": "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/release-validation/20260907-packaging-01/evidence/source.sha256",
+  "sourceManifestSHA256": "cdaf5d4826d2ba914f20032da6ca5b3e93e2b4b78cdd3890b38faa5019af99d0",
+  "externalLimitations": [
+    "No live microphone or ScreenCaptureKit delivery",
+    "No live Grok or OAuth grant",
+    "No meeting receiver/fullscreen/display-change matrix"
+  ],
+  "buildInputManifest": "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/release-validation/20260907-packaging-01/evidence/build-inputs.sha256",
+  "buildInputManifestSHA256": "37737d2dfa68a7d470db9e7f8fb836c832672648022ec83a507df1ad9fd4fde0",
+  "execSessionID": 90368,
+  "swiftTestPID": 34239,
+  "testingHelperPID": 34454,
+  "lastVerifiedAliveAt": "2026-09-07T14:55:00.499998+00:00",
+  "testBinarySHA256": "46f4d50f6793f68db44dd4b038de9a86bb7eaa76349f4e12b3ca3dcee1ca4a1f",
+  "runtimeEvidence": "Same helper was followed through the complete run; buffered stdout was not treated as failure or used to restart it.",
+  "sourceBuildInputsMatchCommit": "ef16d1c707226a56cd597f684325be27f41f4acf",
+  "hostFullyIdle": false,
+  "concurrentActivities": [
+    {
+      "activity": "OAuth test-fixture diagnosis and Debug/Release regression compilation/testing in the main workspace",
+      "timeDescription": "During the initial part of the soak, before the final uninstrumented regression handoff at approximately 14:41 UTC; no simultaneous model jobs",
+      "preciseIntervalsRecorded": false,
+      "evidence": "Benchmarks/results/regression-verification.json"
+    },
+    {
+      "activity": "Clean Git checkout compilation, four compiler jobs",
+      "intervalsUTC": [
+        {
+          "configuration": "debug-build",
+          "start": "2026-09-07T14:46:11.515779+00:00",
+          "end": "2026-09-07T14:46:34.209723+00:00"
+        },
+        {
+          "configuration": "release-build",
+          "start": "2026-09-07T14:47:02.607764+00:00",
+          "end": "2026-09-07T14:48:04.086010+00:00"
+        }
+      ],
+      "evidence": "Benchmarks/results/clean-checkout-verification.json"
+    }
+  ],
+  "verifiedAt": "2026-09-07T18:10:16.622962+00:00",
+  "exitStatus": 0,
+  "processesTerminal": true,
+  "rawResult": "/Users/4wl2d/Documents/ChatGPT/Freely/Benchmarks/results/integrated-soak-14400s.json",
+  "rawResultSHA256": "2346be8a0d9769b573a01a08a0e03e6c2e1954ab8db386daaf7069d7cfddcbdd",
+  "fullLogSHA256": "358674981e95fd4230b859464cfd1ba01a49f1f632ac5fa5f44da1f86c4805a1",
+  "acceptanceChecks": {
+    "process_exit_zero": true,
+    "full_processing_duration": true,
+    "both_full_audio_timelines": true,
+    "zero_audio_loss_and_gaps": true,
+    "no_session_or_generation_errors": true,
+    "bounded_transcript": true,
+    "rss_peak_under_4_gib": true,
+    "growth_under_original_limit": true,
+    "warm_reference_at_10_minutes": true,
+    "owned_work_stopped": true,
+    "ui_exercised_and_closed": true,
+    "ui_no_credentials_or_persistence": true,
+    "monotonic_complete_samples": true,
+    "all_thermal_samples_nominal": true
+  },
+  "terminalEvidence": "Original execution session exited 0; the swift-test parent and testing helper were absent afterward; 4 selected tests in 2 suites passed.",
+  "workloadBoundary": {
+    "localDecodedWindowCoverageSeconds": 664.84,
+    "remoteDecodedWindowCoverageSeconds": 12837.96,
+    "meaning": "Newly covered VAD-window time after successful inference, including padding/silence; not ground-truth speech duration or all offered PCM. Sparse local inference and sustained remote inference.",
+    "corpusSecondsPerSource": 1500,
+    "corpusRepeats": 9.60004,
+    "longAnswerUIStress": false,
+    "recordedProviderCancellations": 0
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-09-07T14:42:50.535301+00:00",
+  "appTests": {
+    "debug": {
+      "command": "MEETINGCOPILOT_KEYCHAIN_TEST=1 MEETINGCOPILOT_HOTKEY_TEST=1 MEETINGCOPILOT_SOAK=0 MEETINGCOPILOT_FOCUS_TEST=0 DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer swift test",
+      "exitStatus": 0,
+      "collected": 141,
+      "executedAndPassed": 139,
+      "skipped": 2,
+      "suites": 28,
+      "testSeconds": 2.696,
+      "log": "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/research/final-debug-tests-synchronous-fixture.log",
+      "logSHA256": "6184340f554ecfb6eaab9aad937f10fad829ec011a27678b8751a3c6a84fa667"
+    },
+    "release": {
+      "command": "MEETINGCOPILOT_KEYCHAIN_TEST=1 MEETINGCOPILOT_HOTKEY_TEST=1 MEETINGCOPILOT_SOAK=0 MEETINGCOPILOT_FOCUS_TEST=0 DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer swift test -c release",
+      "exitStatus": 0,
+      "collected": 141,
+      "executedAndPassed": 139,
+      "skipped": 2,
+      "suites": 28,
+      "testSeconds": 3.135,
+      "log": "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/research/final-release-tests-synchronous-fixture.log",
+      "logSHA256": "6cf125543d35c5f36920e3b253517927eae1df2eaa4682e80224e424f0cd54b7"
+    }
+  },
+  "coreTests": {
+    "debugPassed": 47,
+    "releasePassed": 47,
+    "releaseLog": "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/research/final-core-release-tests.log"
+  },
+  "skippedAppTests": [
+    "Opt-in real-time local model soak (running separately)",
+    "Opt-in passive native focus verification (prior independent pass)"
+  ],
+  "nativeTestFlags": "Unique synthetic Keychain items and actual Carbon hotkey registration/conflict/cleanup were enabled",
+  "productionInputsUnchangedFromPackage": true,
+  "fixScope": [
+    "Test-only OAuth URLProtocol worker/cancellation lifecycle",
+    "Synchronous initial headers after worker installation",
+    "Explicit failure if expected request start is not observed",
+    "Bounded observation of later fixture stop notification, preserving cancellation/zero-save/stops assertions"
+  ],
+  "preservedFailures": [
+    ".cache/research/final-release-tests.log",
+    ".cache/research/final-debug-tests-fixture-fixed.log",
+    ".cache/research/release-test-stall.sample.txt",
+    ".cache/research/debug-test-stall-after-fixture-fix.sample.txt"
+  ],
+  "limitations": [
+    "No live xAI/OAuth grant or physical capture used by ordinary regression suites",
+    "Hotkey registration is not a physical-keypress or cross-application delivery matrix",
+    "Long soak and passive focus have separate evidence"
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "capturedAt": "2026-09-07T12:44:53.652892+00:00",
+  "kind": "real microphone capture and local STT in normally launched Release .app",
+  "os": "macOS26.6.2(25G83)",
+  "machine": "AppleM5Max",
+  "source": "localUser",
+  "device": "System default, reported BuiltInMicrophoneDevice by AVFoundation/CoreAudio",
+  "sampleRateHz": 48000,
+  "observedNativeFrames": 6564,
+  "observedRetainedSegments": 10,
+  "queueSecondsAtObservation": 0.011,
+  "droppedSecondsAtObservation": 0.0,
+  "processingRTFAtObservation": 0.271,
+  "lastWindowProcessingDelaySeconds": 0.052,
+  "lastFinalizationDelaySeconds": 0.524,
+  "observedStopSeconds": 0.028,
+  "retainedSegmentsAfterStop": 0,
+  "appBinarySHA256": "f877c672087e6b83a3e01a33a2512065a4901f6b0b48dd7ff5fba81215c3fcc8",
+  "textPersisted": false,
+  "rawAudioPersisted": false,
+  "cloudRequests": 0,
+  "boundaries": [
+    "Incidental live speech was visibly transcribed; no verbatim transcript was retained in this artifact.",
+    "One physical microphone and one run; no accuracy/p50/p95 claim.",
+    "System audio was explicitly disabled after macOSSCStreamErrorDomain(-3801) denied authorization.",
+    "Stop cleared transcript and source state; a stale toolbar Ending session display was subsequently fixed with observable stop-state tracking.",
+    "The prior KVOclock crash is recorded in OSdiagnostics; typed CFclock access/typevalidation and callback quiescence were then exercised successfully."
+  ]
+}

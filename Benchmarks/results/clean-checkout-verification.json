@@ -1,0 +1,185 @@
+{
+  "schemaVersion": 1,
+  "recordedUTC": "2026-09-07T14:49:07.254784+00:00",
+  "result": "PASS",
+  "commit": "ef16d1c707226a56cd597f684325be27f41f4acf",
+  "checkoutPath": "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/clean-checkout-validation/ef16d1c/source",
+  "trackedFiles": 184,
+  "trackedFileBlobComparison": "PASS: all 184 files equal exact commit blobs",
+  "trackedFilesSHA256Manifest": ".cache/clean-checkout-validation/ef16d1c/evidence/tracked-files.sha256",
+  "trackedFilesManifestSHA256": "0481bf94fdbdd69c01fe94b9f3d2b16be11991e3532327601efeba1451c4d844",
+  "cleanTreeBeforeAndAfterBuilds": true,
+  "dependencySeed": "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/release-validation/20260907-packaging-01/source/.build",
+  "seededDirectories": [
+    "checkouts",
+    "repositories",
+    "artifacts"
+  ],
+  "compiledProjectOutputsReused": false,
+  "dependencyManifestComparison": "PASS",
+  "dependencyManifestSHA256": "984bdfd994ce9a7af3168c5e99ecb607b2a2031185fcd46c85b31a4336ef0b8e",
+  "packagedSnapshot60BuildInputsMatchCheckoutAndCurrentWorkspace": true,
+  "packagingBuildInputsManifestSHA256": "37737d2dfa68a7d470db9e7f8fb836c832672648022ec83a507df1ad9fd4fde0",
+  "toolchain": "Xcode 26.6 / Apple Swift 6.3.3; DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer",
+  "builds": [
+    {
+      "name": "debug-build",
+      "startedUTC": "2026-09-07T14:46:11.515779+00:00",
+      "finishedUTC": "2026-09-07T14:46:34.209723+00:00",
+      "durationSeconds": 22.694,
+      "exitStatus": 0,
+      "binaryPath": "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/clean-checkout-validation/ef16d1c/source/.build/arm64-apple-macosx/debug/MeetingCopilot",
+      "binaryBytes": 32448896,
+      "binarySHA256": "42f2c28e2841d14407d3d097e871bb8f083ced0e296f4453a7d6a89db1a6e685"
+    },
+    {
+      "name": "release-build",
+      "startedUTC": "2026-09-07T14:47:02.607764+00:00",
+      "finishedUTC": "2026-09-07T14:48:04.086010+00:00",
+      "durationSeconds": 61.477,
+      "exitStatus": 0,
+      "binaryPath": "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/clean-checkout-validation/ef16d1c/source/.build/arm64-apple-macosx/release/MeetingCopilot",
+      "binaryBytes": 21194160,
+      "binarySHA256": "1467cbbb3fd96ac1f1222a0b8cf88b5051fe29a27aec8a17ff75d11662b66b64"
+    }
+  ],
+  "soakOverlap": {
+    "helperPID": 34454,
+    "hostIdleDuringBuilds": false,
+    "intervalsUTC": [
+      {
+        "configuration": "debug-build",
+        "start": "2026-09-07T14:46:11.515779+00:00",
+        "end": "2026-09-07T14:46:34.209723+00:00"
+      },
+      {
+        "configuration": "release-build",
+        "start": "2026-09-07T14:47:02.607764+00:00",
+        "end": "2026-09-07T14:48:04.086010+00:00"
+      }
+    ],
+    "interpretation": "These compilation intervals overlap the separately running four-hour soak; host was not otherwise idle. No soak files or processes were modified.",
+    "helperObservedBetweenBuildsAndAfterBoth": true,
+    "processObservationDetail": "First ps sample was between Debug and Release; second was after both. Both show the same helper start time, before either build."
+  },
+  "scope": "Debug and Release compilation only. No tests, package script, app launch, UI, capture, model jobs, or remote push. Shared dependency/cache runtime was reused; project build outputs started empty.",
+  "commands": [
+    {
+      "name": "local-clone",
+      "command": "git clone --local --no-hardlinks --no-checkout /Users/4wl2d/Documents/ChatGPT/Freely /Users/4wl2d/Documents/ChatGPT/Freely/.cache/clean-checkout-validation/ef16d1c/source",
+      "cwd": "/Users/4wl2d/Documents/ChatGPT/Freely",
+      "startedUTC": "2026-09-07T14:45:48.958166+00:00",
+      "finishedUTC": "2026-09-07T14:45:48.982024+00:00",
+      "exitStatus": 0,
+      "log": ".cache/clean-checkout-validation/ef16d1c/evidence/local-clone.log"
+    },
+    {
+      "name": "detached-checkout",
+      "command": "git checkout --detach ef16d1c707226a56cd597f684325be27f41f4acf",
+      "cwd": "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/clean-checkout-validation/ef16d1c/source",
+      "startedUTC": "2026-09-07T14:45:48.982183+00:00",
+      "finishedUTC": "2026-09-07T14:45:49.004772+00:00",
+      "exitStatus": 0,
+      "log": ".cache/clean-checkout-validation/ef16d1c/evidence/detached-checkout.log"
+    },
+    {
+      "name": "commit-check",
+      "command": "git rev-parse HEAD",
+      "cwd": "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/clean-checkout-validation/ef16d1c/source",
+      "startedUTC": "2026-09-07T14:45:49.004933+00:00",
+      "finishedUTC": "2026-09-07T14:45:49.010434+00:00",
+      "exitStatus": 0,
+      "log": ".cache/clean-checkout-validation/ef16d1c/evidence/commit-check.log"
+    },
+    {
+      "name": "clean-tree-before",
+      "command": "git status --porcelain=v1 --untracked-files=all",
+      "cwd": "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/clean-checkout-validation/ef16d1c/source",
+      "startedUTC": "2026-09-07T14:45:49.010594+00:00",
+      "finishedUTC": "2026-09-07T14:45:49.019695+00:00",
+      "exitStatus": 0,
+      "log": ".cache/clean-checkout-validation/ef16d1c/evidence/clean-tree-before.log"
+    },
+    {
+      "name": "tracked-paths",
+      "command": "git ls-files -z",
+      "cwd": "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/clean-checkout-validation/ef16d1c/source",
+      "startedUTC": "2026-09-07T14:45:49.019846+00:00",
+      "finishedUTC": "2026-09-07T14:45:49.025714+00:00",
+      "exitStatus": 0,
+      "log": ".cache/clean-checkout-validation/ef16d1c/evidence/tracked-paths.log"
+    },
+    {
+      "name": "toolchain",
+      "command": "env DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer swift --version",
+      "cwd": "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/clean-checkout-validation/ef16d1c/source",
+      "startedUTC": "2026-09-07T14:46:45.338744+00:00",
+      "finishedUTC": "2026-09-07T14:46:45.414924+00:00",
+      "exitStatus": 0,
+      "log": ".cache/clean-checkout-validation/ef16d1c/evidence/toolchain.log"
+    },
+    {
+      "name": "soak-process-before",
+      "command": "/bin/ps -p 34454 -o pid=,lstart=,etime=,comm=",
+      "cwd": "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/clean-checkout-validation/ef16d1c/source",
+      "startedUTC": "2026-09-07T14:46:45.369703+00:00",
+      "finishedUTC": "2026-09-07T14:46:45.372843+00:00",
+      "exitStatus": 0,
+      "log": ".cache/clean-checkout-validation/ef16d1c/evidence/soak-process-before.log"
+    },
+    {
+      "name": "debug-build",
+      "command": "env DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer swift build -c debug --arch arm64 --product MeetingCopilot --disable-automatic-resolution --skip-update --jobs 4",
+      "cwd": "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/clean-checkout-validation/ef16d1c/source",
+      "startedUTC": "2026-09-07T14:46:11.515779+00:00",
+      "finishedUTC": "2026-09-07T14:46:34.209723+00:00",
+      "exitStatus": 0,
+      "log": ".cache/clean-checkout-validation/ef16d1c/evidence/debug-build.log"
+    },
+    {
+      "name": "release-build",
+      "command": "env DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer swift build -c release --arch arm64 --product MeetingCopilot --disable-automatic-resolution --skip-update --jobs 4",
+      "cwd": "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/clean-checkout-validation/ef16d1c/source",
+      "startedUTC": "2026-09-07T14:47:02.607764+00:00",
+      "finishedUTC": "2026-09-07T14:48:04.086010+00:00",
+      "exitStatus": 0,
+      "log": ".cache/clean-checkout-validation/ef16d1c/evidence/release-build.log"
+    },
+    {
+      "name": "clean-tree-after",
+      "command": "git status --porcelain=v1 --untracked-files=all",
+      "cwd": "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/clean-checkout-validation/ef16d1c/source",
+      "startedUTC": "2026-09-07T14:49:07.167226+00:00",
+      "finishedUTC": "2026-09-07T14:49:07.176893+00:00",
+      "exitStatus": 0,
+      "log": ".cache/clean-checkout-validation/ef16d1c/evidence/clean-tree-after.log"
+    },
+    {
+      "name": "final-commit-check",
+      "command": "git rev-parse HEAD",
+      "cwd": "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/clean-checkout-validation/ef16d1c/source",
+      "startedUTC": "2026-09-07T14:49:07.177308+00:00",
+      "finishedUTC": "2026-09-07T14:49:07.183634+00:00",
+      "exitStatus": 0,
+      "log": ".cache/clean-checkout-validation/ef16d1c/evidence/final-commit-check.log"
+    },
+    {
+      "name": "tracked-file-hash-check",
+      "command": "/usr/bin/shasum -a 256 -c ../evidence/tracked-files.sha256",
+      "cwd": "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/clean-checkout-validation/ef16d1c/source",
+      "startedUTC": "2026-09-07T14:49:07.183843+00:00",
+      "finishedUTC": "2026-09-07T14:49:07.223800+00:00",
+      "exitStatus": 0,
+      "log": ".cache/clean-checkout-validation/ef16d1c/evidence/tracked-file-hash-check.log"
+    },
+    {
+      "name": "soak-process-after",
+      "command": "/bin/ps -p 34454 -o pid=,lstart=,etime=,comm=",
+      "cwd": "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/clean-checkout-validation/ef16d1c/source",
+      "startedUTC": "2026-09-07T14:49:07.223983+00:00",
+      "finishedUTC": "2026-09-07T14:49:07.228243+00:00",
+      "exitStatus": 0,
+      "log": ".cache/clean-checkout-validation/ef16d1c/evidence/soak-process-after.log"
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-09-07T14:10:08.587378+00:00",
+  "kind": "normal LaunchServices packaged Release app UI inspection through native accessibility and screenshot controls",
+  "appBinarySHA256": "a27d0effa01c0206a337d2e63597b45c884944cc1eb230ef18d912bea3b22eb1",
+  "app": "/Users/4wl2d/Documents/ChatGPT/Freely/dist/MeetingCopilot.app",
+  "os": "macOS 26.6.2 (25G83)",
+  "verified": [
+    "App opens its setup window after the isolated build was copied into dist",
+    "Pinned installed model and incomplete setup are represented distinctly; Start session remains disabled without a configured connection",
+    "Grok subscription is the primary selected connection; API key is a separate optional choice",
+    "Connect subscription without an own registered client displays the registration-required state",
+    "Advanced setup exposes own-client field, meetingcopilot://oauth/callback, and the xAI integration information link",
+    "Optional API-key view uses SecureField and Save in Keychain; no key was entered",
+    "Returned connection selection to Grok subscription",
+    "All ten default shortcut registrations appear Registered in settings",
+    "Interact opens native NSPanel with selectable text, a question field and controls",
+    "Clicking Expand changes the visible accessibility control to Compact",
+    "Final packaged app repeats ScreenCaptureKit -3801 during explicit source-list refresh and shows a concrete permission-recovery banner"
+  ],
+  "notEstablished": [
+    "CUA-injected Control/Option/Command number combinations did not produce a conclusively observed shortcut action; physical hotkey delivery is still unverified",
+    "No live Grok or OAuth grant, no session capture, no raw microphone recording, no screen upload",
+    "No fullscreen/Spaces, mixed-display, permission-revocation or receiver capture matrix",
+    "This is not a clean-user-account or no-Xcode-machine launch"
+  ],
+  "cloudRequests": 0,
+  "audioCaptureStarted": false,
+  "screenContext": "Off",
+  "sourceInputsMovedOrDeleted": false,
+  "permissionRecheckAt": "2026-09-07T14:30:23.797843+00:00",
+  "currentPackagedMicrophonePermissionUI": "Not requested",
+  "currentPackagedScreenCaptureRecheck": {
+    "action": "Refresh applications",
+    "result": "denied",
+    "domain": "com.apple.ScreenCaptureKit.SCStreamErrorDomain",
+    "code": -3801,
+    "uiAction": "Allow MeetingCopilot in Privacy & Security -> Screen & System Audio Recording, then quit/reopen if requested"
+  },
+  "postSoakPrerequisiteRecheckAt": "2026-09-07T18:22:35.867772+00:00",
+  "postSoakPrerequisites": {
+    "subscription": "Own provider-issued MeetingCopilot client registration still missing; sign-in not established",
+    "optionalAPIKey": "UI confirms No key configured",
+    "microphonePermissionUI": "Not requested",
+    "systemCaptureUI": "Explicit source refresh still displays authorization denial -3801",
+    "screenContext": "Off",
+    "signingIdentities": 0,
+    "selectedConnectionRestoredTo": "Grok subscription"
+  }
+}

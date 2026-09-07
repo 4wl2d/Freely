@@ -1,0 +1,248 @@
+{
+  "actualElapsedSeconds" : 272.8011744582909,
+  "automaticQuestionsDetected" : 240,
+  "contextBuild" : {
+    "maximumMilliseconds" : 338.6774166719988,
+    "measuredOperations" : 240,
+    "p50Milliseconds" : 220.29712499352172,
+    "p95Milliseconds" : 235.49066670238972,
+    "retainedSamples" : 240
+  },
+  "coreApply" : {
+    "maximumMilliseconds" : 56.86616664752364,
+    "measuredOperations" : 14400,
+    "p50Milliseconds" : 15.335416712332517,
+    "p95Milliseconds" : 17.23891665460542,
+    "retainedSamples" : 14400
+  },
+  "cpuCount" : 18,
+  "eventsProcessed" : 14400,
+  "evidenceType" : "accelerated-domain-replay",
+  "expectedAutomaticQuestions" : 240,
+  "fixtureVersion" : "two-source-domain-v1",
+  "growth" : [
+    {
+      "replaySeconds" : 2,
+      "residentBytes" : 6733824,
+      "retainedQuestions" : 1,
+      "retainedSegments" : 2,
+      "retainedSummaryBytes" : 0,
+      "retainedTranscriptBytes" : 127
+    },
+    {
+      "replaySeconds" : 602,
+      "residentBytes" : 9207808,
+      "retainedQuestions" : 11,
+      "retainedSegments" : 601,
+      "retainedSummaryBytes" : 90,
+      "retainedTranscriptBytes" : 43208
+    },
+    {
+      "replaySeconds" : 1202,
+      "residentBytes" : 9519104,
+      "retainedQuestions" : 20,
+      "retainedSegments" : 601,
+      "retainedSummaryBytes" : 91,
+      "retainedTranscriptBytes" : 43211
+    },
+    {
+      "replaySeconds" : 1802,
+      "residentBytes" : 9535488,
+      "retainedQuestions" : 20,
+      "retainedSegments" : 601,
+      "retainedSummaryBytes" : 90,
+      "retainedTranscriptBytes" : 43213
+    },
+    {
+      "replaySeconds" : 2402,
+      "residentBytes" : 9584640,
+      "retainedQuestions" : 20,
+      "retainedSegments" : 600,
+      "retainedSummaryBytes" : 164,
+      "retainedTranscriptBytes" : 43151
+    },
+    {
+      "replaySeconds" : 3002,
+      "residentBytes" : 9633792,
+      "retainedQuestions" : 20,
+      "retainedSegments" : 601,
+      "retainedSummaryBytes" : 91,
+      "retainedTranscriptBytes" : 43212
+    },
+    {
+      "replaySeconds" : 3602,
+      "residentBytes" : 9633792,
+      "retainedQuestions" : 20,
+      "retainedSegments" : 601,
+      "retainedSummaryBytes" : 90,
+      "retainedTranscriptBytes" : 43212
+    },
+    {
+      "replaySeconds" : 4202,
+      "residentBytes" : 9633792,
+      "retainedQuestions" : 20,
+      "retainedSegments" : 601,
+      "retainedSummaryBytes" : 181,
+      "retainedTranscriptBytes" : 43207
+    },
+    {
+      "replaySeconds" : 4802,
+      "residentBytes" : 9633792,
+      "retainedQuestions" : 20,
+      "retainedSegments" : 601,
+      "retainedSummaryBytes" : 90,
+      "retainedTranscriptBytes" : 43213
+    },
+    {
+      "replaySeconds" : 5402,
+      "residentBytes" : 9715712,
+      "retainedQuestions" : 20,
+      "retainedSegments" : 601,
+      "retainedSummaryBytes" : 90,
+      "retainedTranscriptBytes" : 43211
+    },
+    {
+      "replaySeconds" : 6002,
+      "residentBytes" : 9781248,
+      "retainedQuestions" : 20,
+      "retainedSegments" : 601,
+      "retainedSummaryBytes" : 91,
+      "retainedTranscriptBytes" : 43208
+    },
+    {
+      "replaySeconds" : 6602,
+      "residentBytes" : 9879552,
+      "retainedQuestions" : 20,
+      "retainedSegments" : 601,
+      "retainedSummaryBytes" : 90,
+      "retainedTranscriptBytes" : 43213
+    },
+    {
+      "replaySeconds" : 7202,
+      "residentBytes" : 9879552,
+      "retainedQuestions" : 20,
+      "retainedSegments" : 601,
+      "retainedSummaryBytes" : 90,
+      "retainedTranscriptBytes" : 43210
+    },
+    {
+      "replaySeconds" : 7802,
+      "residentBytes" : 9879552,
+      "retainedQuestions" : 20,
+      "retainedSegments" : 601,
+      "retainedSummaryBytes" : 91,
+      "retainedTranscriptBytes" : 43209
+    },
+    {
+      "replaySeconds" : 8402,
+      "residentBytes" : 10092544,
+      "retainedQuestions" : 20,
+      "retainedSegments" : 601,
+      "retainedSummaryBytes" : 90,
+      "retainedTranscriptBytes" : 43213
+    },
+    {
+      "replaySeconds" : 9002,
+      "residentBytes" : 10092544,
+      "retainedQuestions" : 20,
+      "retainedSegments" : 601,
+      "retainedSummaryBytes" : 90,
+      "retainedTranscriptBytes" : 43209
+    },
+    {
+      "replaySeconds" : 9602,
+      "residentBytes" : 10092544,
+      "retainedQuestions" : 20,
+      "retainedSegments" : 601,
+      "retainedSummaryBytes" : 91,
+      "retainedTranscriptBytes" : 43210
+    },
+    {
+      "replaySeconds" : 10202,
+      "residentBytes" : 10092544,
+      "retainedQuestions" : 20,
+      "retainedSegments" : 601,
+      "retainedSummaryBytes" : 90,
+      "retainedTranscriptBytes" : 43213
+    },
+    {
+      "replaySeconds" : 10802,
+      "residentBytes" : 10092544,
+      "retainedQuestions" : 20,
+      "retainedSegments" : 601,
+      "retainedSummaryBytes" : 90,
+      "retainedTranscriptBytes" : 43208
+    },
+    {
+      "replaySeconds" : 11402,
+      "residentBytes" : 10043392,
+      "retainedQuestions" : 20,
+      "retainedSegments" : 601,
+      "retainedSummaryBytes" : 91,
+      "retainedTranscriptBytes" : 43211
+    },
+    {
+      "replaySeconds" : 12002,
+      "residentBytes" : 10043392,
+      "retainedQuestions" : 20,
+      "retainedSegments" : 601,
+      "retainedSummaryBytes" : 90,
+      "retainedTranscriptBytes" : 43213
+    },
+    {
+      "replaySeconds" : 12602,
+      "residentBytes" : 10207232,
+      "retainedQuestions" : 20,
+      "retainedSegments" : 601,
+      "retainedSummaryBytes" : 91,
+      "retainedTranscriptBytes" : 43207
+    },
+    {
+      "replaySeconds" : 13202,
+      "residentBytes" : 10207232,
+      "retainedQuestions" : 20,
+      "retainedSegments" : 601,
+      "retainedSummaryBytes" : 91,
+      "retainedTranscriptBytes" : 43212
+    },
+    {
+      "replaySeconds" : 13802,
+      "residentBytes" : 10223616,
+      "retainedQuestions" : 20,
+      "retainedSegments" : 601,
+      "retainedSummaryBytes" : 90,
+      "retainedTranscriptBytes" : 43212
+    },
+    {
+      "replaySeconds" : 14400,
+      "residentBytes" : 10240000,
+      "retainedQuestions" : 20,
+      "retainedSegments" : 601,
+      "retainedSummaryBytes" : 91,
+      "retainedTranscriptBytes" : 43225
+    }
+  ],
+  "limitations" : [
+    "Synthetic text fixtures, not a speech-recognition accuracy corpus.",
+    "Accelerated execution does not measure real-time audio capture, model inference, thermal behavior, network latency, or native teardown.",
+    "Resident memory includes the benchmark runner and bounded full-run timing samples, but no STT assets.",
+    "Context token counts are conservative UTF-8 byte estimates, not provider usage."
+  ],
+  "machineMemoryBytes" : 137438953472,
+  "maximumEstimatedContextTokens" : 5500,
+  "maximumRetainedQuestions" : 20,
+  "maximumRetainedSegments" : 601,
+  "maximumRetainedTranscriptBytes" : 43230,
+  "osVersion" : "Version 26.6.2 (Build 25G83)",
+  "passedInvariants" : true,
+  "replaySeconds" : 14400,
+  "schemaVersion" : 1,
+  "stableTick" : {
+    "maximumMilliseconds" : 5.874666676390916,
+    "measuredOperations" : 7200,
+    "p50Milliseconds" : 0.00966666266322136,
+    "p95Milliseconds" : 0.020874955225735903,
+    "retainedSamples" : 7200
+  },
+  "staleCallbacksRejected" : 100
+}

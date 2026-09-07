@@ -1,0 +1,291 @@
+{
+  "inspectionUTC": "2026-09-07T13:16:19.574294+00:00",
+  "appPath": "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/release-validation/20260907-packaging-01/source/dist/MeetingCopilot.app",
+  "archivePath": "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/release-validation/20260907-packaging-01/source/dist/MeetingCopilot-1.0.0-macOS-arm64.zip",
+  "archiveSHA256": "58b46c4e4773662a5bec9f4f89f1f9beb4cd1c415122446a21b5739218e3e1a7",
+  "archiveBytes": 10961243,
+  "binarySHA256": "a27d0effa01c0206a337d2e63597b45c884944cc1eb230ef18d912bea3b22eb1",
+  "binaryBytes": 21093872,
+  "appFileCount": 16,
+  "appBytes": 22971967,
+  "appFilesManifestSHA256": "10a2c49f4f5f754c7963e2d17fc449d2cc71dcdffe8834329591de04dc6303a0",
+  "architecture": "arm64",
+  "minimumOS": "15.0",
+  "infoPlist": {
+    "CFBundleName": "MeetingCopilot",
+    "CFBundleDisplayName": "MeetingCopilot",
+    "CFBundleExecutable": "MeetingCopilot",
+    "CFBundleIconFile": "AppIcon",
+    "CFBundleIdentifier": "local.meetingcopilot.app",
+    "CFBundlePackageType": "APPL",
+    "CFBundleShortVersionString": "1.0.0",
+    "CFBundleVersion": "1",
+    "LSMinimumSystemVersion": "15.0",
+    "LSArchitecturePriority": [
+      "arm64"
+    ],
+    "LSUIElement": true,
+    "NSPrincipalClass": "NSApplication",
+    "NSMicrophoneUsageDescription": "Transcribe your selected microphone locally during a session you start. Audio is never saved or uploaded.",
+    "NSScreenCaptureUsageDescription": "Capture audio from your chosen meeting application. Screen images are captured only with separate session consent.",
+    "NSAudioCaptureUsageDescription": "Transcribe selected meeting application audio locally.",
+    "NSHighResolutionCapable": true,
+    "CFBundleURLTypes": [
+      {
+        "CFBundleURLName": "MeetingCopilot OAuth callback",
+        "CFBundleURLSchemes": [
+          "meetingcopilot"
+        ]
+      }
+    ]
+  },
+  "resourceChecks": [
+    {
+      "source": "Resources/Info.plist",
+      "staged": "Contents/Info.plist",
+      "sha256": "0cea33ccd3c68ef3336527028b9b4fc8701ab6e4c071199babbb2200e12199c2"
+    },
+    {
+      "source": "Resources/AppIcon.icns",
+      "staged": "Contents/Resources/AppIcon.icns",
+      "sha256": "adedc2d0b4681f1266c4fc418307b3f93bcb4243acd68f6ceceefd00f294acfc"
+    },
+    {
+      "source": "MeetingCopilot/Resources/model-manifest.json",
+      "staged": "Contents/Resources/model-manifest.json",
+      "sha256": "1e35241d2164a82e3c0c573c0b551cc3ee26f42f78fa139242da3e8d61b8135d"
+    },
+    {
+      "source": "Resources/Licenses/FluidAudio-Apache-2.0.txt",
+      "staged": "Contents/Resources/Licenses/FluidAudio-Apache-2.0.txt",
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+    },
+    {
+      "source": "Resources/Licenses/NemoTextProcessing-Apache-2.0.txt",
+      "staged": "Contents/Resources/Licenses/NemoTextProcessing-Apache-2.0.txt",
+      "sha256": "ac84752611bfcb8e2f472b17f9cb18f5321c9a75c2a5445b766725b1de67790b"
+    },
+    {
+      "source": "Resources/Licenses/NemoTextProcessing-NOTICE.md",
+      "staged": "Contents/Resources/Licenses/NemoTextProcessing-NOTICE.md",
+      "sha256": "300a31d86c7c5d809f0adc00ef7d35259226acc7e412b9767cd3029a3395c50e"
+    },
+    {
+      "source": "Resources/Licenses/NemoTextProcessing-Rust-LICENSES.md",
+      "staged": "Contents/Resources/Licenses/NemoTextProcessing-Rust-LICENSES.md",
+      "sha256": "5aade20a757f4dab6407f477d39dedf23c8e459baf1847a5dc1ba9c5e1b29264"
+    },
+    {
+      "source": "Resources/Licenses/NemoTextProcessing-Rust-inventory.json",
+      "staged": "Contents/Resources/Licenses/NemoTextProcessing-Rust-inventory.json",
+      "sha256": "948fc32da6be58b909b554a3f29a8ec2df3dbefe4ac91144cd6fae6f8ccc3334"
+    },
+    {
+      "source": "Resources/Licenses/NemoTextProcessing-Upstream-NOTICE.txt",
+      "staged": "Contents/Resources/Licenses/NemoTextProcessing-Upstream-NOTICE.txt",
+      "sha256": "085a55933d294de0b629cd3fd0022352240c2acd4f0debcbcce83ed603873fb8"
+    },
+    {
+      "source": "Resources/Licenses/Parakeet-TDT-v3-NOTICE.txt",
+      "staged": "Contents/Resources/Licenses/Parakeet-TDT-v3-NOTICE.txt",
+      "sha256": "8d5bb70bc91cd030c56309fceae23d0280b30777921bb720a4ab2d7565b91c2a"
+    },
+    {
+      "source": "Resources/Licenses/fastcluster-LICENSE.md",
+      "staged": "Contents/Resources/Licenses/fastcluster-LICENSE.md",
+      "sha256": "67594dbe4a7477719c8160373e7767c2c319ef966a6042f76846a18af02cde0a"
+    },
+    {
+      "source": "Resources/Licenses/vbx-LICENSE.md",
+      "staged": "Contents/Resources/Licenses/vbx-LICENSE.md",
+      "sha256": "08e57fdb5187c816e937916f1e176aadb400ca76f4b3b493d69730ec8f10dd80"
+    }
+  ],
+  "licenseFileCount": 9,
+  "modelFileCount": 21,
+  "modelDownloadBytes": 483105645,
+  "modelWeightsBundled": false,
+  "resourceBundles": [
+    "Contents/Resources/FluidAudio_FluidAudio.bundle"
+  ],
+  "rpaths": [
+    "/usr/lib/swift",
+    "@loader_path",
+    "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift-6.2/macosx"
+  ],
+  "signing": "ad hoc; hardened runtime flag present; microphone entitlement present; no Developer ID or notarization claimed",
+  "archiveExtractedHashAndModeComparison": "PASS",
+  "activeApplicationRuntimeIndependence": "STATIC ONLY: no source-linked dylibs/rpaths; application manifest uses Bundle.main; ASR accepts verified user Application Support model paths. Packaged app was not launched.",
+  "unusedDependencyResourceCaveat": "FluidAudio Bundle.module accessor has build-path fallback and app-root candidate, whereas optional LuxTts resources are staged in Contents/Resources. Only unused LuxTtsG2p references Bundle.module in pinned dependency sources; meeting ASR path does not access it.",
+  "commands": [
+    {
+      "name": "bundle-plist-lint",
+      "command": [
+        "/usr/bin/plutil",
+        "-lint",
+        "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/release-validation/20260907-packaging-01/source/dist/MeetingCopilot.app/Contents/Info.plist"
+      ],
+      "cwd": "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/release-validation/20260907-packaging-01/source",
+      "startedUTC": "2026-09-07T13:16:19.152657+00:00",
+      "finishedUTC": "2026-09-07T13:16:19.156908+00:00",
+      "exitStatus": 0,
+      "log": "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/release-validation/20260907-packaging-01/evidence/bundle-plist-lint.log"
+    },
+    {
+      "name": "architecture",
+      "command": [
+        "/usr/bin/lipo",
+        "-archs",
+        "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/release-validation/20260907-packaging-01/source/dist/MeetingCopilot.app/Contents/MacOS/MeetingCopilot"
+      ],
+      "cwd": "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/release-validation/20260907-packaging-01/source",
+      "startedUTC": "2026-09-07T13:16:19.157034+00:00",
+      "finishedUTC": "2026-09-07T13:16:19.168711+00:00",
+      "exitStatus": 0,
+      "log": "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/release-validation/20260907-packaging-01/evidence/architecture.log"
+    },
+    {
+      "name": "file-type",
+      "command": [
+        "/usr/bin/file",
+        "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/release-validation/20260907-packaging-01/source/dist/MeetingCopilot.app/Contents/MacOS/MeetingCopilot"
+      ],
+      "cwd": "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/release-validation/20260907-packaging-01/source",
+      "startedUTC": "2026-09-07T13:16:19.168830+00:00",
+      "finishedUTC": "2026-09-07T13:16:19.171741+00:00",
+      "exitStatus": 0,
+      "log": "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/release-validation/20260907-packaging-01/evidence/file-type.log"
+    },
+    {
+      "name": "minimum-os",
+      "command": [
+        "/usr/bin/xcrun",
+        "vtool",
+        "-show-build",
+        "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/release-validation/20260907-packaging-01/source/dist/MeetingCopilot.app/Contents/MacOS/MeetingCopilot"
+      ],
+      "cwd": "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/release-validation/20260907-packaging-01/source",
+      "startedUTC": "2026-09-07T13:16:19.171867+00:00",
+      "finishedUTC": "2026-09-07T13:16:19.183827+00:00",
+      "exitStatus": 0,
+      "log": "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/release-validation/20260907-packaging-01/evidence/minimum-os.log"
+    },
+    {
+      "name": "dynamic-dependencies",
+      "command": [
+        "/usr/bin/otool",
+        "-L",
+        "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/release-validation/20260907-packaging-01/source/dist/MeetingCopilot.app/Contents/MacOS/MeetingCopilot"
+      ],
+      "cwd": "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/release-validation/20260907-packaging-01/source",
+      "startedUTC": "2026-09-07T13:16:19.184012+00:00",
+      "finishedUTC": "2026-09-07T13:16:19.195679+00:00",
+      "exitStatus": 0,
+      "log": "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/release-validation/20260907-packaging-01/evidence/dynamic-dependencies.log"
+    },
+    {
+      "name": "load-commands",
+      "command": [
+        "/usr/bin/otool",
+        "-l",
+        "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/release-validation/20260907-packaging-01/source/dist/MeetingCopilot.app/Contents/MacOS/MeetingCopilot"
+      ],
+      "cwd": "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/release-validation/20260907-packaging-01/source",
+      "startedUTC": "2026-09-07T13:16:19.195799+00:00",
+      "finishedUTC": "2026-09-07T13:16:19.207758+00:00",
+      "exitStatus": 0,
+      "log": "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/release-validation/20260907-packaging-01/evidence/load-commands.log"
+    },
+    {
+      "name": "signature-details",
+      "command": [
+        "/usr/bin/codesign",
+        "-dvvv",
+        "--entitlements",
+        ":-",
+        "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/release-validation/20260907-packaging-01/source/dist/MeetingCopilot.app"
+      ],
+      "cwd": "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/release-validation/20260907-packaging-01/source",
+      "startedUTC": "2026-09-07T13:16:19.207982+00:00",
+      "finishedUTC": "2026-09-07T13:16:19.213218+00:00",
+      "exitStatus": 0,
+      "log": "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/release-validation/20260907-packaging-01/evidence/signature-details.log"
+    },
+    {
+      "name": "signature-verify",
+      "command": [
+        "/usr/bin/codesign",
+        "--verify",
+        "--deep",
+        "--strict",
+        "--verbose=2",
+        "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/release-validation/20260907-packaging-01/source/dist/MeetingCopilot.app"
+      ],
+      "cwd": "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/release-validation/20260907-packaging-01/source",
+      "startedUTC": "2026-09-07T13:16:19.213366+00:00",
+      "finishedUTC": "2026-09-07T13:16:19.228871+00:00",
+      "exitStatus": 0,
+      "log": "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/release-validation/20260907-packaging-01/evidence/signature-verify.log"
+    },
+    {
+      "name": "gatekeeper-assess",
+      "command": [
+        "/usr/sbin/spctl",
+        "--assess",
+        "--type",
+        "execute",
+        "--verbose=2",
+        "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/release-validation/20260907-packaging-01/source/dist/MeetingCopilot.app"
+      ],
+      "cwd": "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/release-validation/20260907-packaging-01/source",
+      "startedUTC": "2026-09-07T13:16:19.229004+00:00",
+      "finishedUTC": "2026-09-07T13:16:19.393721+00:00",
+      "exitStatus": 3,
+      "log": "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/release-validation/20260907-packaging-01/evidence/gatekeeper-assess.log"
+    },
+    {
+      "name": "archive-integrity",
+      "command": [
+        "/usr/bin/unzip",
+        "-t",
+        "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/release-validation/20260907-packaging-01/source/dist/MeetingCopilot-1.0.0-macOS-arm64.zip"
+      ],
+      "cwd": "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/release-validation/20260907-packaging-01/source",
+      "startedUTC": "2026-09-07T13:16:19.393863+00:00",
+      "finishedUTC": "2026-09-07T13:16:19.490148+00:00",
+      "exitStatus": 0,
+      "log": "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/release-validation/20260907-packaging-01/evidence/archive-integrity.log"
+    },
+    {
+      "name": "archive-extract",
+      "command": [
+        "/usr/bin/ditto",
+        "-x",
+        "-k",
+        "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/release-validation/20260907-packaging-01/source/dist/MeetingCopilot-1.0.0-macOS-arm64.zip",
+        "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/release-validation/20260907-packaging-01/evidence/extracted"
+      ],
+      "cwd": "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/release-validation/20260907-packaging-01/source",
+      "startedUTC": "2026-09-07T13:16:19.490814+00:00",
+      "finishedUTC": "2026-09-07T13:16:19.535104+00:00",
+      "exitStatus": 0,
+      "log": "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/release-validation/20260907-packaging-01/evidence/archive-extract.log"
+    },
+    {
+      "name": "extracted-signature-verify",
+      "command": [
+        "/usr/bin/codesign",
+        "--verify",
+        "--deep",
+        "--strict",
+        "--verbose=2",
+        "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/release-validation/20260907-packaging-01/evidence/extracted/MeetingCopilot.app"
+      ],
+      "cwd": "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/release-validation/20260907-packaging-01/source",
+      "startedUTC": "2026-09-07T13:16:19.535253+00:00",
+      "finishedUTC": "2026-09-07T13:16:19.551156+00:00",
+      "exitStatus": 0,
+      "log": "/Users/4wl2d/Documents/ChatGPT/Freely/.cache/release-validation/20260907-packaging-01/evidence/extracted-signature-verify.log"
+    }
+  ]
+}

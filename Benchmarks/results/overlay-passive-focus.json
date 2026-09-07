@@ -1,0 +1,15 @@
+{
+  "activatedSelf" : false,
+  "cadenceMilliseconds" : 40,
+  "date" : "2026-09-07T12:08:43Z",
+  "frontmostAtStart" : "net.kovidgoyal.kitty",
+  "kind" : "real NSPanel + SwiftUI\/native text rendering; local stream fixture; no inference",
+  "limits" : "Test process hosts the production panel\/controller; not a live Grok request, fullscreen, Spaces or capture-visibility test.",
+  "os" : "Version 26.6.2 (Build 25G83)",
+  "otherObservedFocusChanges" : 0,
+  "panelBecameKey" : false,
+  "panelVisible" : true,
+  "passed" : true,
+  "schemaVersion" : 1,
+  "streamUpdates" : 100
+}
