@@ -1,0 +1,7 @@
+NVIDIA Parakeet TDT 0.6B v3 / FluidInference Core ML conversion
+Model source: https://huggingface.co/FluidInference/parakeet-tdt-0.6b-v3-coreml
+Pinned revision: 7dd20fe6b1797d35f5e3307e8b1732d9a178edfe
+License: Creative Commons Attribution 4.0 International (CC BY 4.0)
+Attribution: NVIDIA and FluidInference. Core ML conversion and mixed quantization by the model repository maintainers.
+License legal code: https://creativecommons.org/licenses/by/4.0/legalcode
+The app downloads these weights separately and verifies every manifest file by SHA-256.
