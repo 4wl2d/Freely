@@ -202,12 +202,13 @@ import Testing
 
 @Test func resumingSessionWaitsForNativeCaptureAcknowledgement() throws {
     var lifecycle = SessionLifecycle()
-    let epoch = try #require(lifecycle.start())
+    let started = lifecycle.start()
+    let epoch = try #require(started)
     lifecycle.setSource(.localUser, status: .stopped, epoch: epoch)
     lifecycle.setSource(.systemAudio, status: .running, epoch: epoch)
-    #expect(lifecycle.ready(epoch: epoch))
-    #expect(lifecycle.pause())
-    #expect(lifecycle.resume())
+    #expect(lifecycle.ready(epoch: epoch) == true)
+    #expect(lifecycle.pause() == true)
+    #expect(lifecycle.resume() == true)
     #expect(lifecycle.sources[.localUser] == .stopped)
     #expect(lifecycle.sources[.systemAudio] == .paused)
     lifecycle.setSource(.systemAudio, status: .running, epoch: epoch)
