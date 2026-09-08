@@ -6,10 +6,13 @@ fi
 TASK_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$TASK_ROOT"
 MODE="${1:-run}"
-case "$MODE" in run|--verify|--build-only|--release|--logs|--telemetry|--debug) ;; *) echo "Usage: $0 [--verify|--build-only|--release|--logs|--telemetry|--debug]" >&2; exit 2;; esac
+case "$MODE" in run|--verify|--build-only|--release|--logs|--telemetry|--debug|--diagnostics) ;; *) echo "Usage: $0 [--verify|--build-only|--release|--logs|--telemetry|--debug|--diagnostics]" >&2; exit 2;; esac
 CONFIGURATION="${FREELY_CONFIGURATION:-debug}"
 if [[ "$MODE" == --release ]]; then CONFIGURATION=release; fi
 case "$CONFIGURATION" in debug|release) ;; *) echo "Configuration must be debug or release." >&2; exit 2;; esac
+if [[ "$MODE" == --debug && "$CONFIGURATION" != debug ]]; then
+  echo "LLDB requires a debug build. Release bundles never receive get-task-allow." >&2; exit 2
+fi
 if pgrep -x Freely >/dev/null; then
   pkill -TERM -x Freely
   for _ in {1..30}; do if ! pgrep -x Freely >/dev/null; then break; fi; sleep 0.1; done
@@ -21,6 +24,11 @@ APP_BUNDLE="$TASK_ROOT/dist/Freely.app"
 mkdir -p "$APP_BUNDLE/Contents/MacOS" "$APP_BUNDLE/Contents/Resources"
 cp "$BIN_DIR/Freely" "$APP_BUNDLE/Contents/MacOS/Freely"
 cp Resources/Info.plist "$APP_BUNDLE/Contents/Info.plist"
+BUILD_REVISION="$(git rev-parse --short=12 HEAD)"
+BUILD_TREE=clean
+if [[ -n "$(git status --porcelain --untracked-files=normal)" ]]; then BUILD_TREE=modified; fi
+/usr/libexec/PlistBuddy -c "Add :FreelyBuildRevision string $BUILD_REVISION" "$APP_BUNDLE/Contents/Info.plist"
+/usr/libexec/PlistBuddy -c "Add :FreelyBuildWorkingTree string $BUILD_TREE" "$APP_BUNDLE/Contents/Info.plist"
 cp Freely/Resources/model-manifest.json "$APP_BUNDLE/Contents/Resources/model-manifest.json"
 cp Resources/AppIcon.icns "$APP_BUNDLE/Contents/Resources/AppIcon.icns"
 ditto Resources/Licenses "$APP_BUNDLE/Contents/Resources/Licenses"
@@ -35,14 +43,28 @@ fi
 # loads only the explicitly verified model directory and does not access Bundle.module.
 shopt -s nullglob
 for bundle in "$BIN_DIR"/FluidAudio_*.bundle; do ditto "$bundle" "$APP_BUNDLE/Contents/Resources/$(basename "$bundle")"; done
-codesign --force --sign "${FREELY_SIGN_IDENTITY:--}" --options runtime --entitlements Resources/Freely.entitlements "$APP_BUNDLE"
+SIGNING_ENTITLEMENTS=Resources/Freely.entitlements
+if [[ "$MODE" == --debug ]]; then
+  SIGNING_ENTITLEMENTS="$(mktemp -t freely-debug-entitlements)"
+  trap 'rm -f "$SIGNING_ENTITLEMENTS"' EXIT
+  cp Resources/Freely.entitlements "$SIGNING_ENTITLEMENTS"
+  /usr/libexec/PlistBuddy -c 'Add :com.apple.security.get-task-allow bool true' "$SIGNING_ENTITLEMENTS"
+fi
+codesign --force --sign "${FREELY_SIGN_IDENTITY:--}" --options runtime --entitlements "$SIGNING_ENTITLEMENTS" "$APP_BUNDLE"
 codesign --verify --strict "$APP_BUNDLE"
 plutil -lint "$APP_BUNDLE/Contents/Info.plist"
 if [[ "$MODE" == --build-only ]]; then echo "$APP_BUNDLE"; exit 0; fi
-/usr/bin/open -n "$APP_BUNDLE"
+if [[ "$MODE" == --debug ]]; then
+  lldb -o run -- "$APP_BUNDLE/Contents/MacOS/Freely" --diagnostics --diagnostic-verbose
+  exit $?
+fi
+if [[ "$MODE" == --diagnostics || "$MODE" == --telemetry ]]; then
+  /usr/bin/open -n "$APP_BUNDLE" --args --diagnostics --diagnostic-verbose
+else
+  /usr/bin/open -n "$APP_BUNDLE"
+fi
 case "$MODE" in
   --verify) sleep 1; pgrep -x Freely ;;
   --logs) /usr/bin/log stream --info --style compact --predicate 'process == "Freely"' ;;
-  --telemetry) /usr/bin/log stream --info --style compact --predicate 'subsystem == "local.freely.app"' ;;
-  --debug) lldb -n Freely ;;
+  --telemetry) /usr/bin/log stream --level debug --style compact --predicate 'subsystem == "local.freely.app"' ;;
 esac

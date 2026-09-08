@@ -11,6 +11,7 @@ private final class FixtureURLProtocol: URLProtocol, @unchecked Sendable {
         var chunks: [(Duration, Data)] = []
         var end = true
         var error: URLError.Code?
+        var errorGate: OAuthResultGate<Void>?
     }
     struct Record: Sendable {
         let fixtures: [Fixture]
@@ -68,6 +69,11 @@ private final class FixtureURLProtocol: URLProtocol, @unchecked Sendable {
                     try Task.checkCancellation()
                     client?.urlProtocol(self, didLoad: data)
                 }
+                if let gate = fixture.errorGate {
+                    try await withTaskCancellationHandler {
+                        try await withCheckedThrowingContinuation { gate.install($0) }
+                    } onCancel: { gate.resolve(.failure(CancellationError())) }
+                }
                 if let error = fixture.error { client?.urlProtocol(self, didFailWithError: URLError(error)) }
                 else if fixture.end { client?.urlProtocolDidFinishLoading(self) }
             } catch is CancellationError { /* Deliberate test-server cancellation. */ }
@@ -119,7 +125,8 @@ struct XAITransportTests {
         let started = ContinuousClock().now
         var first: Duration?
         var events: [LLMEvent] = []
-        for try await event in try await provider().stream(request(id)) {
+        let outbound = request(id)
+        for try await event in try await provider().stream(outbound) {
             events.append(event)
             if case .textDelta = event { first = started.duration(to: ContinuousClock().now) }
         }
@@ -128,6 +135,11 @@ struct XAITransportTests {
         let recorded = try #require(FixtureURLProtocol.record(id)?.requests.first)
         #expect(recorded.url?.absoluteString == "https://api.x.ai/v1/responses")
         #expect(recorded.value(forHTTPHeaderField: "Authorization") == "Bearer synthetic-test-credential")
+        let trace = FreelyLog.recorder.snapshot().events.filter { $0.scope.request == outbound.diagnosticRequestID }
+        #expect(trace.map(\.name) == [.requestStarted, .responseReceived, .requestFinished])
+        #expect(trace.first(where: { $0.name == .responseReceived })?.fields["httpStatus"] == "200")
+        let diagnosticJSON = String(decoding: try JSONEncoder().encode(trace), as: UTF8.self)
+        #expect(!diagnosticJSON.contains("synthetic-test-credential") && !diagnosticJSON.contains("Selected fixture"))
     }
 
     @Test func earlyEOFIsInterruptedAndNeverCompleted() async throws {
@@ -161,10 +173,19 @@ struct XAITransportTests {
     }
 
     @Test func noRetryAfterAnswerText() async throws {
-        let id = FixtureURLProtocol.install([.init(chunks: [(.zero, delta)], error: .networkConnectionLost)])
-        defer { FixtureURLProtocol.remove(id) }
-        do { for try await _ in try await provider().stream(request(id)) {}; Issue.record("Connection loss must throw") }
-        catch { #expect(error as? XAIError == .network) }
+        // URLProtocol didLoad can race with didFailWithError in Foundation's AsyncBytes bridge.
+        // Inject the failure only after the consumer actually observes answer text.
+        let gate = OAuthResultGate<Void>()
+        let id = FixtureURLProtocol.install([.init(chunks: [(.zero, delta)], error: .networkConnectionLost, errorGate: gate)])
+        defer { gate.resolve(.failure(CancellationError())); FixtureURLProtocol.remove(id) }
+        var observedText = false
+        do {
+            for try await event in try await provider().stream(request(id)) {
+                if case .textDelta = event { observedText = true; gate.resolve(.success(())) }
+            }
+            Issue.record("Connection loss must throw")
+        } catch { #expect(error as? XAIError == .network) }
+        #expect(observedText)
         #expect(FixtureURLProtocol.record(id)?.requests.count == 1)
     }
 

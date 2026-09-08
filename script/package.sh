@@ -5,7 +5,7 @@ cd "$TASK_ROOT"
 if [[ -z "${DEVELOPER_DIR:-}" && -d /Applications/Xcode.app/Contents/Developer ]]; then export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer; fi
 FREELY_CONFIGURATION=release ./script/build_and_run.sh --build-only
 APP="$TASK_ROOT/dist/Freely.app"
-ZIP="$TASK_ROOT/dist/Freely-1.0.0-macOS-arm64.zip"
+ZIP="$TASK_ROOT/dist/Freely-0.2.0-macOS-arm64.zip"
 archive_app() {
   ditto -c -k --sequesterRsrc --keepParent "$APP" "$ZIP"
   zip -j -q "$ZIP" "$TASK_ROOT/LICENSE" "$TASK_ROOT/NOTICE"
@@ -27,5 +27,8 @@ if [[ -n "${FREELY_NOTARY_PROFILE:-}" ]]; then
 else
   echo 'Local artifact only: NOT NOTARIZED. No Developer ID/notarization credential was supplied.'
 fi
-shasum -a 256 "$ZIP" > "$ZIP.sha256"
+(
+  cd "$TASK_ROOT/dist"
+  shasum -a 256 "$(basename "$ZIP")" > "$(basename "$ZIP").sha256"
+)
 echo "$ZIP"

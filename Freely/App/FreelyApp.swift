@@ -7,13 +7,20 @@ struct FreelyApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var delegate
     var body: some Scene {
         Settings { SetupView(model: delegate.model) }
+            .commands {
+                CommandGroup(after: .appSettings) {
+                    Button("Debug console…") { delegate.showDiagnostics() }
+                        .keyboardShortcut("d", modifiers: [.command, .option])
+                }
+            }
     }
 }
 
 @MainActor
-final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
+final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSWindowDelegate {
     private var statusItem: NSStatusItem?
     private var window: NSWindow?
+    private var diagnosticWindow: NSWindow?
     private var overlay: OverlayController?
     private let regionSelection = RegionSelectionController()
     private var signalSource: DispatchSourceSignal?
@@ -24,6 +31,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     let model = ApplicationModel()
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        FreelyLog.recorder.setVerbose(CommandLine.arguments.contains("--diagnostic-verbose"))
+        FreelyLog.record(.appLaunched)
         NSApp.setActivationPolicy(.accessory)
         let controller = OverlayController(model: model)
         overlay = controller
@@ -63,6 +72,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         })
         model.initialize()
         showMainWindow()
+        if CommandLine.arguments.contains("--diagnostics") { showDiagnostics() }
     }
     func menuNeedsUpdate(_ menu: NSMenu) {
         menu.removeAllItems()
@@ -88,7 +98,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         add(menu, model.pinned ? "Unpin answer" : "Pin answer", #selector(pin))
         menu.addItem(.separator())
         add(menu, "Open Freely…", #selector(showMainWindow))
-        add(menu, "Diagnostics…", #selector(showDiagnostics))
+        add(menu, "Debug console…", #selector(showDiagnostics))
+        menu.items.last?.keyEquivalent = "d"
+        menu.items.last?.keyEquivalentModifierMask = [.command, .option]
         add(menu, "Quit Freely", #selector(quit))
     }
     private func updateStatusItem() {
@@ -124,7 +136,27 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     @objc private func copyCurrentAnswer() { model.copyAnswer() }
     @objc private func clear() { model.clearAnswer() }
     @objc private func pin() { model.setPinned(!model.pinned) }
-    @objc private func showDiagnostics() { model.section = .diagnostics; showMainWindow() }
+    @objc func showDiagnostics() {
+        FreelyLog.record(.debugOpened)
+        if diagnosticWindow == nil {
+            let panel = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 1_100, height: 780),
+                styleMask: [.titled, .closable, .miniaturizable, .resizable], backing: .buffered, defer: false)
+            panel.title = "Freely — Debug console"
+            panel.contentView = NSHostingView(rootView: DiagnosticsView(model: model))
+            panel.minSize = NSSize(width: 850, height: 620)
+            panel.isReleasedWhenClosed = false
+            panel.delegate = self
+            panel.center(); diagnosticWindow = panel
+        }
+        diagnosticWindow?.makeKeyAndOrderFront(nil)
+        NSApp.activate(ignoringOtherApps: true)
+    }
+    func windowWillClose(_ notification: Notification) {
+        if notification.object as? NSWindow === diagnosticWindow {
+            diagnosticWindow?.contentView = nil
+            diagnosticWindow = nil
+        }
+    }
     @objc private func quit() { NSApp.terminate(nil) }
     @objc func showMainWindow() {
         if window == nil {

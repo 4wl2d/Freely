@@ -180,7 +180,6 @@ actor ModelInstaller {
     private var verifying = false
     private let availableCapacity: @Sendable (URL) throws -> Int64
     private let fetchFile: (@Sendable (ModelManifest.File, URL) async throws -> Void)?
-    private let logger = Logger(subsystem: "local.freely.app", category: "model-distribution")
 
     init(root: URL, manifest: ModelManifest,
          availableCapacity: @escaping @Sendable (URL) throws -> Int64 = ModelInstaller.diskCapacity,
@@ -253,17 +252,17 @@ actor ModelInstaller {
                 guard renameatx_np(AT_FDCWD, staging.path, AT_FDCWD, target.path, UInt32(RENAME_SWAP)) == 0 else { throw ModelInstallError.publicationFailed }
                 // Publication already succeeded. Failure to remove the old directory is a cleanup warning, not a failed install.
                 do { try manager.removeItem(at: staging) }
-                catch { logger.error("Verified model installed, but previous model cleanup failed") }
+                catch { FreelyLog.record(.modelCleanupFailed, level: .warning, fields: [.state: .state("previous_installation"), .failure: .failure(error)]) }
             } else {
                 guard renameatx_np(AT_FDCWD, staging.path, AT_FDCWD, target.path, UInt32(RENAME_EXCL)) == 0 else { throw ModelInstallError.publicationFailed }
             }
             progressState = .init(phase: "Verified", completedBytes: manifest.bytes, totalBytes: manifest.bytes)
-            logger.info("Verified model installed; bytes=\(self.manifest.bytes)")
+            FreelyLog.record(.modelInstalled, fields: [.bytes: .int(manifest.bytes)])
             return target
         } catch {
             if manager.fileExists(atPath: staging.path) {
                 do { try manager.removeItem(at: staging) }
-                catch { logger.error("Unable to remove bounded model staging directory") }
+                catch { FreelyLog.record(.modelCleanupFailed, level: .warning, fields: [.state: .state("staging"), .failure: .failure(error)]) }
             }
             progressState = .init(phase: error is CancellationError ? "Cancelled" : "Installation failed", completedBytes: 0, totalBytes: manifest.bytes)
             throw error

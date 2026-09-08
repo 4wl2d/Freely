@@ -13,11 +13,12 @@ public struct AppPreferences: Codable, Equatable, Sendable {
     public var onboardingCompleted = false
     public var connectionMethod: ConnectionMethod = .subscription
     public var subscriptionClientID = ""
+    public var grokBuildConnected = false
     public init() {}
 
     private enum CodingKeys: String, CodingKey {
         case schemaVersion, ai, audio, overlay, shortcuts, profiles, selectedProfileID, onboardingCompleted
-        case connectionMethod, subscriptionClientID
+        case connectionMethod, subscriptionClientID, grokBuildConnected
     }
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
@@ -33,6 +34,7 @@ public struct AppPreferences: Codable, Equatable, Sendable {
         onboardingCompleted = try values.decode(Bool.self, forKey: .onboardingCompleted)
         connectionMethod = try values.decodeIfPresent(ConnectionMethod.self, forKey: .connectionMethod) ?? .subscription
         subscriptionClientID = try values.decodeIfPresent(String.self, forKey: .subscriptionClientID) ?? ""
+        grokBuildConnected = try values.decodeIfPresent(Bool.self, forKey: .grokBuildConnected) ?? false
     }
 
     /// Selection is explicit. An absent/deleted selection never falls back to another profile.

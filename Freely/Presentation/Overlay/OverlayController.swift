@@ -46,10 +46,10 @@ final class OverlayController: NSObject, NSWindowDelegate {
     func toggle() {
         if panel.isVisible { panel.orderOut(nil); model.overlayVisible = false; model.interactive = false }
         else { panel.orderFrontRegardless(); model.overlayVisible = true }
-        FreelyLog.overlay.info("Overlay visibility changed; visible=\(self.panel.isVisible)")
+        FreelyLog.record(.overlayVisibility, fields: [.enabled: .flag(panel.isVisible)])
     }
     func setInteractive(_ enabled: Bool) {
-        FreelyLog.overlay.info("Explicit overlay interaction changed; interactive=\(enabled)")
+        FreelyLog.record(.overlayInteraction, fields: [.enabled: .flag(enabled)])
         let wasKey = panel.isKeyWindow
         panel.allowsInteraction = enabled
         model.interactive = enabled

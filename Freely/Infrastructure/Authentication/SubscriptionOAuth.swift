@@ -604,11 +604,12 @@ final class SubscriptionAuthentication: NSObject, ASWebAuthenticationPresentatio
     }
     func signIn(configuration: SubscriptionClientConfiguration, anchor: NSWindow?) {
         guard !signingIn else { return }
-        do { try configuration.validate() } catch { status = Self.message(error); return }
+        do { try configuration.validate() } catch { FreelyLog.record(.authFailed, level: .error, fields: [.failure: .failure(error)]); status = Self.message(error); return }
         self.anchor = anchor
         currentConfiguration = configuration
         configurationID = UUID()
         let id = UUID(); loginID = id
+        FreelyLog.record(.authStarted, scope: .init(request: id))
         signingIn = true; status = "Opening secure xAI sign-in"
         loginTask = Task { [weak self] in
             guard let self else { return }
@@ -629,10 +630,11 @@ final class SubscriptionAuthentication: NSObject, ASWebAuthenticationPresentatio
                 try await tokens.exchange(code: code, attempt: attempt)
                 try Task.checkCancellation()
                 guard loginID == id, currentConfiguration == configuration else { throw CancellationError() }
+                FreelyLog.record(.authConnected, scope: .init(request: id))
                 connected = true
                 status = "Subscription connected. Test generation to verify this application's model access and entitlement."
-            } catch is CancellationError { if loginID == id { status = "Sign-in cancelled" } }
-            catch { if loginID == id { status = Self.message(error) } }
+            } catch is CancellationError { FreelyLog.record(.authCancelled, scope: .init(request: id)); if loginID == id { status = "Sign-in cancelled" } }
+            catch { FreelyLog.record(.authFailed, level: .error, scope: .init(request: id), fields: [.failure: .failure(error)]); if loginID == id { status = Self.message(error) } }
         }
     }
     func cancel() {
@@ -648,6 +650,7 @@ final class SubscriptionAuthentication: NSObject, ASWebAuthenticationPresentatio
         let localCleared: Bool
         do { try await tokens.disconnect(); status = "Subscription disconnected"; localCleared = true }
         catch { status = Self.message(error); localCleared = error as? OAuthError == .revocationUnconfirmed }
+        FreelyLog.record(.authDisconnected, level: localCleared ? .info : .warning, fields: [.ready: .flag(localCleared)])
         connected = false
         return localCleared
     }

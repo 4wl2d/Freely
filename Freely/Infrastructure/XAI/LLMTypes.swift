@@ -13,9 +13,13 @@ public struct LLMRequest: Sendable {
     public let sessionCacheKey: String
     public let image: LLMImage?
     public let detailed: Bool
+    public let diagnosticSessionID: UUID?
+    public let diagnosticRequestID: UUID
 
     public init(trustedInstructions: String, selectedContext: String, estimatedInputTokens: Int,
-                sessionCacheKey: String, image: LLMImage? = nil, detailed: Bool = false) {
+                sessionCacheKey: String, image: LLMImage? = nil, detailed: Bool = false, diagnosticSessionID: UUID? = nil, diagnosticRequestID: UUID = UUID()) {
+        self.diagnosticSessionID = diagnosticSessionID
+        self.diagnosticRequestID = diagnosticRequestID
         self.trustedInstructions = trustedInstructions
         self.selectedContext = selectedContext
         self.estimatedInputTokens = estimatedInputTokens

@@ -92,10 +92,12 @@ actor SourcePipeline {
     private var lastSampleRate: Double?
     private var metrics: SourceProcessingMetrics
     private var cancelled = false
-    private let logger = Logger(subsystem: "local.freely.app", category: "stt")
+    private var summaryRecorded = false
+    private let sessionID: UUID?
 
     init(source: AudioSource, streamEpoch: SourceEpoch, ingress: AudioIngress,
-         transcriber: any SpeechTranscribing, sessionOrigin: Double) {
+         transcriber: any SpeechTranscribing, sessionOrigin: Double, sessionID: UUID? = nil) {
+        self.sessionID = sessionID
         self.source = source; self.streamEpoch = streamEpoch; self.ingress = ingress
         self.transcriber = transcriber; self.sessionOrigin = sessionOrigin
         self.window = SpeechWindow(rmsFloor: source == .systemAudio ? 0.001 : 0.004)
@@ -203,13 +205,21 @@ actor SourcePipeline {
             // Cancellation is a normal terminal state and all final UI results are fenced upstream.
         } catch {
             metrics.failure = "Local transcription failed. Resume this source to reload its decoder."
-            logger.error("Source decoder failed; source=\(self.source.rawValue, privacy: .public)")
+            FreelyLog.record(.decodeFailed, level: .error, scope: .init(session: sessionID, source: source), fields: [.failure: .failure(error)])
             let end = elapsed
             await onEvent(.gap(.init(source: source, streamEpoch: streamEpoch,
                 startTime: min(lastFrameEnd ?? end, end), endTime: end, cause: .decodingFailure)))
         }
     }
     func stop() async {
+        if !summaryRecorded {
+            summaryRecorded = true
+            let final = snapshot()
+            FreelyLog.record(.sourceSummary, scope: .init(session: sessionID, source: source), fields: [
+                .epoch: .int(streamEpoch.rawValue), .frames: .int(final.receivedFrames),
+                .queuedSeconds: .number(final.queuedSeconds), .droppedSeconds: .number(final.droppedSeconds),
+                .realTimeFactor: .number(final.realTimeFactor)])
+        }
         cancelled = true; ingress.close()
         await transcriber.stop()
         window.reset(); normalizer.reset(); metrics.retainedBatchSeconds = 0
@@ -234,6 +244,7 @@ actor SourcePipeline {
         try Task.checkCancellation()
         guard !cancelled else { throw CancellationError() }
         let inference = ProcessInfo.processInfo.systemUptime - start
+        FreelyLog.record(.decodeCompleted, level: .debug, scope: .init(session: sessionID, source: source), fields: [.segmentID: .id(segmentID.rawValue), .final: .flag(final), .empty: .flag(hypothesis.text.isEmpty), .epoch: .int(streamEpoch.rawValue)], duration: inference)
         metrics.lastInferenceSeconds = inference
         metrics.processingSeconds += inference
         metrics.analysisSeconds += max(0, capturedEnd - max(capturedStart, lastDecodeEnd))

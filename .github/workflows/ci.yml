@@ -63,7 +63,7 @@ jobs:
         with:
           name: Freely-macos-arm64
           path: |
-            dist/Freely-1.0.0-macOS-arm64.zip
-            dist/Freely-1.0.0-macOS-arm64.zip.sha256
+            dist/Freely-0.2.0-macOS-arm64.zip
+            dist/Freely-0.2.0-macOS-arm64.zip.sha256
           if-no-files-found: error
           retention-days: 14

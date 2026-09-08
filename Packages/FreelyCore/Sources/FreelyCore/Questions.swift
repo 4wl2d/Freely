@@ -14,6 +14,14 @@ public enum IntentHeuristics {
         }.joined().split(whereSeparator: \.isWhitespace).joined(separator: " ")
     }
     public static func classify(_ text: String, hasAntecedent: Bool) -> QuestionTrigger? {
+        if let trigger = classifyLeading(text, hasAntecedent: hasAntecedent) { return trigger }
+        // Speech recognition often joins a statement and the actual question with a comma.
+        // Keep the whole turn as context, but also examine its final clause for direct intent.
+        let clauses = text.split { ",;.!?\n—".contains($0) }.map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }.filter { !$0.isEmpty }
+        guard clauses.count > 1, let final = clauses.last else { return nil }
+        return classifyLeading(final, hasAntecedent: hasAntecedent)
+    }
+    private static func classifyLeading(_ text: String, hasAntecedent: Bool) -> QuestionTrigger? {
         let words = materialText(text).split(separator: " ").map(String.init)
         guard let first = words.first else { return nil }
         let normalized = words.joined(separator: " ")

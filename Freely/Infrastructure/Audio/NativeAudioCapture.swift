@@ -123,7 +123,7 @@ actor NativeMicrophoneCapture: MicrophoneCapturing {
             await stop()
             throw CancellationError()
         }
-        FreelyLog.audio.info("Microphone capture started; epoch=\(startEpoch)")
+        FreelyLog.record(.audioStarted, scope: .init(source: .localUser), fields: [.epoch: .int(startEpoch)])
     }
     func stop() async {
         epoch &+= 1
@@ -149,7 +149,7 @@ actor NativeMicrophoneCapture: MicrophoneCapturing {
         // invalidates its device clock. Local handles prevent a late stop touching a successor.
         await withCheckedContinuation { continuation in queue.async { continuation.resume() } }
         oldSession?.stopRunning()
-        if oldSession != nil { FreelyLog.audio.info("Microphone capture stopped") }
+        if oldSession != nil { FreelyLog.record(.audioStopped, scope: .init(source: .localUser)) }
     }
     private static var defaultInputAddress: AudioObjectPropertyAddress {
         AudioObjectPropertyAddress(mSelector: kAudioHardwarePropertyDefaultInputDevice, mScope: kAudioObjectPropertyScopeGlobal, mElement: kAudioObjectPropertyElementMain)
@@ -215,10 +215,15 @@ actor NativeSystemAudioCapture: SystemAudioCapturing {
     private var epoch: UInt64 = 0
     private let queue = DispatchQueue(label: "local.freely.systemaudio", qos: .userInitiated)
 
-    static func applications() async throws -> [AudioApplication] {
-        let content = try await SCShareableContent.excludingDesktopWindows(true, onScreenWindowsOnly: false)
-        return content.applications.filter { $0.processID != ProcessInfo.processInfo.processIdentifier }
-            .map { AudioApplication(id: $0.processID, bundleID: $0.bundleIdentifier, name: $0.applicationName) }
+    @MainActor static func applications() async throws -> [AudioApplication] {
+        // Listing running apps does not need screen-recording permission. ScreenCaptureKit
+        // verifies the selected PID and bundle again when capture actually starts.
+        NSWorkspace.shared.runningApplications
+            .filter { $0.activationPolicy == .regular && $0.processIdentifier != ProcessInfo.processInfo.processIdentifier }
+            .compactMap { app in
+                guard let bundleID = app.bundleIdentifier, let name = app.localizedName else { return nil }
+                return AudioApplication(id: app.processIdentifier, bundleID: bundleID, name: name)
+            }
             .sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
     }
 
@@ -267,7 +272,7 @@ actor NativeSystemAudioCapture: SystemAudioCapturing {
                 try await newStream.stopCapture()
                 throw CancellationError()
             }
-            FreelyLog.audio.info("System audio capture started; epoch=\(startEpoch)")
+            FreelyLog.record(.audioStarted, scope: .init(source: .systemAudio), fields: [.epoch: .int(startEpoch)])
         } catch {
             let superseded = epoch != startEpoch || Task.isCancelled
             if epoch == startEpoch { await stop() }
@@ -292,7 +297,7 @@ actor NativeSystemAudioCapture: SystemAudioCapturing {
             }
         }
         await withCheckedContinuation { continuation in queue.async { continuation.resume() } }
-        if old != nil { FreelyLog.audio.info("System audio capture stopped") }
+        if old != nil { FreelyLog.record(.audioStopped, scope: .init(source: .systemAudio)) }
     }
 }
 

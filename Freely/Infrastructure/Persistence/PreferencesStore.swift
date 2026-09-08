@@ -19,6 +19,10 @@ public actor PreferencesStore {
 
     public func load() throws -> AppPreferences {
         do {
+            if directory.standardizedFileURL == Self.defaultDirectory.standardizedFileURL {
+                let legacy = directory.deletingLastPathComponent().appendingPathComponent("MeetingCopilot", isDirectory: true)
+                _ = try LegacyDataMigration.copyIfNeeded(destination: directory, legacy: legacy)
+            }
             let preferences = try readConfiguration()
             hasLoaded = true
             requiresReset = false

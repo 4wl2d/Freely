@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/4wl2d/Freely/releases/tag/v0.1.0-preview"><strong>Download preview</strong></a>
+  <a href="https://github.com/4wl2d/Freely/releases/tag/v0.2.0-preview"><strong>Download preview</strong></a>
   · <a href="#get-started">Get started</a>
   · <a href="docs/architecture.md">Architecture</a>
   · <a href="docs/verification.md">Verification</a>
@@ -16,7 +16,9 @@
 Freely is a native SwiftUI/AppKit meeting companion. It transcribes audio locally, keeps a bounded conversation context, and streams Grok suggestions into a passive companion panel. You choose the audio sources and the context that may leave your Mac.
 
 > [!IMPORTANT]
-> **This is a preview with external setup requirements.** Grok subscription OAuth is the primary connection, but Freely still needs its **own provider-issued OAuth registration and approved subscription inference access**. An ordinary Grok login is not enough. An **API key is optional**, with separate API access and billing. Local transcription can run through the explicit transcription-only mode.
+> **Freely is a native macOS preview.** Connect your Grok subscription through the official **Grok Build** client, or explicitly choose an xAI API key with separate billing. No OAuth client registration is needed for the ordinary subscription connection. Local transcription also works without an AI connection.
+
+For development, open **Debug console…** (⌥⌘D) for live events, pipeline health, timing distributions, and safe JSON reports. See the [debugging guide](docs/debugging.md) for reproduction, LLDB, and crash/hang capture workflows.
 
 ## Built around the conversation
 
@@ -35,13 +37,16 @@ The app does not join calls, identify individual speakers, or type into another 
 
 **Target:** macOS 15.0 or later, Apple Silicon. The verified runtime host is macOS 26.6.2; macOS 15 execution has not been tested separately.
 
-1. Download the app archive from [v0.1.0-preview](https://github.com/4wl2d/Freely/releases/tag/v0.1.0-preview), or build from source below.
-2. In **Audio / STT**, select a microphone and meeting application, grant the required macOS permissions, then download and verify the approximately **483 MB** local model.
-3. In **AI**, use this application's registered OAuth client when available, explicitly choose the optional API-key connection, or enable **Transcription-only session**. [Connection setup →](docs/integration-settings.md)
-4. Choose a profile in **Context** if needed, review shortcuts, then press **Start session**. Setup never starts a meeting automatically.
+1. Download [Freely 0.2.0 preview](https://github.com/4wl2d/Freely/releases/tag/v0.2.0-preview), unzip it, and move **Freely.app** to **Applications**.
+2. Open **Audio / STT**. Enable the sources you need, choose your meeting application, request microphone access if enabled, and download the approximately **483 MB** speech model. macOS may require **Quit & Reopen** after you enable Screen & System Audio Recording.
+3. Open **AI → Connect Grok**. Freely reuses an existing [official Grok Build](https://docs.x.ai/build/overview) sign-in or opens its browser sign-in. The button runs a short subscription test and reports the result. Install Grok Build first if the app shows **Install Grok Build**. An API key or **Transcription-only session** are alternative choices.
+4. Optionally add a profile or notes in **Context**, then press **Start session**. Speak or play meeting audio, wait for the transcript, and use **Answer now** when needed. Direct questions in meeting audio can trigger answers automatically.
+5. **Pause** suspends capture; **End session** stops capture and requests, and clears the retained transcript and answers.
+
+The first Freely launch copies existing settings and speech models from the former app when no Freely copy exists. It preserves the originals. macOS permissions belong to the new app identity and must be granted again.
 
 > [!NOTE]
-> The preview app is **ad hoc signed with hardened runtime, and is not notarized**. Its integrity checks pass, but Gatekeeper assessment rejected the artifact. The last system-audio permission attempt also failed with ScreenCaptureKit `-3801`; successful simultaneous microphone/system capture has not been demonstrated. See the [verification ledger](docs/verification.md) before relying on it in a meeting.
+> This preview is **ad hoc signed and not notarized**. macOS may block the first launch until you explicitly allow it in **System Settings → Privacy & Security**. A Developer ID certificate and notarization credentials are required for trusted distribution; they are not bundled in this repository.
 
 ### Build from source
 
@@ -55,15 +60,18 @@ cd Freely
 
 The script builds, stages, locally signs, and opens `dist/Freely.app`. Use `./script/test.sh` for the ordinary test suites or `./script/package.sh` for a Release app and ZIP. [Development and validation →](CONTRIBUTING.md)
 
-## Subscription first, with a clear boundary
+## Grok subscription connection
 
-The native OAuth implementation uses xAI's authorization service, a browser authentication session, PKCE/S256, state validation, refresh-token rotation and device-bound Keychain storage. The public build does not contain another application's client identity. Its registered callback is `freely://oauth/callback`.
+Freely runs the official Grok Build client through its supported headless interface. The client handles grok.com authentication, token refresh and subscription routing. Freely never imports its token contents or borrows an OAuth client identity. **Grok Build 1.0.13** was tested on the development Mac.
 
-**Registration and entitlement remain unresolved for this application.** Support for other xAI integrations does not establish a supported subscription inference route for Freely. The app therefore shows an actionable registration-required state. [OAuth implementation and evidence →](docs/oauth-evidence.md)
+Each request uses a private temporary workspace, disables tools, imported rules/hooks, memory and conversation writeback, and sends only Freely's selected context plus an explicitly allowed image. Temporary client files are removed after the process exits. Ending a session cancels and waits for its requests. **Disconnect** disconnects Freely without signing you out of other Grok Build sessions. Provider retention and subscription limits remain governed by your xAI account.
 
-The optional API path uses your own xAI API key, stored separately in Keychain. Requests use the Responses API with bounded context, no model tools and `store:false`. This setting is not a blanket provider-retention guarantee. Live text streaming and live transcript-plus-image reasoning still require separate verification with authorized access.
+The optional direct API connection keeps its key in Keychain and uses the Responses API with `store:false`. It never activates as an automatic fallback from a subscription failure. The advanced native OAuth registration field is only for a separately registered integration. [Connection details and evidence →](docs/oauth-evidence.md)
 
 ## Evidence you can inspect
+
+The [Freely first-meeting verification](docs/first-meeting-ux.md) records the current rebrand, subscription and UX checks. The table below preserves the original pre-rebrand measurements; those long-soak results have not been re-run for this change.
+
 
 | Check | Recorded result | Scope |
 | --- | --- | --- |
@@ -76,7 +84,7 @@ The optional API path uses your own xAI API key, stored separately in Keychain. 
 
 The four-hour workload exercised **sparse local inference alongside sustained remote inference**: decoded-window coverage was 664.84 s local and 12,837.96 s remote, including padding/silence. It was not dense two-speaker speech, a live call, or live Grok. Development builds overlapped the run. [Method and limits →](docs/benchmarks.md#completed-four-hour-paced-integration-soak)
 
-The original latency objectives were **not met**: measured aligned partial p95 was 3,082 ms for the selected TDT backend against a 900 ms objective. Heldout question-finalization evidence contains only one recognized question. Real account access, simultaneous capture, receiver/display compatibility, and trusted distribution remain incomplete. Failed runs are preserved in the evidence. [Full verification ledger →](docs/verification.md)
+The original latency objectives were **not met**: measured aligned partial p95 was 3,082 ms for the selected TDT backend against a 900 ms objective. Heldout question-finalization evidence contains only one recognized question. The original run did not establish real account access or simultaneous capture. Current subscription and capture checks are recorded separately; receiver/display compatibility and trusted distribution remain incomplete. Failed runs are preserved in the evidence. [Full verification ledger →](docs/verification.md)
 
 ## Explore the project
 
@@ -90,7 +98,7 @@ The original latency objectives were **not met**: measured aligned partial p95 w
 | [History and provenance](docs/history.md) | How the first public import was organized and how to recover the original Git history. |
 | [Third-party notices](THIRD_PARTY_NOTICES.md) | Dependency and model attribution; bundled license texts. |
 
-The [preview release](https://github.com/4wl2d/Freely/releases/tag/v0.1.0-preview) includes the app ZIP, checksums, the original Git-history bundle, and a verification-evidence archive. Model weights and corpus audio are not included in the repository. For reproducible issues or focused contributions, see [CONTRIBUTING.md](CONTRIBUTING.md).
+The [Freely preview](https://github.com/4wl2d/Freely/releases/tag/v0.2.0-preview) contains the current app ZIP and checksum. The [original preview archive](https://github.com/4wl2d/Freely/releases/tag/v0.1.0-preview) preserves the old app, Git-history bundle and verification evidence. Model weights and corpus audio are not included in the repository. For reproducible issues or focused contributions, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 

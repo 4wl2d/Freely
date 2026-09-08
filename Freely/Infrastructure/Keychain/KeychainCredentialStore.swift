@@ -48,6 +48,17 @@ public actor KeychainCredentialStore: CredentialStoring {
         return credential
     }
 
+    /// One-time import preserves the original item so the previous app can still be opened.
+    public func importLegacyCredentialIfNeeded() async throws {
+        guard service == "com.freely.xai-api", try load() == nil else { return }
+        let marker = PreferencesStore.defaultDirectory.appendingPathComponent(".legacy-keychain-import-complete")
+        guard !FileManager.default.fileExists(atPath: marker.path) else { return }
+        let legacy = KeychainCredentialStore(service: "com.meetingcopilot.xai-api", account: account)
+        if let credential = try await legacy.load() { try save(credential) }
+        try FileManager.default.createDirectory(at: marker.deletingLastPathComponent(), withIntermediateDirectories: true, attributes: [.posixPermissions: 0o700])
+        try Data().write(to: marker, options: .atomic)
+    }
+
     public func save(_ credential: String) throws {
         let trimmed = credential.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty, trimmed.utf8.count <= 4_096,
