@@ -91,7 +91,7 @@ actor NativeScreenCapture: ScreenContextCapturing {
         }
         let windows = content.windows.filter {
             $0.owningApplication?.processID != ProcessInfo.processInfo.processIdentifier &&
-                $0.frame.width > 32 && $0.frame.height > 32
+                $0.windowLayer == 0 && $0.frame.width > 32 && $0.frame.height > 32
         }.map {
             VisualSource(id: "window:\($0.windowID)", kind: .window, nativeID: $0.windowID,
                 name: "\($0.owningApplication?.applicationName ?? "Application") — \($0.title ?? "Untitled window")",
@@ -163,7 +163,10 @@ actor NativeScreenCapture: ScreenContextCapturing {
         }
         let crop = selection.region ?? bounds
         guard Self.validRegion(crop, inside: bounds) else { throw ScreenCaptureFailure.invalidRegion }
-        configuration.sourceRect = crop
+        // A full-window filter already carries the window's desktop origin. An explicit
+        // zero-origin rectangle is in display coordinates and crops displaced windows.
+        // Only an intentional display-region selection overrides ScreenCaptureKit's bounds.
+        if let region = selection.region { configuration.sourceRect = region }
         guard let pixels = Self.renderSize(for: crop, pointPixelScale: Double(filter.pointPixelScale)) else { throw ScreenCaptureFailure.invalidRegion }
         configuration.width = Int(pixels.width)
         configuration.height = Int(pixels.height)

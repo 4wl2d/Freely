@@ -40,7 +40,7 @@ struct GrokBuildRuntime: Sendable {
 
     func generate(_ request: LLMRequest, configuration: XAIConfiguration,
                   receive: @escaping @Sendable (LLMEvent) throws -> Void) async throws {
-        let scope = DiagnosticScope(request: UUID())
+        let scope = DiagnosticScope(session: request.diagnosticSessionID, request: request.diagnosticRequestID)
         let started = ProcessInfo.processInfo.systemUptime
         let clock = ContinuousClock()
         let deadline = clock.now.advanced(by: request.detailed ? configuration.detailedDeadline : configuration.normalDeadline)
