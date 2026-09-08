@@ -1,9 +1,9 @@
 <p align="center">
-  <img src="docs/assets/meetingcopilot-banner.svg" alt="MeetingCopilot — native macOS meeting assistance with local transcription. Preview for macOS 15 and later on Apple Silicon." width="100%">
+  <img src="docs/assets/freely-banner.svg" alt="Freely — native macOS meeting assistance with local transcription. Preview for macOS 15 and later on Apple Silicon." width="100%">
 </p>
 
 <p align="center">
-  <a href="https://github.com/4wl2d/MeetingCopilot/releases/tag/v0.1.0-preview"><strong>Download preview</strong></a>
+  <a href="https://github.com/4wl2d/Freely/releases/tag/v0.1.0-preview"><strong>Download preview</strong></a>
   · <a href="#get-started">Get started</a>
   · <a href="docs/architecture.md">Architecture</a>
   · <a href="docs/verification.md">Verification</a>
@@ -11,12 +11,12 @@
   · <a href="LICENSE">Apache-2.0</a>
 </p>
 
-[![macOS CI](https://github.com/4wl2d/MeetingCopilot/actions/workflows/ci.yml/badge.svg)](https://github.com/4wl2d/MeetingCopilot/actions/workflows/ci.yml)
+[![macOS CI](https://github.com/4wl2d/Freely/actions/workflows/ci.yml/badge.svg)](https://github.com/4wl2d/Freely/actions/workflows/ci.yml)
 
-MeetingCopilot is a native SwiftUI/AppKit meeting companion. It transcribes audio locally, keeps a bounded conversation context, and streams Grok suggestions into a passive companion panel. You choose the audio sources and the context that may leave your Mac.
+Freely is a native SwiftUI/AppKit meeting companion. It transcribes audio locally, keeps a bounded conversation context, and streams Grok suggestions into a passive companion panel. You choose the audio sources and the context that may leave your Mac.
 
 > [!IMPORTANT]
-> **This is a preview with external setup requirements.** Grok subscription OAuth is the primary connection, but MeetingCopilot still needs its **own provider-issued OAuth registration and approved subscription inference access**. An ordinary Grok login is not enough. An **API key is optional**, with separate API access and billing. Local transcription can run through the explicit transcription-only mode.
+> **This is a preview with external setup requirements.** Grok subscription OAuth is the primary connection, but Freely still needs its **own provider-issued OAuth registration and approved subscription inference access**. An ordinary Grok login is not enough. An **API key is optional**, with separate API access and billing. Local transcription can run through the explicit transcription-only mode.
 
 ## Built around the conversation
 
@@ -35,7 +35,7 @@ The app does not join calls, identify individual speakers, or type into another 
 
 **Target:** macOS 15.0 or later, Apple Silicon. The verified runtime host is macOS 26.6.2; macOS 15 execution has not been tested separately.
 
-1. Download the app archive from [v0.1.0-preview](https://github.com/4wl2d/MeetingCopilot/releases/tag/v0.1.0-preview), or build from source below.
+1. Download the app archive from [v0.1.0-preview](https://github.com/4wl2d/Freely/releases/tag/v0.1.0-preview), or build from source below.
 2. In **Audio / STT**, select a microphone and meeting application, grant the required macOS permissions, then download and verify the approximately **483 MB** local model.
 3. In **AI**, use this application's registered OAuth client when available, explicitly choose the optional API-key connection, or enable **Transcription-only session**. [Connection setup →](docs/integration-settings.md)
 4. Choose a profile in **Context** if needed, review shortcuts, then press **Start session**. Setup never starts a meeting automatically.
@@ -48,18 +48,18 @@ The app does not join calls, identify individual speakers, or type into another 
 Use a stable full Xcode installation. The verified toolchain is **Xcode 26.6 / Swift 6.3.3**. The scripts select `/Applications/Xcode.app` when available without changing global `xcode-select`.
 
 ```sh
-git clone https://github.com/4wl2d/MeetingCopilot.git
-cd MeetingCopilot
+git clone https://github.com/4wl2d/Freely.git
+cd Freely
 ./script/build_and_run.sh
 ```
 
-The script builds, stages, locally signs, and opens `dist/MeetingCopilot.app`. Use `./script/test.sh` for the ordinary test suites or `./script/package.sh` for a Release app and ZIP. [Development and validation →](CONTRIBUTING.md)
+The script builds, stages, locally signs, and opens `dist/Freely.app`. Use `./script/test.sh` for the ordinary test suites or `./script/package.sh` for a Release app and ZIP. [Development and validation →](CONTRIBUTING.md)
 
 ## Subscription first, with a clear boundary
 
-The native OAuth implementation uses xAI's authorization service, a browser authentication session, PKCE/S256, state validation, refresh-token rotation and device-bound Keychain storage. The public build does not contain another application's client identity. Its registered callback is `meetingcopilot://oauth/callback`.
+The native OAuth implementation uses xAI's authorization service, a browser authentication session, PKCE/S256, state validation, refresh-token rotation and device-bound Keychain storage. The public build does not contain another application's client identity. Its registered callback is `freely://oauth/callback`.
 
-**Registration and entitlement remain unresolved for this application.** Support for other xAI integrations does not establish a supported subscription inference route for MeetingCopilot. The app therefore shows an actionable registration-required state. [OAuth implementation and evidence →](docs/oauth-evidence.md)
+**Registration and entitlement remain unresolved for this application.** Support for other xAI integrations does not establish a supported subscription inference route for Freely. The app therefore shows an actionable registration-required state. [OAuth implementation and evidence →](docs/oauth-evidence.md)
 
 The optional API path uses your own xAI API key, stored separately in Keychain. Requests use the Responses API with bounded context, no model tools and `store:false`. This setting is not a blanket provider-retention guarantee. Live text streaming and live transcript-plus-image reasoning still require separate verification with authorized access.
 
@@ -90,7 +90,7 @@ The original latency objectives were **not met**: measured aligned partial p95 w
 | [History and provenance](docs/history.md) | How the first public import was organized and how to recover the original Git history. |
 | [Third-party notices](THIRD_PARTY_NOTICES.md) | Dependency and model attribution; bundled license texts. |
 
-The [preview release](https://github.com/4wl2d/MeetingCopilot/releases/tag/v0.1.0-preview) includes the app ZIP, checksums, the original Git-history bundle, and a verification-evidence archive. Model weights and corpus audio are not included in the repository. For reproducible issues or focused contributions, see [CONTRIBUTING.md](CONTRIBUTING.md).
+The [preview release](https://github.com/4wl2d/Freely/releases/tag/v0.1.0-preview) includes the app ZIP, checksums, the original Git-history bundle, and a verification-evidence archive. Model weights and corpus audio are not included in the repository. For reproducible issues or focused contributions, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 

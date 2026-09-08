@@ -1,6 +1,6 @@
 import Foundation
 import Testing
-@testable import MeetingCopilot
+@testable import Freely
 
 struct SSEParserTests {
     @Test func allByteBoundariesPreserveUnicodeAndMultipleEvents() throws {

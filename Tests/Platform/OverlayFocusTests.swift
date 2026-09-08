@@ -1,12 +1,12 @@
 import AppKit
-import CopilotCore
+import FreelyCore
 import Foundation
 import Testing
-@testable import MeetingCopilot
+@testable import Freely
 
 @Suite(.serialized)
 struct OverlayFocusTests {
-    @Test(.enabled(if: ProcessInfo.processInfo.environment["MEETINGCOPILOT_FOCUS_TEST"] == "1", "Opt-in live desktop NSPanel focus verification"))
+    @Test(.enabled(if: ProcessInfo.processInfo.environment["FREELY_FOCUS_TEST"] == "1", "Opt-in live desktop NSPanel focus verification"))
     @MainActor func passiveStreamDoesNotActivateTheApplication() async throws {
         let initial = try #require(NSWorkspace.shared.frontmostApplication)
         let process = ProcessInfo.processInfo.processIdentifier

@@ -7,7 +7,7 @@ import AVFoundation
     func applicationDidFinishLaunching(_ notification: Notification) {
         let window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 800, height: 520),
             styleMask: [.titled, .closable, .miniaturizable, .resizable], backing: .buffered, defer: false)
-        window.title = "MeetingCopilot capture fixture — public test content"
+        window.title = "Freely capture fixture — public test content"
         let content = NSView(frame: NSRect(x: 0, y: 0, width: 800, height: 520))
         let title = NSTextField(labelWithString: "Screen understanding fixture")
         title.font = .systemFont(ofSize: 26, weight: .semibold); title.frame = NSRect(x: 30, y: 445, width: 730, height: 40)

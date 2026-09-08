@@ -1,7 +1,7 @@
 import AuthenticationServices
 import Foundation
 import Testing
-@testable import MeetingCopilot
+@testable import Freely
 
 struct OAuthTests {
     @Test func missingRegistrationFailsClosedAndPKCEMatchesRFCVector() throws {
@@ -27,16 +27,16 @@ struct OAuthTests {
         let state = String(repeating: "s", count: 43)
         let attempt = try OAuthAuthorizationAttempt(configuration: OAuthFixtures.configuration, discovery: OAuthFixtures.discovery,
             verifier: String(repeating: "v", count: 43), state: state)
-        let valid = try #require(URL(string: "meetingcopilot://oauth/callback?state=\(state)&code=synthetic-code"))
+        let valid = try #require(URL(string: "freely://oauth/callback?state=\(state)&code=synthetic-code"))
         #expect(try attempt.authorizationCode(from: valid) == "synthetic-code")
         for text in [
-            "meetingcopilot://oauth/callback?state=wrong&code=code", "meetingcopilot://other/callback?state=\(state)&code=code",
-            "meetingcopilot://oauth/callback?state=\(state)&state=\(state)&code=code",
-            "meetingcopilot://oauth/callback?state=\(state)&code=one&code=two",
-            "meetingcopilot://oauth/callback?state=\(state)&code=one&error=access_denied",
-            "meetingcopilot://oauth/callback?state=\(state)&code=one&iss=https://wrong.example",
-            "meetingcopilot://oauth/%63allback?state=\(state)&code=one",
-            "meetingcopilot://oauth/callback?state=\(state)&code=one#fragment"
+            "freely://oauth/callback?state=wrong&code=code", "freely://other/callback?state=\(state)&code=code",
+            "freely://oauth/callback?state=\(state)&state=\(state)&code=code",
+            "freely://oauth/callback?state=\(state)&code=one&code=two",
+            "freely://oauth/callback?state=\(state)&code=one&error=access_denied",
+            "freely://oauth/callback?state=\(state)&code=one&iss=https://wrong.example",
+            "freely://oauth/%63allback?state=\(state)&code=one",
+            "freely://oauth/callback?state=\(state)&code=one#fragment"
         ] {
             let callback = try #require(URL(string: text))
             #expect(throws: OAuthError.invalidCallback) { try attempt.authorizationCode(from: callback) }
@@ -48,7 +48,7 @@ struct OAuthTests {
         #expect(cancelled.resolve(.failure(CancellationError())))
         do { let _: URL = try await withCheckedThrowingContinuation { cancelled.install($0) }; Issue.record("Expected cancelled continuation") }
         catch { #expect(error is CancellationError) }
-        #expect(!cancelled.resolve(.success(URL(string: "meetingcopilot://oauth/callback")!)))
+        #expect(!cancelled.resolve(.success(URL(string: "freely://oauth/callback")!)))
         let completed = OAuthResultGate<String>()
         let task = Task { try await withCheckedThrowingContinuation { completed.install($0) } }
         #expect(completed.resolve(.success("synthetic-result")))
@@ -117,7 +117,7 @@ struct OAuthTests {
         let first = Task { try await client.accessToken() }
         let second = Task { try await client.accessToken() }
         try await OAuthFixtures.waitForRequests(1, scenario: scenario)
-        await client.configure(.init(clientID: "another-meetingcopilot-test-client"))
+        await client.configure(.init(clientID: "another-freely-test-client"))
         for task in [first, second] {
             do { _ = try await task.value; Issue.record("Obsolete refresh must not return tokens") }
             catch { #expect(error is CancellationError || error as? OAuthError == .disconnected) }

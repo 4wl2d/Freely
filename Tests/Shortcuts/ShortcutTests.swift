@@ -1,7 +1,7 @@
 import AppKit
 import Foundation
 import Testing
-@testable import MeetingCopilot
+@testable import Freely
 
 struct ShortcutTests {
     @Test func everyRequiredActionHasDistinctValidDefault() {
@@ -32,7 +32,7 @@ struct ShortcutTests {
         #expect(ShortcutChord(key: .one, modifiers: [.control, .option, .command]).label == "⌃⌥⌘1")
     }
 
-    @Test(.enabled(if: ProcessInfo.processInfo.environment["MEETINGCOPILOT_HOTKEY_TEST"] == "1"))
+    @Test(.enabled(if: ProcessInfo.processInfo.environment["FREELY_HOTKEY_TEST"] == "1"))
     @MainActor func nativeRegistrationConflictReconfigureAndCleanup() {
         _ = NSApplication.shared
         let first = HotkeyController { _ in }

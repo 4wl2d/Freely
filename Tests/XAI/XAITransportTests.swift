@@ -1,7 +1,7 @@
 import Foundation
 import Synchronization
 import Testing
-@testable import MeetingCopilot
+@testable import Freely
 
 /// Test-only URLProtocol exercises Foundation's real AsyncBytes bridge without paid requests or actual credentials.
 private final class FixtureURLProtocol: URLProtocol, @unchecked Sendable {

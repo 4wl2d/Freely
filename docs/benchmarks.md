@@ -80,7 +80,7 @@ Benchmarks/STT/run.sh test
 ./script/benchmark.sh --stt-initial
 ./script/benchmark.sh --stt-dual 1200
 ./script/benchmark.sh --soak 60
-MEETINGCOPILOT_SOAK_UI=1 ./script/benchmark.sh --soak 14400
+FREELY_SOAK_UI=1 ./script/benchmark.sh --soak 14400
 ```
 
 The soak requires cached verified models and the paired licensed corpus. It performs real paced local inference/context/generation coordination with a recorded LLM fixture. The optional UI mode hosts production SetupView and NativeAnswerView in a hidden NSWindow, retains actual coordinator updates and verifies cleanup without accessing credentials, writing preferences or activating a window. This measures view retention inside the test process; proper app-bundle usability and visible interaction are separate checks. It is opt-in and ordinary CI skips it. Raw hypothesis/audio/model assets are kept in ignored local folders; compact source/metric summaries are checked in. No synthetic provider result is counted as internet/model performance.

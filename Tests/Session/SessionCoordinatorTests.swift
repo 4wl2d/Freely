@@ -1,7 +1,7 @@
-import CopilotCore
+import FreelyCore
 import Foundation
 import Testing
-@testable import MeetingCopilot
+@testable import Freely
 
 struct SessionCoordinatorTests {
     @Test @MainActor func deferredConsentFromAnEndedSessionCannotEnableTheNewSession() async throws {

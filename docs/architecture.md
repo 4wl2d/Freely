@@ -1,6 +1,6 @@
 # Architecture and source ledger
 
-MeetingCopilot is one Swift 6 macOS application, packaged from a checked-in SwiftPM executable target. `Packages/CopilotCore` contains platform-independent value types, actors, bounded domain algorithms and tests. No bot, cloud backend, meeting SDK, Python inference server, event bus or DI framework is shipped.
+Freely is one Swift 6 macOS application, packaged from a checked-in SwiftPM executable target. `Packages/FreelyCore` contains platform-independent value types, actors, bounded domain algorithms and tests. No bot, cloud backend, meeting SDK, Python inference server, event bus or DI framework is shipped.
 
 ## Ownership and flow
 
@@ -61,7 +61,7 @@ Accessed 2026-09-07. Documentation evidence is distinct from local runtime tests
 | [Apple NSAudioCaptureUsageDescription](https://developer.apple.com/documentation/bundleresources/information-property-list/nsaudiocaptureusagedescription) | System-audio purpose string; microphone/screen purpose strings also declared | Actual runtime prompt/permission is checked, not inferred from a plist key. |
 | [ASWebAuthenticationSession](https://developer.apple.com/documentation/authenticationservices/aswebauthenticationsession) | Native external browser authentication | Own provider registration/callback approval still required. |
 | [xAI OAuth discovery](https://auth.x.ai/.well-known/openid-configuration) | Actual issuer/endpoints, public-client PKCE, S256 and refresh grant | No advertised registration endpoint; no custom app entitlement established. |
-| [xAI OpenCode integration](https://x.ai/news/grok-opencode) | Subscription-backed OAuth exists for a named integration | Its identity/token cannot be reused as MeetingCopilot's registration. |
+| [xAI OpenCode integration](https://x.ai/news/grok-opencode) | Subscription-backed OAuth exists for a named integration | Its identity/token cannot be reused as Freely's registration. |
 | [RFC 8252](https://www.rfc-editor.org/rfc/rfc8252), [RFC 7636](https://www.rfc-editor.org/rfc/rfc7636) | External user agent, PKCE, state/callback checks, no embedded secret | Interoperability needs registered-client live verification. |
 | [Grok 4.6](https://docs.x.ai/developers/grok-4-6), [reasoning](https://docs.x.ai/developers/model-capabilities/text/reasoning) | Configurable real model; low effort; Responses text+image capability | Account/model access and latency remain live checks. |
 | [Text generation](https://docs.x.ai/developers/model-capabilities/text/generate-text), [streaming](https://docs.x.ai/developers/model-capabilities/text/streaming) | store:false, bounded client context, typed SSE and terminal states | Provider-specific live terminal/usage traces not replaced by fixtures. |

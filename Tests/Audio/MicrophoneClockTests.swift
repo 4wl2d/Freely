@@ -1,7 +1,7 @@
 import CoreMedia
 import Foundation
 import Testing
-@testable import MeetingCopilot
+@testable import Freely
 
 struct MicrophoneClockTests {
     @Test func clockCanBeEstablishedAfterConfiguration() throws {

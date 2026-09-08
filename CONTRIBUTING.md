@@ -1,25 +1,25 @@
 # Contributing
 
-MeetingCopilot is a native macOS preview. Start with the [verification ledger](docs/verification.md) to distinguish an implementation defect from an account, permission or untested compatibility boundary.
+Freely is a native macOS preview. Start with the [verification ledger](docs/verification.md) to distinguish an implementation defect from an account, permission or untested compatibility boundary.
 
 ## Build and test
 
 Use Apple Silicon and a stable full Xcode installation. The recorded toolchain is Xcode 26.6 / Swift 6.3.3; the app targets macOS 15.0 or later.
 
 ```sh
-DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer swift build --arch arm64 --product MeetingCopilot
+DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer swift build --arch arm64 --product Freely
 ./script/test.sh
 ```
 
 The ordinary suite does not download models, request capture permission, or make live paid API calls. Native Keychain and hotkey registration checks are opt-in:
 
 ```sh
-MEETINGCOPILOT_KEYCHAIN_TEST=1 MEETINGCOPILOT_HOTKEY_TEST=1 ./script/test.sh
+FREELY_KEYCHAIN_TEST=1 FREELY_HOTKEY_TEST=1 ./script/test.sh
 ```
 
 Keychain checks use unique synthetic test items. Hotkey registration is not proof of physical key delivery across applications. Model/corpus-dependent benchmarks and the four-hour soak have separate setup and workload limits in [docs/benchmarks.md](docs/benchmarks.md).
 
-`./script/build_and_run.sh` stages and launches the app. It stops running processes named `MeetingCopilot`, including in `--build-only` mode; finish any active session first. Keep benchmark measurements tied to an exact source snapshot and artifact, and record concurrent host activity.
+`./script/build_and_run.sh` stages and launches the app. It stops running processes named `Freely`, including in `--build-only` mode; finish any active session first. Keep benchmark measurements tied to an exact source snapshot and artifact, and record concurrent host activity.
 
 ## Focus a change
 

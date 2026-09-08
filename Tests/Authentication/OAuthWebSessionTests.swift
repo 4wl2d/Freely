@@ -1,7 +1,7 @@
 import AuthenticationServices
 import Foundation
 import Testing
-@testable import MeetingCopilot
+@testable import Freely
 
 @MainActor struct OAuthWebSessionTests {
     private func waitForSession(_ holder: WebSessionHolder) async throws {
@@ -12,7 +12,7 @@ import Testing
     }
     private func callback(_ authorizationURL: URL) throws -> URL {
         let state = try #require(URLComponents(url: authorizationURL, resolvingAgainstBaseURL: false)?.queryItems?.first { $0.name == "state" }?.value)
-        return try #require(URL(string: "meetingcopilot://oauth/callback?state=\(state)&code=synthetic-authorized-code"))
+        return try #require(URL(string: "freely://oauth/callback?state=\(state)&code=synthetic-authorized-code"))
     }
 
     @Test func cancelWithoutOSCallbackTerminatesAndAllowsAnotherAttempt() async throws {
@@ -147,9 +147,9 @@ import Testing
 }
 
 struct OAuthKeychainTests {
-    @Test(.enabled(if: ProcessInfo.processInfo.environment["MEETINGCOPILOT_KEYCHAIN_TEST"] == "1"))
+    @Test(.enabled(if: ProcessInfo.processInfo.environment["FREELY_KEYCHAIN_TEST"] == "1"))
     func syntheticTokenSetRotatesAtomicallyInAnIsolatedKeychainItem() throws {
-        let store = OAuthTokenStore(service: "local.meetingcopilot.oauth-test.\(UUID().uuidString)")
+        let store = OAuthTokenStore(service: "local.freely.oauth-test.\(UUID().uuidString)")
         #expect(try store.load() == nil)
         do {
             let initial = OAuthFixtures.oldTokens()

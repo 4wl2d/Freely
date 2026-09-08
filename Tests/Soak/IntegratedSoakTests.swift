@@ -1,12 +1,12 @@
 import AppKit
-import CopilotCore
+import FreelyCore
 import CryptoKit
 import Darwin
 import Foundation
 import SwiftUI
 import Synchronization
 import Testing
-@testable import MeetingCopilot
+@testable import Freely
 
 private struct ReplayFixture: Codable, Sendable {
     let file: String
@@ -293,7 +293,7 @@ private struct SoakUIReport: Codable {
     private var closed = false
 
     init(preferences: AppPreferences) throws {
-        directory = FileManager.default.temporaryDirectory.appendingPathComponent("MeetingCopilot-Soak-UI-\(UUID())", isDirectory: true)
+        directory = FileManager.default.temporaryDirectory.appendingPathComponent("Freely-Soak-UI-\(UUID())", isDirectory: true)
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true, attributes: [.posixPermissions: 0o700])
         _ = NSApplication.shared // Creates AppKit infrastructure without activating the process.
         let model = ApplicationModel(store: PreferencesStore(directory: directory), credentials: credentials,
@@ -415,15 +415,15 @@ private struct SoakUIReport: Codable {
 
 @Suite(.serialized)
 struct IntegratedSoakTests {
-    @Test(.enabled(if: ProcessInfo.processInfo.environment["MEETINGCOPILOT_SOAK"] == "1", "Opt-in cached-model paced run"))
+    @Test(.enabled(if: ProcessInfo.processInfo.environment["FREELY_SOAK"] == "1", "Opt-in cached-model paced run"))
     @MainActor func realTimeDualSourceLocalProcessing() async throws {
         let environment = ProcessInfo.processInfo.environment
         let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
-        let seconds = min(14_400, max(10, Int(environment["MEETINGCOPILOT_SOAK_SECONDS"] ?? "60") ?? 60))
+        let seconds = min(14_400, max(10, Int(environment["FREELY_SOAK_SECONDS"] ?? "60") ?? 60))
         let defaultCorpus = root.appendingPathComponent("Benchmarks/STT/.cache/paired-corpus-v1")
-        let corpus = URL(fileURLWithPath: environment["MEETINGCOPILOT_SOAK_CORPUS"] ?? defaultCorpus.path)
-        let manifest = try JSONDecoder().decode(ModelManifest.self, from: Data(contentsOf: root.appendingPathComponent("MeetingCopilot/Resources/model-manifest.json")))
-        let modelRoot = URL(fileURLWithPath: environment["MEETINGCOPILOT_SOAK_MODELS"] ?? PreferencesStore.defaultDirectory.appendingPathComponent("Models").path)
+        let corpus = URL(fileURLWithPath: environment["FREELY_SOAK_CORPUS"] ?? defaultCorpus.path)
+        let manifest = try JSONDecoder().decode(ModelManifest.self, from: Data(contentsOf: root.appendingPathComponent("Freely/Resources/model-manifest.json")))
+        let modelRoot = URL(fileURLWithPath: environment["FREELY_SOAK_MODELS"] ?? PreferencesStore.defaultDirectory.appendingPathComponent("Models").path)
         let installer = try ModelInstaller(root: modelRoot, manifest: manifest)
         _ = try await installer.verifiedInstallation()
         let cache = LocalSpeechModelCache(installer: installer)
@@ -435,12 +435,12 @@ struct IntegratedSoakTests {
             microphone: local, system: remote, makeTranscriber: { source in try await cache.transcriber(for: source) },
             makeProvider: { _, _ in provider }, onState: recorder.record, onAnswer: recorder.record)
         recorder.coordinator = coordinator
-        let activity = ProcessInfo.processInfo.beginActivity(options: [.userInitiated, .idleSystemSleepDisabled], reason: "MeetingCopilot opt-in paced local-processing benchmark")
+        let activity = ProcessInfo.processInfo.beginActivity(options: [.userInitiated, .idleSystemSleepDisabled], reason: "Freely opt-in paced local-processing benchmark")
         defer { ProcessInfo.processInfo.endActivity(activity) }
         var preferences = AppPreferences()
         preferences.audio.systemScope = .allSystemAudio
         preferences.ai.experimentalSpeculation = false
-        let uiRequested = environment["MEETINGCOPILOT_SOAK_UI"] == "1"
+        let uiRequested = environment["FREELY_SOAK_UI"] == "1"
         if uiRequested { recorder.uiHost = try SoakUIHost(preferences: preferences) }
         var memory: [SoakMemorySample] = []
         var began: Double?
@@ -664,7 +664,7 @@ struct SoakFixtureReaderTests {
     }
 
     @Test func exactFramesCrossFileBoundariesWithoutPaddingOrLostTailSamples() async throws {
-        let directory = FileManager.default.temporaryDirectory.appendingPathComponent("MeetingCopilot-PacedReader-\(UUID())")
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent("Freely-PacedReader-\(UUID())")
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
         defer { do { try FileManager.default.removeItem(at: directory) } catch { Issue.record("Fixture cleanup failed") } }
         let values: [[Float]] = [[0.1, 0.2, 0.3], [0.4, 0.5, 0.6, 0.7]]
@@ -684,7 +684,7 @@ struct SoakFixtureReaderTests {
         try await reader.close()
     }
     @Test func emptyAndCorruptFixturesFailBeforePacedCaptureStarts() throws {
-        let directory = FileManager.default.temporaryDirectory.appendingPathComponent("MeetingCopilot-InvalidReader-\(UUID())")
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent("Freely-InvalidReader-\(UUID())")
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
         defer { do { try FileManager.default.removeItem(at: directory) } catch { Issue.record("Fixture cleanup failed") } }
         let manifest = directory.appendingPathComponent("source.json")
