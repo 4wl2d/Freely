@@ -156,6 +156,10 @@ final class ApplicationModel {
             (connectionReady || transcriptionOnly) && audioSelectionReady &&
             (!preferences.audio.microphoneEnabled || microphonePermission == .authorized)
     }
+    var capturePermissionsReady: Bool {
+        (!preferences.audio.microphoneEnabled || microphonePermission == .authorized) &&
+            (!preferences.audio.systemAudioEnabled || screenPixelPermission || systemPermissionStatus == "Capture started successfully")
+    }
     var audioSelectionReady: Bool {
         (preferences.audio.microphoneEnabled || preferences.audio.systemAudioEnabled) &&
             (!preferences.audio.systemAudioEnabled || preferences.audio.systemScope == .allSystemAudio || preferences.audio.applicationBundleID != nil)

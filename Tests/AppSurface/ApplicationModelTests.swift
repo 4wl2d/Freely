@@ -167,4 +167,21 @@ private actor SurfaceSourceGate {
         await model.shutdown(); try cleanup(directory)
     }
 
+    @Test func setupAcknowledgesGrantedPermissionsBeforeFirstCapture() async throws {
+        let directory = directory(), model = model(directory: directory)
+        model.preferences.audio.microphoneEnabled = true
+        model.preferences.audio.systemAudioEnabled = true
+        model.microphonePermission = .authorized
+        model.screenPixelPermission = true
+        model.systemPermissionStatus = "Not exercised"
+        #expect(model.capturePermissionsReady)
+        model.screenPixelPermission = false
+        #expect(!model.capturePermissionsReady)
+        model.preferences.audio.systemAudioEnabled = false
+        #expect(model.capturePermissionsReady)
+        model.microphonePermission = .denied
+        #expect(!model.capturePermissionsReady)
+        await model.shutdown(); try cleanup(directory)
+    }
+
 }
