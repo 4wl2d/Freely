@@ -54,7 +54,8 @@ public actor KeychainCredentialStore: CredentialStoring {
         let marker = PreferencesStore.defaultDirectory.appendingPathComponent(".legacy-keychain-import-complete")
         guard !FileManager.default.fileExists(atPath: marker.path) else { return }
         let legacy = KeychainCredentialStore(service: "com.meetingcopilot.xai-api", account: account)
-        if let credential = try await legacy.load() { try save(credential) }
+        // The legacy actor suspends us; a key entered meanwhile must win over migration.
+        if let credential = try await legacy.load(), try load() == nil { try save(credential) }
         try FileManager.default.createDirectory(at: marker.deletingLastPathComponent(), withIntermediateDirectories: true, attributes: [.posixPermissions: 0o700])
         try Data().write(to: marker, options: .atomic)
     }
