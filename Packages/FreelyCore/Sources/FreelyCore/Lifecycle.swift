@@ -27,7 +27,8 @@ public struct SessionLifecycle: Sendable {
     @discardableResult public mutating func resume() -> Bool {
         guard phase == .paused else { return false }
         phase = .running
-        for source in AudioSource.allCases where sources[source] == .paused { sources[source] = .running }
+        // The native coordinator must confirm each restarted source. Resuming the
+        // session alone must not claim that a paused or disabled input is capturing.
         return true
     }
     @discardableResult public mutating func recovering(epoch: SessionEpoch) -> Bool {
