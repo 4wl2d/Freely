@@ -1,0 +1,103 @@
+{
+  "product": "Freely",
+  "version": "0.2.0",
+  "date": "2026-09-08",
+  "environment": {
+    "macOS": "26.6.2",
+    "macOSBuild": "25G83",
+    "architecture": "arm64",
+    "Xcode": "26.6 (17F113)",
+    "Swift": "6.3.3",
+    "GrokBuild": "1.0.13 (5e9a58528b76)"
+  },
+  "artifact": {
+    "name": "Freely-0.2.0-macOS-arm64.zip",
+    "sha256": "83bba6116c69dbf585ae166640347fbb95ecd6d85cdbf2aea6eb0d24478e1772",
+    "executableSHA256": "959124d01c7e400014e2e588fca3bf6478bcd37983971d696d6c8d0a20471aa6",
+    "bundleID": "local.freely.app",
+    "buildRevision": "0c8053082065",
+    "buildWorkingTree": "clean",
+    "installedFilesMatchExtractedZIP": true,
+    "runtimeInputsMatchTestHead": true,
+    "notarized": false
+  },
+  "testHead": "747f6eae41a2b51eaa005ee56a042cdbef51f1c6",
+  "automated": {
+    "core": {
+      "discovered": 49,
+      "passed": 49
+    },
+    "native": {
+      "discovered": 171,
+      "passed": 165,
+      "optInSkipped": 6
+    }
+  },
+  "liveChecks": {
+    "subscriptionText": "passed, grok.com subscription via official Grok Build",
+    "speechModelDownload": "passed, 483.1 MB download and hash verification",
+    "systemAudioSTT": "passed, controlled English speech from CaptureFixture",
+    "automaticAnswer": "passed, question following introductory speech",
+    "windowVision": "passed, full PNG inspected and code result 20 returned",
+    "microphone": "passed, 48 kHz native input and local decoding, transcription-only mode",
+    "pauseResume": "passed, disabled microphone remains Off",
+    "cancelActiveGrokRequest": "passed, 0.0968 s session teardown, zero child processes and temporary request directories afterward",
+    "endSession": "passed, retained transcript, answer and image selection cleared",
+    "restoreUserSettings": "passed, original mic/system-audio choices restored and transcription-only disabled"
+  },
+  "evidence": {
+    "setup-ready.png": {
+      "sha256": "87e1365416fdc5e76c639e1427cb629f00f33755299ff3fc86867cdf189e9661",
+      "bytes": 102334
+    },
+    "grok-connected.png": {
+      "sha256": "af3e3440976fb9776ad6643e368c67e76ff0ffffcc0c2fa0725ff1691edb9157",
+      "bytes": 84095
+    },
+    "model-download.png": {
+      "sha256": "e3d7941a7fc6da8dc08632faa49a3790ca93b62a31d8360ccdbf5bdd8eb9e63c",
+      "bytes": 90849
+    },
+    "meeting-answer.png": {
+      "sha256": "c85e8fef49bd29645546329af5e923572fe5313d23da4baf31d0668d3f936aa4",
+      "bytes": 114584
+    },
+    "window-answer.png": {
+      "sha256": "09a04b09577a67dc4593a5dfe9ae2969a974276be4801ad3713fc14c775f974e",
+      "bytes": 92153
+    },
+    "window-capture.png": {
+      "sha256": "2046fddf15de224868d02bee8f4f172b3b34daa60e6cd6dfc60427b9577917cc",
+      "bytes": 137138
+    },
+    "resume-sources.png": {
+      "sha256": "2d0c913c5610b6b7068b835b8042df072f2209950626fe337ce11509ffccf48e",
+      "bytes": 72865
+    },
+    "microphone-check.png": {
+      "sha256": "ec3d6224cda818b9c761ba618b53602d4406c9bb350ef8aac0046de8a5553fc8",
+      "bytes": 86081
+    },
+    "ended-session.png": {
+      "sha256": "f82a132ecf290f45090adfa21856ff6b166d80c8b33b56a8a8524ace6d549ebd",
+      "bytes": 68010
+    }
+  },
+  "boundaries": [
+    "Same user account and Mac, not a clean macOS account or hardware matrix",
+    "Existing Grok Build sign-in reused; fresh account creation was not forced",
+    "Controlled English audio and a public test window, not a Zoom/Teams receiver matrix",
+    "Separate microphone and system-audio checks, not a new multi-hour simultaneous-capture soak",
+    "Ad hoc signed preview; Developer ID/notarization not supplied",
+    "Meeting and vision screenshots precede the final pause-state correction; final installed artifact additionally verified pause, cancellation, mic and restored setup"
+  ],
+  "hostedCI": {
+    "url": "https://github.com/4wl2d/Freely/actions/runs/34262734157",
+    "headSHA": "747f6eae41a2b51eaa005ee56a042cdbef51f1c6",
+    "debug": "passed",
+    "release": "passed",
+    "coreTestsPerConfiguration": 49,
+    "nativeTestsPerConfiguration": 171,
+    "nativeOptInSkipsPerConfiguration": 6
+  }
+}
