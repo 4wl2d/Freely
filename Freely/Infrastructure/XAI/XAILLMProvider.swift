@@ -33,14 +33,20 @@ public actor XAILLMProvider: LLMProviding {
         guard !tearingDown, requestedEpoch == operationEpoch else { throw CancellationError() }
         guard jobs.count < 2 else { throw XAIError.localRateLimited }
         let jobID = UUID()
+        let scope = DiagnosticScope(session: request.diagnosticSessionID, request: request.diagnosticRequestID)
         return AsyncThrowingStream(bufferingPolicy: .bufferingOldest(256)) { continuation in
             let task = Task {
+                let started = ProcessInfo.processInfo.systemUptime
                 do {
-                    try await self.perform(body: body, credential: credential, detailed: request.detailed, continuation: continuation)
+                    try await self.perform(body: body, credential: credential, detailed: request.detailed, scope: scope, continuation: continuation)
+                    FreelyLog.record(.requestFinished, scope: scope, duration: ProcessInfo.processInfo.systemUptime - started)
                     continuation.finish()
                 } catch {
-                    if Task.isCancelled || error is CancellationError { continuation.finish(throwing: CancellationError()) }
-                    else { continuation.finish(throwing: Self.redacted(error)) }
+                    if Task.isCancelled || error is CancellationError {
+                        FreelyLog.record(.requestCancelled, scope: scope)
+                        continuation.finish(throwing: CancellationError())
+                    }
+                    else { FreelyLog.record(.requestFailed, level: .error, scope: scope, fields: [.failure: .failure(Self.redacted(error))]); continuation.finish(throwing: Self.redacted(error)) }
                 }
                 self.removeJob(jobID)
             }
@@ -62,7 +68,7 @@ public actor XAILLMProvider: LLMProviding {
 
     private func removeJob(_ id: UUID) { jobs[id] = nil }
 
-    private func perform(body: Data, credential: String, detailed: Bool,
+    private func perform(body: Data, credential: String, detailed: Bool, scope: DiagnosticScope,
                          continuation: AsyncThrowingStream<LLMEvent, Error>.Continuation) async throws {
         let clock = ContinuousClock()
         let deadline = clock.now.advanced(by: detailed ? configuration.detailedDeadline : configuration.normalDeadline)
@@ -81,8 +87,9 @@ public actor XAILLMProvider: LLMProviding {
             guard starts.count < configuration.requestStartsPerMinute else { throw XAIError.localRateLimited }
             starts.append(clock.now)
             await progress.beginAttempt()
+            FreelyLog.record(.requestStarted, scope: scope, fields: [.attempt: .int(attempt + 1)])
             do {
-                try await attemptStream(body: body, credential: credential, deadline: deadline, progress: progress, continuation: continuation)
+                try await attemptStream(body: body, credential: credential, deadline: deadline, progress: progress, scope: scope, continuation: continuation)
                 return
             } catch {
                 if Task.isCancelled || error is CancellationError { throw CancellationError() }
@@ -94,13 +101,14 @@ public actor XAILLMProvider: LLMProviding {
                 guard !visible, attempt < configuration.maxRetries, Self.isRetryable(failure) else { throw failure }
                 let delay = Self.retryDelay(failure: failure, attempt: attempt, jitter: Double.random(in: 0.8...1.2))
                 guard clock.now.advanced(by: .seconds(delay)) < deadline else { throw failure }
+                FreelyLog.record(.requestRetry, level: .warning, scope: scope, fields: [.attempt: .int(attempt + 1), .delaySeconds: .number(delay), .failure: .failure(failure)])
                 try Self.emit(.retryScheduled(attempt: attempt + 1, delaySeconds: delay), to: continuation)
                 try await clock.sleep(for: .seconds(delay))
             }
         }
     }
 
-    private func attemptStream(body: Data, credential: String, deadline: ContinuousClock.Instant, progress: StreamProgress,
+    private func attemptStream(body: Data, credential: String, deadline: ContinuousClock.Instant, progress: StreamProgress, scope: DiagnosticScope,
                                continuation: AsyncThrowingStream<LLMEvent, Error>.Continuation) async throws {
         guard let endpoint = URL(string: "https://api.x.ai/v1/responses") else { throw XAIError.invalidConfiguration }
         var request = URLRequest(url: endpoint)
@@ -129,6 +137,7 @@ public actor XAILLMProvider: LLMProviding {
                     let (bytes, response) = try await session.bytes(for: immutableRequest)
                     defer { bytes.task.cancel() }
                     guard let http = response as? HTTPURLResponse else { throw XAIError.network }
+                    FreelyLog.record(.responseReceived, scope: scope, fields: [.httpStatus: .int(http.statusCode)])
                     guard (200..<300).contains(http.statusCode) else {
                         throw Self.httpError(status: http.statusCode, retryAfter: http.value(forHTTPHeaderField: "Retry-After"))
                     }

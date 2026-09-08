@@ -210,3 +210,16 @@ import Testing
     _ = await engine.apply(.gap(.init(source: .systemAudio, startTime: 8.2, endTime: 8.4, cause: .overflow)), sessionEpoch: epoch, now: 315)
     #expect(await engine.rollingSummary()?.facts == "")
 }
+
+@Test func questionAtEndOfRecognizedMeetingTurnTriggersWithItsContext() async throws {
+    let text = "The team is planning a demo for Friday, the API is ready, but the login screen still needs testing, what should we test before the demo?"
+    #expect(IntentHeuristics.classify(text, hasAntecedent: false) == .interrogative)
+    #expect(IntentHeuristics.classify("The API is ready. Can we test the login screen?", hasAntecedent: false) == .interrogative)
+    #expect(IntentHeuristics.classify("The team discussed what to test before the demo.", hasAntecedent: false) == nil)
+    #expect(IntentHeuristics.classify("The API is ready, the login screen needs testing.", hasAntecedent: false) == nil)
+    let engine = ConversationEngine()
+    await engine.begin(sessionID: .init(), epoch: .init(1))
+    let update = await engine.apply(.upsert(segment(text, sequence: 1, start: 0, end: 8)), sessionEpoch: .init(1), now: 8.5)
+    #expect(update.newQuestion?.text == text)
+    #expect(await engine.tick(now: 9).newQuestion == nil)
+}

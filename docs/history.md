@@ -1,5 +1,7 @@
 # History and provenance
 
+On 2026-09-08 the repository and active project were renamed to **Freely**. Swift targets, app identity, resources, paths, scripts and current documentation use the new name. Names inside original release assets and historical measurement records remain unchanged so their hashes and provenance stay valid. The new app imports legacy settings and model files without deleting their originals.
+
 Before its first public import, MeetingCopilot's initial implementation was reorganized into logical, reviewable commits. Those commits present a completed local implementation and its evidence by topic. Their order is not a reconstruction of when each subsystem was written, and no development chronology has been invented or backdated.
 
 The original local Git history is preserved separately. Public import commits may therefore have different identifiers from the snapshots named in build and benchmark records. A historical SHA in an evidence file identifies that original snapshot; it does not imply that a GitHub commit URL with the same SHA will exist in the reorganized public history.

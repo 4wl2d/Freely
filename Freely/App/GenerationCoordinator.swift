@@ -21,6 +21,7 @@ actor SharedRequestBudget {
 }
 
 struct GenerationDiagnostics: Sendable {
+    var requestID: UUID?
     var status = "Idle"
     var inputEstimate = 0
     /// Submission precedes credential lookup and request-budget approval; this is not HTTP start.
@@ -96,7 +97,10 @@ final class GenerationCoordinator {
     private var lastUIUpdate = 0.0
     private var activeQuestionEnd: Double?
     private var activeContextID: UUID?
-    private let logger = Logger(subsystem: "local.freely.app", category: "llm")
+    private func trace(_ name: DiagnosticName, _ identity: GenerationIdentity, level: DiagnosticLevel = .info,
+                       fields: [DiagnosticField: DiagnosticValue] = [:], duration: Double? = nil) {
+        FreelyLog.record(name, level: level, scope: .init(session: sessionID.rawValue, request: identity.generationID.rawValue), fields: fields, duration: duration)
+    }
 
     init(conversation: ConversationEngine, screen: NativeScreenCapture, provider: any LLMProviding,
          rateBudget: SharedRequestBudget, sessionEpoch: SessionEpoch, sessionID: SessionID,
@@ -246,6 +250,7 @@ final class GenerationCoordinator {
     }
     func contextInvalidated(_ id: UUID) {
         guard activeContextID == id else { return }
+        if let identity = runningIdentity { trace(.contextInvalidated, identity, level: .warning, fields: [.contextID: .id(id)]) }
         invalidateForeground(clearPending: false)
         contextHistoryNeedsPurge = true
         diagnostics.status = "Selected conversation was corrected · request an updated answer"
@@ -277,7 +282,8 @@ final class GenerationCoordinator {
         activeManual = intent.manual; activeVisual = intent.visual
         outputIdentity = identity; outputPending = ""; activeQuestionEnd = nil
         if !intent.speculative { presentation.begin(identity: identity, question: intent.question) }
-        diagnostics = GenerationDiagnostics(status: intent.speculative ? "Experimental speculation" : "Preparing context")
+        diagnostics = GenerationDiagnostics(requestID: identity.generationID.rawValue, status: intent.speculative ? "Experimental speculation" : "Preparing context")
+        trace(.generationStarted, identity, fields: [.questionID: .id(intent.question.id.rawValue), .revision: .int(intent.question.revision), .manual: .flag(intent.manual), .visual: .flag(intent.visual), .speculative: .flag(intent.speculative)])
         publish()
         let previousSummary = summaryTask
         previousSummary?.cancel()
@@ -324,7 +330,7 @@ final class GenerationCoordinator {
             guard await conversation.generationContextIsCurrent(selectedContext.contextID) else {
                 contextInvalidated(selectedContext.contextID); throw CancellationError()
             }
-            FreelyLog.context.info("Context snapshot prepared; revision=\(snapshot.revision), estimated_tokens=\(snapshot.estimatedTokens)")
+            trace(.contextPrepared, identity, fields: [.contextID: .id(selectedContext.contextID), .revision: .int(snapshot.revision), .inputTokens: .int(snapshot.estimatedTokens)])
             let observed = await conversation.currentUpdate()
             guard accepts(identity), !Task.isCancelled else { throw CancellationError() }
             activeQuestionEnd = !manual && question.source == .systemAudio
@@ -353,7 +359,7 @@ final class GenerationCoordinator {
             publish()
             let request = LLMRequest(trustedInstructions: snapshot.trustedInstructions,
                 selectedContext: snapshot.userContext, estimatedInputTokens: snapshot.estimatedTokens,
-                sessionCacheKey: sessionID.rawValue.uuidString, image: image, detailed: detailed)
+                sessionCacheKey: sessionID.rawValue.uuidString, image: image, detailed: detailed, diagnosticSessionID: sessionID.rawValue, diagnosticRequestID: identity.generationID.rawValue)
             let events = try await provider.stream(request)
             flushTask = Task { [weak self] in
                 while !Task.isCancelled {
@@ -382,6 +388,10 @@ final class GenerationCoordinator {
                     usage = value; diagnostics.usage = value
                     if speculative { speculativeUsage = value }
                 case .completed:
+                    var completionFields: [DiagnosticField: DiagnosticValue] = [:]
+                    if let input = usage?.inputTokens { completionFields[.inputTokens] = .int(input) }
+                    if let output = usage?.outputTokens { completionFields[.outputTokens] = .int(output) }
+                    trace(.generationCompleted, identity, fields: completionFields, duration: diagnostics.submittedAt.map { ProcessInfo.processInfo.systemUptime - $0 })
                     if speculative, !speculationConfirmed {
                         speculativeCompleted = true; terminal = true
                         diagnostics.status = "Speculative answer buffered"; continue
@@ -390,6 +400,7 @@ final class GenerationCoordinator {
                     _ = presentation.finish(identity: identity, lifecycle: .completed, usage: usage.flatMap(Self.coreUsage))
                     diagnostics.status = "Completed"; terminal = true
                 case .incomplete(let reason):
+                    trace(.generationIncomplete, identity, level: .warning)
                     if speculative, !speculationConfirmed { throw XAIError.earlyEOF }
                     flush(identity)
                     _ = presentation.finish(identity: identity, lifecycle: .interrupted, usage: usage.flatMap(Self.coreUsage))
@@ -414,12 +425,14 @@ final class GenerationCoordinator {
             }
             if speculative, speculationConfirmed { clearSpeculation(discarded: false) }
         } catch is CancellationError {
+            trace(.generationCancelled, identity)
             if accepts(identity) {
                 outputPending = ""
                 _ = presentation.finish(identity: identity, lifecycle: .cancelled)
                 diagnostics.status = "Cancelled"
             }
         } catch {
+            trace(.generationFailed, identity, level: .error, fields: [.failure: .failure(error)])
             if accepts(identity) {
                 if speculative, !speculationConfirmed {
                     clearSpeculation()
@@ -436,7 +449,6 @@ final class GenerationCoordinator {
                     usage: usage.flatMap(Self.coreUsage), error: AppError(domain: visual ? .visual : .network,
                         category: .interrupted, userAction: message, diagnosticCode: "answer_interrupted"))
                 diagnostics.status = message
-                logger.error("Generation interrupted; generation=\(identity.generationID.rawValue.uuidString, privacy: .public)")
                 }
             }
         }
@@ -478,6 +490,7 @@ final class GenerationCoordinator {
             } catch {
                 if case XAIError.rateLimited(let delay) = error { await rateBudget.backoff(for: delay ?? 2) }
             }
+            FreelyLog.record(.summaryFinished, level: succeeded ? .info : .warning, scope: .init(session: sessionID.rawValue, request: request.id), fields: [.ready: .flag(succeeded)])
             if !succeeded { await conversation.summaryFailed(requestID: request.id) }
             await provider.cancelAll()
             guard summaryID == request.id else { return }
@@ -541,6 +554,7 @@ final class GenerationCoordinator {
         guard accepts(identity), !presentation.isPinned, diagnostics.firstTextSeconds == nil else { return }
         let now = ProcessInfo.processInfo.systemUptime
         diagnostics.firstTextSeconds = diagnostics.submittedAt.map { max(0, now - $0) }
+        trace(.generationFirstText, identity, duration: diagnostics.firstTextSeconds)
         diagnostics.endToVisibleSeconds = activeQuestionEnd.map { max(0, now - sessionOrigin - $0) }
     }
     private func publish() { onChange(presentation, diagnostics) }

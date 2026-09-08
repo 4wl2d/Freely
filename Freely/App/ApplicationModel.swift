@@ -73,6 +73,7 @@ final class ApplicationModel {
     @ObservationIgnored private let fetchVisualSources: @Sendable () async throws -> [VisualSource]
     @ObservationIgnored let credentials: any CredentialStoring
     @ObservationIgnored let subscription: SubscriptionAuthentication
+    @ObservationIgnored let grokBuild: GrokBuildConnection
     @ObservationIgnored private var connectionCredentials: PreferredCredentialStore?
     @ObservationIgnored private var connectionTask: Task<Void, Never>?
     @ObservationIgnored private var lastConnectionSettings = ""
@@ -87,7 +88,7 @@ final class ApplicationModel {
     @ObservationIgnored private var sanityTask: Task<Void, Never>?
     @ObservationIgnored private var saveTask: Task<Void, Never>?
     @ObservationIgnored private var setupTask: Task<Void, Never>?
-    @ObservationIgnored private var activeValidationProvider: XAILLMProvider?
+    @ObservationIgnored private var activeValidationProvider: (any LLMProviding)?
     @ObservationIgnored private var applicationsTask: Task<Void, Never>?
     @ObservationIgnored private var visualSourcesTask: Task<Void, Never>?
     @ObservationIgnored private var screenTask: Task<Void, Never>?
@@ -119,18 +120,21 @@ final class ApplicationModel {
 
     init(store: PreferencesStore = PreferencesStore(), credentials: any CredentialStoring = KeychainCredentialStore(),
          subscription: SubscriptionAuthentication = SubscriptionAuthentication(),
+         grokBuild: GrokBuildConnection = GrokBuildConnection(),
          fetchVisualSources: @escaping @Sendable () async throws -> [VisualSource] = NativeScreenCapture.sources) {
-        self.store = store; self.credentials = credentials; self.subscription = subscription
+        self.store = store; self.credentials = credentials; self.subscription = subscription; self.grokBuild = grokBuild
         self.fetchVisualSources = fetchVisualSources
     }
 
     var status: String {
         if isShuttingDown { return "Closing Freely" }
         if maintenanceBusy { return "Updating local data" }
+        if modelInstalling { return "Downloading and verifying the speech model" }
+        if sanityChecking { return "Checking local speech recognition" }
         if stopping { return "Ending session" }
         if connectionUpdating, !transcriptionOnly { return "Updating Grok connection" }
         return switch session.phase {
-        case .idle: ready && modelReady && (connectionReady || transcriptionOnly) ? "Ready · capture is off" : "Complete setup to start"
+        case .idle: canStart ? "Ready · capture is off" : (startRequirement ?? "Complete setup to start")
         case .preparing: "Preparing local transcription"
         case .running: transcriptionOnly ? "Transcription only · local audio" : "Listening · automatic answers \(preferences.ai.automaticAnswers ? "on" : "off")"
         case .paused: "Paused · resume explicitly"
@@ -149,9 +153,66 @@ final class ApplicationModel {
     var clickThrough: Bool { preferences.overlay.clickThrough }
     var canStart: Bool {
         ready && modelReady && !running && !preparing && !stopping && !isShuttingDown && !modelInstalling && !sanityChecking && !maintenanceBusy && !credentialBusy &&
-            (connectionReady || transcriptionOnly) && (preferences.audio.microphoneEnabled || preferences.audio.systemAudioEnabled)
+            (connectionReady || transcriptionOnly) && audioSelectionReady &&
+            (!preferences.audio.microphoneEnabled || microphonePermission == .authorized)
     }
-    var connectionReady: Bool { !connectionUpdating && (preferences.connectionMethod == .apiKey ? hasAPIKey : subscription.connected) }
+    var audioSelectionReady: Bool {
+        (preferences.audio.microphoneEnabled || preferences.audio.systemAudioEnabled) &&
+            (!preferences.audio.systemAudioEnabled || preferences.audio.systemScope == .allSystemAudio || preferences.audio.applicationBundleID != nil)
+    }
+    var startRequirement: String? {
+        if !ready { return "Checking your setup…" }
+        if !modelReady { return "Download the speech model in Audio / STT" }
+        if !connectionReady && !transcriptionOnly { return "Connect Grok in AI settings, or choose transcription only" }
+        if !preferences.audio.microphoneEnabled && !preferences.audio.systemAudioEnabled { return "Choose at least one audio source in Audio / STT" }
+        if !audioSelectionReady { return "Choose a meeting application in Audio / STT" }
+        if preferences.audio.microphoneEnabled && microphonePermission != .authorized { return "Allow microphone access in Audio / STT" }
+        return nil
+    }
+    var diagnosticState: [String: DiagnosticValue] {
+        var result: [String: DiagnosticValue] = [
+            "setupReady": .flag(ready), "modelReady": .flag(modelReady), "modelInstalling": .flag(modelInstalling),
+            "connectionReady": .flag(connectionReady), "transcriptionOnly": .flag(transcriptionOnly),
+            "sessionActive": .flag(running), "sessionPreparing": .flag(preparing),
+            "ownedSessionTasks": .int(coordinator?.ownedTaskCount ?? 0),
+            "microphonePermission": .int(microphonePermission.rawValue), "screenPixelPermission": .flag(screenPixelPermission),
+            "microphoneEnabled": .flag(preferences.audio.microphoneEnabled), "systemAudioEnabled": .flag(preferences.audio.systemAudioEnabled),
+            "screenContextEnabled": .flag(screenMode != .off), "contextLimited": .flag(session.contextLimited),
+            "retainedSegments": .int(session.transcript.count), "audioGaps": .int(session.gapCount),
+            "estimatedInputTokens": .int(generationDiagnostics.inputEstimate),
+            "usesVisual": .flag(generationDiagnostics.usesVisual), "overlayVisible": .flag(overlayVisible),
+            "overlayInteractive": .flag(interactive), "recentErrorCount": .int(recentErrors.count)
+        ]
+        if let value = session.teardownSeconds { result["lastTeardownSeconds"] = .number(value) }
+        if let value = generationDiagnostics.firstTextSeconds { result["firstVisibleTextSeconds"] = .number(value) }
+        for source in AudioSource.allCases {
+            let prefix = source == .localUser ? "microphone" : "systemAudio"
+            let status: DiagnosticValue
+            switch session.sources[source] ?? .stopped {
+            case .stopped: status = .state("stopped")
+            case .preparing: status = .state("preparing")
+            case .running: status = .state("running")
+            case .paused: status = .state("paused")
+            case .failed: status = .state("failed")
+            }
+            result[prefix + ".state"] = status
+            guard let metrics = session.metrics[source] else { continue }
+            result[prefix + ".receivedFrames"] = .int(metrics.receivedFrames)
+            result[prefix + ".queuedSeconds"] = .number(metrics.queuedSeconds)
+            result[prefix + ".droppedSeconds"] = .number(metrics.droppedSeconds)
+            result[prefix + ".peak"] = .number(Double(metrics.peak))
+            result[prefix + ".sampleRate"] = .number(metrics.sampleRate)
+            result[prefix + ".realTimeFactor"] = .number(metrics.realTimeFactor)
+            result[prefix + ".lastInferenceSeconds"] = .number(metrics.lastInferenceSeconds)
+            if let last = metrics.lastAudioAt { result[prefix + ".lastAudioAgeSeconds"] = .number(max(0, session.elapsedSeconds - last)) }
+        }
+        return result
+    }
+    var usesGrokBuild: Bool { preferences.connectionMethod == .subscription && !subscriptionConfiguration.isConfigured }
+    var subscriptionBusy: Bool { usesGrokBuild ? grokBuild.busy : subscription.signingIn }
+    var subscriptionConnected: Bool { usesGrokBuild ? grokBuild.connected : subscription.connected }
+    var subscriptionStatus: String { usesGrokBuild ? grokBuild.status : subscription.status }
+    var connectionReady: Bool { !connectionUpdating && !subscriptionBusy && (preferences.connectionMethod == .apiKey ? hasAPIKey : subscriptionConnected) }
     var subscriptionConfiguration: SubscriptionClientConfiguration {
         var configuration = SubscriptionClientConfiguration()
         configuration.clientID = preferences.subscriptionClientID.isEmpty
@@ -167,12 +228,18 @@ final class ApplicationModel {
         setupTask = Task { [weak self] in
             guard let self else { return }
             do { preferences = try await store.load(); persistedPreferences = preferences }
-            catch { showError(Self.message(error)); notice = "Existing settings were preserved. Clear local data explicitly to reset a corrupt configuration." }
+            catch { showError(Self.diagnosticMessage(error)); notice = "Existing settings were preserved. Clear local data explicitly to reset a corrupt configuration." }
             guard !Task.isCancelled else { return }
-            do { hasAPIKey = try await credentials.load()?.isEmpty == false }
-            catch { showError(Self.message(error)) }
+            do {
+                if store.directory == PreferencesStore.defaultDirectory, let keychain = credentials as? KeychainCredentialStore {
+                    try await keychain.importLegacyCredentialIfNeeded()
+                }
+                hasAPIKey = try await credentials.load()?.isEmpty == false
+            }
+            catch { showError(Self.diagnosticMessage(error)) }
             guard !Task.isCancelled else { return }
             await subscription.configure(subscriptionConfiguration)
+            if usesGrokBuild { await grokBuild.restore(enabled: preferences.grokBuildConnected) }
             guard !Task.isCancelled else { return }
             let connection = PreferredCredentialStore(apiKey: credentials, subscription: subscription.tokens)
             await connection.select(preferences.connectionMethod)
@@ -199,12 +266,13 @@ final class ApplicationModel {
                     modelProgress = await installer.progress()
                 } catch ModelInstallError.notInstalled {
                     modelProgress = .init(phase: "Download required", completedBytes: 0, totalBytes: manifest.bytes)
-                } catch { modelProgress = .init(phase: "Repair required", completedBytes: 0, totalBytes: manifest.bytes); showError(Self.message(error)) }
-            } catch { showError(Self.message(error)) }
+                } catch { modelProgress = .init(phase: "Repair required", completedBytes: 0, totalBytes: manifest.bytes); showError(Self.diagnosticMessage(error)) }
+            } catch { showError(Self.diagnosticMessage(error)) }
             guard !Task.isCancelled else { return }
             let controller = HotkeyController { [weak self] in self?.handleHotkey($0) }
             hotkeys = controller
             hotkeyStatuses = controller.configure(preferences.shortcuts)
+            FreelyLog.record(.appReady, fields: [.ready: .flag(modelReady), .connected: .flag(connectionReady)])
             ready = true
             updateOverlay?()
             if CommandLine.arguments.contains("--install-model") { installModel() }
@@ -212,7 +280,7 @@ final class ApplicationModel {
     }
     func start() {
         guard !isShuttingDown, !maintenanceBusy else { return }
-        guard canStart else { showError("Finish model setup and connect Grok, or explicitly choose transcription only."); return }
+        guard canStart else { showError(startRequirement ?? "Finish setup before starting a session."); return }
         if preferences.audio.microphoneEnabled && NativeMicrophoneCapture.permission() != .authorized {
             showError("Allow microphone access before starting, or disable the microphone for an explicit system-audio-only session."); return
         }
@@ -225,7 +293,7 @@ final class ApplicationModel {
         desiredScreenMode = .off; desiredScreenSelection = nil; pendingScreenCommit = nil
         coordinator?.prepareScreenConsent(.off)
         coordinator?.prepareScreenSelection(nil)
-        coordinator?.start(preferences: preferences, sessionNotes: sessionNotes, pinnedFacts: pinnedFacts, transcriptionOnly: transcriptionOnly)
+        coordinator?.start(preferences: preferences, sessionNotes: sessionNotes, pinnedFacts: pinnedFacts, transcriptionOnly: transcriptionOnly, useGrokBuild: usesGrokBuild)
         if preferences.overlay.initiallyVisible, !overlayVisible { toggleOverlay?() }
         section = .session
     }
@@ -262,7 +330,7 @@ final class ApplicationModel {
         _ = await NativeMicrophoneCapture.requestPermission()
         guard !isShuttingDown, !maintenanceBusy else { return }
         microphonePermission = NativeMicrophoneCapture.permission()
-        FreelyLog.permissions.info("Microphone authorization checked; status=\(self.microphonePermission.rawValue)")
+        FreelyLog.record(.permissionChecked, scope: .init(source: .localUser), fields: [.state: .int(microphonePermission.rawValue)])
         if microphonePermission != .authorized { showError("Microphone access is denied. Enable Freely in Privacy & Security → Microphone.") }
     }
     func refreshDevices() {
@@ -281,10 +349,13 @@ final class ApplicationModel {
                 let available = try await NativeSystemAudioCapture.applications()
                 guard !Task.isCancelled, !isShuttingDown, !maintenanceBusy else { return }
                 applications = available
-                systemPermissionStatus = "Source listing allowed · audio delivery not yet checked"
+                if systemPermissionStatus != "Capture started successfully" {
+                    systemPermissionStatus = "Choose an application. macOS will request capture permission when the session starts."
+                }
                 screenPixelPermission = CGPreflightScreenCaptureAccess()
             } catch {
                 guard !Task.isCancelled, !isShuttingDown, !maintenanceBusy else { return }
+                FreelyLog.record(.operationFailed, level: .error, fields: [.state: .state("list_audio_sources"), .failure: .failure(error)])
                 let diagnostic = Self.captureFailureCode(error)
                 systemPermissionStatus = "Source listing failed · \(diagnostic)"
                 let native = error as NSError
@@ -406,7 +477,7 @@ final class ApplicationModel {
                 try await credentials.save(key)
                 guard !isShuttingDown, !maintenanceBusy else { return }
                 apiKeyDraft = ""; hasAPIKey = true; apiValidation = "Saved in Keychain · not yet tested"
-            } catch is CancellationError {} catch { if !isShuttingDown, !maintenanceBusy { showError(Self.message(error)) } }
+            } catch is CancellationError {} catch { if !isShuttingDown, !maintenanceBusy { showError(Self.diagnosticMessage(error)) } }
         }
         credentialTask = task; await task.value
     }
@@ -422,7 +493,7 @@ final class ApplicationModel {
                 try await credentials.delete()
                 guard !isShuttingDown, !maintenanceBusy else { return }
                 hasAPIKey = false; apiKeyDraft = ""; apiValidation = "Not tested"
-            } catch is CancellationError {} catch { if !isShuttingDown, !maintenanceBusy { showError(Self.message(error)) } }
+            } catch is CancellationError {} catch { if !isShuttingDown, !maintenanceBusy { showError(Self.diagnosticMessage(error)) } }
         }
         credentialTask = task; await task.value
     }
@@ -437,7 +508,7 @@ final class ApplicationModel {
             await rateBudget.configure(limit: preferences.ai.requestsPerMinute)
             var configuration = preferences.ai.transportConfiguration
             configuration.normalOutputTokens = 256
-            let provider = XAILLMProvider(credentials: connectionCredentials, configuration: configuration,
+            let provider = SelectedLLMProvider(credentials: connectionCredentials, useGrokBuild: usesGrokBuild, configuration: configuration,
                 approveRequestStart: { [rateBudget] in try await rateBudget.acquire() })
             activeValidationProvider = provider
             do {
@@ -455,12 +526,13 @@ final class ApplicationModel {
                     ? "Text streaming verified for \(configuration.model). Image reasoning requires a separate session test."
                     : "Text stream did not complete. Review model access and API configuration."
             } catch is CancellationError { if revision == validationRevision, !isShuttingDown, !maintenanceBusy { apiValidation = "Test cancelled" } }
-            catch { if revision == validationRevision, !isShuttingDown, !maintenanceBusy { apiValidation = Self.message(error) } }
+            catch { if revision == validationRevision, !isShuttingDown, !maintenanceBusy { apiValidation = Self.diagnosticMessage(error) } }
             await provider.cancelAll()
         }
     }
     func installModel() {
         guard !isShuttingDown, !maintenanceBusy, let installer, !modelInstalling, !running, !preparing, !sanityChecking else { return }
+        FreelyLog.record(.modelStarted)
         modelInstalling = true
         installTask = Task { [weak self] in
             guard let self else { return }
@@ -477,8 +549,8 @@ final class ApplicationModel {
                 _ = try await installer.install()
                 modelReady = true
                 notice = "Local model downloaded and verified. Run the sanity check before your first meeting."
-            } catch is CancellationError { notice = "Model installation cancelled. Previously verified assets were preserved." }
-            catch { showError(Self.message(error)) }
+            } catch is CancellationError { FreelyLog.record(.modelCancelled); notice = "Model installation cancelled. Previously verified assets were preserved." }
+            catch { showError(Self.diagnosticMessage(error)) }
             progressTask.cancel(); await progressTask.value
             modelProgress = await installer.progress()
         }
@@ -502,7 +574,7 @@ final class ApplicationModel {
                     localSanity = output.text.isEmpty ? "Load + silence sanity passed. Speech accuracy is measured separately." : "Model loaded; silence produced text. Review the diagnostic and test speech before relying on answers."
                 } catch { await transcriber.stop(); throw error }
             } catch is CancellationError { localSanity = "Sanity check cancelled" }
-            catch { localSanity = Self.message(error) }
+            catch { localSanity = Self.diagnosticMessage(error) }
         }
         sanityTask = task
         await task.value
@@ -531,7 +603,7 @@ final class ApplicationModel {
                     if revision == saveRevision { pendingPreferences = nil; return }
                 } catch is CancellationError { return }
                 catch {
-                    if !isShuttingDown, !maintenanceBusy { showError(Self.message(error)) }
+                    if !isShuttingDown, !maintenanceBusy { showError(Self.diagnosticMessage(error)) }
                     if revision == saveRevision { pendingPreferences = nil; return }
                 }
             }
@@ -580,7 +652,7 @@ final class ApplicationModel {
                           let current = preferences.profiles.firstIndex(where: { $0.id == profileID }) else { return }
                     preferences.profiles[current].importedContext = text
                     savePreferencesDebounced()
-                } catch is CancellationError {} catch { if !isShuttingDown, !maintenanceBusy { showError(Self.message(error)) } }
+                } catch is CancellationError {} catch { if !isShuttingDown, !maintenanceBusy { showError(Self.diagnosticMessage(error)) } }
             }
         }
     }
@@ -632,6 +704,7 @@ final class ApplicationModel {
             desiredScreenMode = .off; desiredScreenSelection = nil
             try await credentials.delete()
             hasAPIKey = false; apiKeyDraft = ""
+            await grokBuild.disconnect()
             guard await subscription.disconnect() else { throw OAuthError.localDeletionFailed }
             await modelCache?.clear()
             if removeModels { try await installer?.removeInstalledModel(); modelReady = false }
@@ -643,7 +716,7 @@ final class ApplicationModel {
             hotkeyStatuses = hotkeys?.configure(preferences.shortcuts) ?? [:]
             notice = "Local settings, profiles and credential cleared. Previously exported or transmitted data is not recalled."
             if restartSetup, !isShuttingDown { maintenanceBusy = false; initialize() }
-        } catch { showError(Self.message(error)) }
+        } catch { showError(Self.diagnosticMessage(error)) }
     }
     func openPermissions(microphone: Bool = false) {
         guard !isShuttingDown, !maintenanceBusy else { return }
@@ -652,6 +725,7 @@ final class ApplicationModel {
     }
     func shutdown() async {
         if let shutdownTask { await shutdownTask.value; return }
+        FreelyLog.record(.appStopping)
         isShuttingDown = true
         importRevision &+= 1; validationRevision &+= 1; visualSourcesRevision &+= 1; visualRevision &+= 1
         hotkeys?.unregisterAll()
@@ -662,22 +736,35 @@ final class ApplicationModel {
         let owned = [setupTask, installTask, validationTask, sanityTask, saveTask, credentialTask, importTask, applicationsTask, visualSourcesTask, screenTask, connectionTask, maintenanceTask].compactMap { $0 }
         for task in owned { task.cancel() }
         let task = Task { [self] in
+            await grokBuild.shutdown()
             await subscription.shutdown()
             await activeValidationProvider?.cancelAll()
             await stop()
             for task in owned { await task.value }
             if shouldPersist {
                 do { try await store.save(latestPreferences); persistedPreferences = latestPreferences }
-                catch { showError(Self.message(error)) }
+                catch { showError(Self.diagnosticMessage(error)) }
             }
             pendingPreferences = nil; apiKeyDraft = ""
+            FreelyLog.record(.appStopped)
         }
         shutdownTask = task
         await task.value
     }
     func connectSubscription() {
         guard !isShuttingDown, !maintenanceBusy, !running, !preparing else { showError("End the session before changing its Grok connection."); return }
-        subscription.signIn(configuration: subscriptionConfiguration, anchor: NSApp.keyWindow)
+        if usesGrokBuild {
+            grokBuild.connect(configuration: preferences.ai.transportConfiguration) { [weak self] connected in
+                guard let self, !isShuttingDown else { return }
+                preferences.grokBuildConnected = connected
+                apiValidation = connected ? "Text streaming verified through your Grok subscription." : "Connection needs attention."
+            }
+        } else {
+            subscription.signIn(configuration: subscriptionConfiguration, anchor: NSApp.keyWindow)
+        }
+    }
+    func cancelSubscriptionConnection() {
+        if usesGrokBuild { grokBuild.cancel() } else { subscription.cancel() }
     }
     func disconnectSubscription() async {
         guard !isShuttingDown, !running, !preparing, !maintenanceBusy else { showError("End the session before disconnecting Grok."); return }
@@ -688,7 +775,10 @@ final class ApplicationModel {
             guard let self else { return }
             defer { maintenanceBusy = false; maintenanceTask = nil }
             await activeValidationProvider?.cancelAll(); await validationTask?.value; await connectionTask?.value
-            _ = await subscription.disconnect(); apiValidation = "Not tested"
+            if usesGrokBuild {
+                await grokBuild.disconnect(); preferences.grokBuildConnected = false
+            } else { _ = await subscription.disconnect() }
+            apiValidation = "Not tested"
         }
         maintenanceTask = task; await task.value
     }
@@ -718,6 +808,7 @@ final class ApplicationModel {
         }
     }
     func showError(_ message: String) {
+        FreelyLog.record(.errorPresented, level: .warning)
         errorMessage = message
         if recentErrors.last != message { recentErrors.append(message) }
         if recentErrors.count > 30 { recentErrors.removeFirst(recentErrors.count - 30) }
@@ -735,6 +826,10 @@ final class ApplicationModel {
         case .pauseResumeSystemAudio: toggleSource(.systemAudio)
         case .endSession: Task { await stop() }
         }
+    }
+    private static func diagnosticMessage(_ error: Error, operation: StaticString = #function) -> String {
+        FreelyLog.record(.operationFailed, level: .error, fields: [.state: .state(operation), .failure: .failure(error)])
+        return message(error)
     }
     static func message(_ error: Error) -> String {
         if let value = error as? AppError { return value.userAction }

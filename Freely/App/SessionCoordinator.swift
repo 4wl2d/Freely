@@ -1,9 +1,12 @@
 import AppKit
 import FreelyCore
 import Foundation
+import ScreenCaptureKit
 import os
 
 struct SessionViewState: Sendable {
+    var sessionID: UUID?
+    var elapsedSeconds = 0.0
     var phase = SessionPhase.idle
     var sources: [AudioSource: SourceStatus] = [:]
     var metrics: [AudioSource: SourceProcessingMetrics] = [:]
@@ -31,6 +34,7 @@ final class SessionCoordinator {
     private let system: any SystemAudioCapturing
     private let makeTranscriber: @Sendable (AudioSource) async throws -> any SpeechTranscribing
     private let makeProvider: @Sendable (AIPreferences, SharedRequestBudget) -> any LLMProviding
+    private let credentials: any CredentialStoring
     let conversation = ConversationEngine()
     let screen: NativeScreenCapture
     private let rateBudget: SharedRequestBudget
@@ -61,7 +65,7 @@ final class SessionCoordinator {
     private var applicationSelection: SystemAudioSelection?
     private var selectedScreen: ScreenSelection?
     private var pausedAt: [AudioSource: Double] = [:]
-    private let logger = Logger(subsystem: "local.freely.app", category: "session")
+    private var lastLoggedSources: [AudioSource: SourceStatus] = [:]
 
     convenience init(modelCache: LocalSpeechModelCache, credentials: any CredentialStoring,
          rateBudget: SharedRequestBudget,
@@ -81,7 +85,7 @@ final class SessionCoordinator {
          makeProvider: (@Sendable (AIPreferences, SharedRequestBudget) -> any LLMProviding)? = nil,
          onState: @escaping @MainActor (SessionViewState) -> Void,
          onAnswer: @escaping @MainActor (AnswerPresentation, GenerationDiagnostics) -> Void) {
-        self.makeTranscriber = makeTranscriber; self.rateBudget = rateBudget
+        self.makeTranscriber = makeTranscriber; self.rateBudget = rateBudget; self.credentials = credentials
         self.microphone = microphone; self.system = system; self.screen = screen
         self.onState = onState; self.onAnswer = onAnswer
         self.makeProvider = makeProvider ?? { options, budget in
@@ -98,14 +102,16 @@ final class SessionCoordinator {
     }
     func currentSourceEpoch(_ source: AudioSource) -> SourceEpoch { .init(sourceEpochs[source, default: 0]) }
 
-    func start(preferences: AppPreferences, sessionNotes: String, pinnedFacts: String, transcriptionOnly: Bool) {
+    func start(preferences: AppPreferences, sessionNotes: String, pinnedFacts: String, transcriptionOnly: Bool, useGrokBuild: Bool = false) {
         guard lifecycle.phase == .idle, stoppingTask == nil else { return }
         guard preferences.audio.microphoneEnabled || preferences.audio.systemAudioEnabled else {
             state.error = "Select at least one audio source before starting."; publish(); return
         }
         guard let epoch = lifecycle.start(), let sessionID = lifecycle.sessionID else { return }
         self.preferences = preferences; self.transcriptionOnly = transcriptionOnly
-        state = SessionViewState(phase: .preparing)
+        state = SessionViewState(sessionID: sessionID.rawValue, phase: .preparing)
+        lastLoggedSources = [:]
+        FreelyLog.record(.sessionStarted, scope: .init(session: sessionID.rawValue), fields: [.epoch: .int(epoch.rawValue), .transcriptionOnly: .flag(transcriptionOnly)])
         sessionOrigin = ProcessInfo.processInfo.systemUptime; lastSourceCheck = 0
         applicationSelection = nil; desiredFailure = [:]
         for source in AudioSource.allCases {
@@ -113,7 +119,10 @@ final class SessionCoordinator {
             lifecycle.setSource(source, status: enabled(source) ? .preparing : .stopped, epoch: epoch)
         }
         let generator = GenerationCoordinator(conversation: conversation, screen: screen,
-            provider: makeProvider(preferences.ai, rateBudget), rateBudget: rateBudget,
+            provider: useGrokBuild
+                ? SelectedLLMProvider(credentials: credentials, useGrokBuild: true, configuration: preferences.ai.transportConfiguration,
+                    approveRequestStart: { [rateBudget] in try await rateBudget.acquire() })
+                : makeProvider(preferences.ai, rateBudget), rateBudget: rateBudget,
             sessionEpoch: epoch, sessionID: sessionID, sessionOrigin: sessionOrigin,
             options: preferences.ai, initialScreenSelection: selectedScreen, onChange: { [weak self] answer, diagnostics in
                 guard let self, self.lifecycle.epoch == epoch, self.lifecycle.phase != .stopping else { return }
@@ -140,7 +149,7 @@ final class SessionCoordinator {
                     guard lifecycle.accepts(epoch), !Task.isCancelled else { await transcriber.stop(); break }
                     prepared[source] = transcriber
                 } catch is CancellationError { break }
-                catch { setSourceFailure(source, message: Self.message(error), epoch: epoch) }
+                catch { setSourceFailure(source, message: Self.message(error), epoch: epoch, failure: error) }
             }
             guard lifecycle.accepts(epoch), !Task.isCancelled else {
                 for transcriber in prepared.values { await transcriber.stop() }
@@ -156,7 +165,7 @@ final class SessionCoordinator {
                 _ = lifecycle.recovering(epoch: epoch)
                 state.error = state.error ?? "No selected source could start. Fix the indicated setup issue and resume a source."
             }
-            logger.info("Session prepared; active sources=\(self.lifecycle.sources.values.filter { $0 == .running }.count)")
+            FreelyLog.record(.sessionReady, scope: .init(session: sessionID.rawValue), fields: [.count: .int(lifecycle.sources.values.filter { $0 == .running }.count)], duration: elapsed)
             publish(); startMonitoring(epoch: epoch)
         }
     }
@@ -168,7 +177,7 @@ final class SessionCoordinator {
         guard lifecycle.accepts(epoch), desiredRunning[source] == true, !Task.isCancelled else { await transcriber.stop(); return }
         let ingress = AudioIngress(); ingresses[source] = ingress
         let pipeline = SourcePipeline(source: source, streamEpoch: sourceEpoch, ingress: ingress,
-            transcriber: transcriber, sessionOrigin: sessionOrigin)
+            transcriber: transcriber, sessionOrigin: sessionOrigin, sessionID: lifecycle.sessionID?.rawValue)
         do {
             if source == .localUser {
                 try await microphone.start(deviceID: preferences.audio.microphoneDeviceUID, ingress: ingress)
@@ -216,7 +225,7 @@ final class SessionCoordinator {
             ingress.close(); await stopNative(source); await pipeline.stop()
             if sourceEpochs[source] == sourceEpoch.rawValue { ingresses[source] = nil; pipelines[source] = nil }
             if !(error is CancellationError), !Task.isCancelled, lifecycle.accepts(epoch) {
-                setSourceFailure(source, message: Self.message(error), epoch: epoch)
+                setSourceFailure(source, message: Self.message(error), epoch: epoch, failure: error)
             }
         }
     }
@@ -237,8 +246,10 @@ final class SessionCoordinator {
             switch event {
             case .upsert(let segment), .insert(let segment), .update(let segment), .finalize(let segment), .revise(let segment):
                 if segment.finality == .final {
-                    FreelyLog.transcript.info("Final transcript event; id=\(segment.id.rawValue.uuidString, privacy: .public), source=\(segment.source.rawValue, privacy: .public), revision=\(segment.revision)")
+                    FreelyLog.record(.transcriptFinal, level: .debug, scope: .init(session: state.sessionID, source: source), fields: [.segmentID: .id(segment.id.rawValue), .revision: .int(segment.revision), .epoch: .int(sourceEpoch.rawValue)])
                 }
+            case .gap(let gap):
+                FreelyLog.record(.audioGap, level: .warning, scope: .init(session: state.sessionID, source: source), fields: [.reason: .gapCause(gap.cause), .droppedSeconds: .number(gap.droppedDuration)], duration: max(0, gap.endTime - gap.startTime))
             default: break
             }
         }
@@ -331,7 +342,7 @@ final class SessionCoordinator {
                         await startSource(source, transcriber: transcriber, epoch: epoch)
                     } else { await transcriber.stop() }
                 } catch is CancellationError {} catch {
-                    if !Task.isCancelled { setSourceFailure(source, message: Self.message(error), epoch: epoch) }
+                    if !Task.isCancelled { setSourceFailure(source, message: Self.message(error), epoch: epoch, failure: error) }
                 }
             }
             guard sourceOperations[source]?.id == id else { return }
@@ -456,6 +467,8 @@ final class SessionCoordinator {
         if let stoppingTask { await stoppingTask.value; return }
         guard let invalidated = lifecycle.stop() else { return }
         let stopStart = ProcessInfo.processInfo.systemUptime
+        let diagnosticSessionID = state.sessionID
+        FreelyLog.record(.sessionStopping, scope: .init(session: diagnosticSessionID))
         let generator = generation, preparation = preparingTask, monitor = monitorTask
         let operations = sourceOperations.values.map(\.task), ownedWorkers = Array(workers.values)
         let ownedPipelines = Array(pipelines.values)
@@ -483,7 +496,7 @@ final class SessionCoordinator {
             lifecycle.didStop(epoch: invalidated)
             state = SessionViewState(teardownSeconds: ProcessInfo.processInfo.systemUptime - stopStart)
             onAnswer(AnswerPresentation(), GenerationDiagnostics(status: "Session ended"))
-            logger.info("Session stopped; seconds=\(self.state.teardownSeconds ?? 0)")
+            FreelyLog.record(.sessionStopped, scope: .init(session: diagnosticSessionID), duration: state.teardownSeconds)
             publish(); stoppingTask = nil
         }
         stoppingTask = termination
@@ -496,16 +509,41 @@ final class SessionCoordinator {
         source == .localUser ? preferences.audio.microphoneEnabled : preferences.audio.systemAudioEnabled
     }
     private var elapsed: Double { ProcessInfo.processInfo.systemUptime - sessionOrigin }
-    private func setSourceFailure(_ source: AudioSource, message: String, epoch: SessionEpoch) {
+    private func setSourceFailure(_ source: AudioSource, message: String, epoch: SessionEpoch, failure: (any Error)? = nil) {
         guard lifecycle.accepts(epoch) else { return }
-        lifecycle.setSource(source, status: .failed(AppError(domain: .audio, category: .unavailable,
-            userAction: message, diagnosticCode: "source_unavailable")), epoch: epoch)
+        let status = SourceStatus.failed(AppError(domain: .audio, category: .unavailable,
+            userAction: message, diagnosticCode: "source_unavailable"))
+        if lifecycle.sources[source] != status {
+            var fields: [DiagnosticField: DiagnosticValue] = [.epoch: .int(epoch.rawValue)]
+            if let failure { fields[.failure] = .failure(failure) }
+            FreelyLog.record(.sourceFailed, level: .error, scope: .init(session: state.sessionID, source: source), fields: fields)
+        }
+        lifecycle.setSource(source, status: status, epoch: epoch)
         state.error = "\(source.label): \(message)"; publish()
     }
     private func publish() {
+        for source in AudioSource.allCases {
+            let value = lifecycle.sources[source] ?? .stopped
+            guard lastLoggedSources[source] != value else { continue }
+            lastLoggedSources[source] = value
+            let label: DiagnosticValue
+            switch value {
+            case .stopped: label = .state("stopped")
+            case .preparing: label = .state("preparing")
+            case .running: label = .state("running")
+            case .paused: label = .state("paused")
+            case .failed: label = .state("failed")
+            }
+            FreelyLog.record(.sourceState, scope: .init(session: state.sessionID, source: source), fields: [.state: label])
+        }
+        state.elapsedSeconds = lifecycle.phase == .idle ? 0 : elapsed
         state.phase = lifecycle.phase; state.sources = lifecycle.sources; onState(state)
     }
-    private static func message(_ error: Error) -> String {
+    static func message(_ error: Error) -> String {
+        let native = error as NSError
+        if native.domain == SCStreamErrorDomain, native.code == -3801 {
+            return "Allow Freely in System Settings → Privacy & Security → Screen & System Audio Recording. Quit and reopen Freely if macOS requests it, then start a new session."
+        }
         if let error = error as? AppError { return error.userAction }
         if let error = error as? LocalizedError, let message = error.errorDescription { return message }
         return "The selected source could not start. Check permissions, device and model, then resume."

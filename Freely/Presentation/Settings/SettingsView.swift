@@ -23,7 +23,7 @@ struct SetupView: View {
                 Text("Local speech · Grok answers").font(.caption).foregroundStyle(.secondary)
                 Text("Screen context: \(model.screenMode == .off ? "Off" : "Enabled for session")")
                     .font(.caption2).foregroundStyle(model.screenMode == .off ? Color.secondary : Color.orange)
-                Text("v1.0 · macOS 15+").font(.caption2).foregroundStyle(.tertiary)
+                Text("v\(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0.2.0") · macOS 15+").font(.caption2).foregroundStyle(.tertiary)
             }.padding(.horizontal, 14).padding(.bottom, 20).frame(width: 200).background(.bar)
             Divider()
             VStack(spacing: 0) {
@@ -39,7 +39,7 @@ struct SetupView: View {
                     } else if model.preparing {
                         ProgressView().controlSize(.small)
                         Button("Cancel") { Task { await model.stop() } }
-                    } else { Button("Start session") { model.start() }.buttonStyle(.borderedProminent).disabled(!model.canStart) }
+                    } else { Button("Start session") { model.start() }.buttonStyle(.borderedProminent).disabled(!model.canStart).help(model.startRequirement ?? "Start the configured session") }
                     Button { model.toggleOverlay?() } label: { Image(systemName: "rectangle.on.rectangle") }
                         .help("Show or hide the private companion overlay")
                 }.padding(22)
@@ -49,6 +49,9 @@ struct SetupView: View {
                         Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.orange)
                         Text(error).font(.callout).textSelection(.enabled)
                         Spacer()
+                        if error.contains("Screen & System Audio Recording") {
+                            Button("Open Settings") { model.openPermissions() }
+                        }
                         Button { model.errorMessage = nil } label: { Image(systemName: "xmark") }.buttonStyle(.plain)
                     }.padding(14).background(Color.orange.opacity(0.09))
                 }
@@ -90,17 +93,17 @@ private struct OnboardingView: View {
                     Text("Keep a useful answer beside your meeting. Speech recognition stays on your Mac. Selected conversation text goes to xAI; images only go when you enable screen context for the current session.")
                         .foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
                 }
-                SetupStep(number: 1, title: "Choose exactly what to hear", detail: "Select your microphone and meeting application. A headset reduces speaker bleed; it is not required.", done: model.preferences.audio.applicationBundleID != nil || !model.preferences.audio.systemAudioEnabled) {
+                SetupStep(number: 1, title: "Choose exactly what to hear", detail: "Select your microphone and meeting application. A headset reduces speaker bleed; it is not required.", done: model.audioSelectionReady) {
                     model.section = .audio
                 }
-                SetupStep(number: 2, title: "Allow native capture", detail: "Microphone and Screen & System Audio Recording are managed by macOS. Capture starts only when you start a session.", done: model.microphonePermission == .authorized && model.screenPixelPermission) { model.section = .audio }
-                SetupStep(number: 3, title: "Connect your Grok subscription", detail: "Use secure browser sign-in for this application's registered xAI integration. An API key is available as an optional connection method.", done: model.connectionReady) { model.section = .ai }
-                SetupStep(number: 4, title: "Install local speech recognition", detail: "Download the pinned model (\(ByteCountFormatter.string(fromByteCount: model.modelProgress.totalBytes, countStyle: .file))). Every file is checked before loading.", done: model.modelReady) { model.section = .audio }
+                SetupStep(number: 2, title: "Allow native capture", detail: "Microphone and Screen & System Audio Recording are managed by macOS. Capture starts only when you start a session.", done: (!model.preferences.audio.microphoneEnabled || model.microphonePermission == .authorized) && (!model.preferences.audio.systemAudioEnabled || model.systemPermissionStatus == "Capture started successfully")) { model.section = .audio }
+                SetupStep(number: 3, title: "Connect your Grok subscription", detail: "Connect with your Grok Build sign-in. A short test checks that your subscription can answer. You can also choose an xAI API key.", done: model.connectionReady) { model.section = .ai }
+                SetupStep(number: 4, title: "Install local speech recognition", detail: model.modelProgress.totalBytes > 0 ? "Download the pinned model (\(ByteCountFormatter.string(fromByteCount: model.modelProgress.totalBytes, countStyle: .file))). Every file is checked before loading." : "Download the local speech model. Every file is checked before loading.", done: model.modelReady) { model.section = .audio }
                 SetupStep(number: 5, title: "Make it yours", detail: "Select a reusable profile, set your answer language, and test the global shortcuts. Meeting notes remain separate from saved profiles.", done: model.preferences.onboardingCompleted) { model.section = .context }
                 Toggle("Transcription-only session · do not request automatic Grok answers", isOn: $model.transcriptionOnly)
                     .disabled(model.running || model.preparing)
                 HStack {
-                    Button("Setup complete") { model.preferences.onboardingCompleted = true; model.notice = "Setup saved. Start a session explicitly when ready." }
+                    Button("Setup complete") { model.preferences.onboardingCompleted = true; model.notice = "Setup saved. Start a session explicitly when ready." }.disabled(!model.canStart)
                     Button("Review shortcuts") { model.section = .overlay }
                     Spacer()
                     Button("Start session") { model.start() }.buttonStyle(.borderedProminent).disabled(!model.canStart)
@@ -228,24 +231,35 @@ private struct AISettingsView: View {
             Section("Connect Grok") {
                 Picker("Connection", selection: $model.preferences.connectionMethod) {
                     ForEach(ConnectionMethod.allCases, id: \.self) { Text($0.rawValue).tag($0) }
-                }.pickerStyle(.segmented).disabled(model.running || model.preparing)
+                }.pickerStyle(.segmented).disabled(model.running || model.preparing || model.subscriptionBusy || model.validatingAPI)
                 if model.preferences.connectionMethod == .subscription {
                     HStack {
-                        Button("Connect Grok subscription") { model.connectSubscription() }
-                            .buttonStyle(.borderedProminent).disabled(model.subscription.signingIn || model.running || model.preparing)
-                        if model.subscription.signingIn { Button("Cancel sign-in") { model.subscription.cancel() } }
-                        if model.subscription.connected {
+                        Button(model.subscriptionBusy ? "Connecting…" : "Connect Grok") { model.connectSubscription() }
+                            .buttonStyle(.borderedProminent).disabled(model.subscriptionBusy || model.running || model.preparing || model.validatingAPI)
+                        if model.subscriptionBusy {
+                            ProgressView().controlSize(.small)
+                            Button("Cancel") { model.cancelSubscriptionConnection() }
+                        }
+                        if model.subscriptionConnected {
                             Button("Disconnect") { Task { await model.disconnectSubscription() } }.disabled(model.running || model.preparing)
                         }
                     }
-                    Text(model.subscription.status).font(.callout).foregroundStyle(.secondary).textSelection(.enabled)
-                    Text("Browser sign-in uses xAI's authorization service. Your password stays in the browser; rotating access tokens are kept in Keychain. Subscription and model access depend on xAI approving this application's integration.")
-                        .font(.caption).foregroundStyle(.secondary)
-                    DisclosureGroup("Advanced subscription integration setup") {
+                    Text(model.subscriptionStatus).font(.callout).foregroundStyle(model.subscriptionConnected ? Color.green : Color.primary).textSelection(.enabled)
+                    if model.usesGrokBuild {
+                        Text("Uses the official Grok Build client and your grok.com subscription. Connect runs a short test that may consume subscription usage. Freely does not read your password or tokens.")
+                            .font(.caption).foregroundStyle(.secondary)
+                        if model.grokBuild.needsInstall {
+                            Link("Install Grok Build", destination: URL(string: "https://docs.x.ai/build/overview")!)
+                            Text("Install the official client, then click Connect Grok again. No OAuth client ID is needed.")
+                                .font(.caption).foregroundStyle(.secondary)
+                        }
+                        Text("Disconnect affects Freely only. Your other Grok Build sessions stay signed in.").font(.caption).foregroundStyle(.secondary)
+                    }
+                    DisclosureGroup("Advanced: registered native OAuth integration") {
                         TextField("Registered Freely client ID", text: $model.preferences.subscriptionClientID)
-                            .disabled(model.running || model.preparing || model.subscription.signingIn)
+                            .disabled(model.running || model.preparing || model.subscriptionBusy)
                         LabeledContent("Registered callback", value: "freely://oauth/callback")
-                        Text("This build has no provider-issued OAuth client registration. Use only a client registered for Freely; another application's client ID is not a substitute.").font(.caption).foregroundStyle(.secondary)
+                        Text("Leave this empty to use Grok Build. Only enter a client ID if xAI has registered a separate native Freely integration with this callback and inference access.").font(.caption).foregroundStyle(.secondary)
                         Link("xAI subscription integration information", destination: URL(string: "https://x.ai/news/grok-opencode")!)
                     }
                 } else {
@@ -267,7 +281,10 @@ private struct AISettingsView: View {
                 Text(model.apiValidation).font(.caption).foregroundStyle(.secondary)
             }
             Section("Answers") {
-                TextField("Model", text: $model.preferences.ai.model).disabled(model.running || model.preparing)
+                TextField("Model", text: $model.preferences.ai.model).disabled(model.running || model.preparing || model.subscriptionBusy || model.validatingAPI)
+                if model.usesGrokBuild, !model.grokBuild.availableModels.isEmpty {
+                    Text("Available: " + model.grokBuild.availableModels.joined(separator: ", ")).font(.caption).foregroundStyle(.secondary)
+                }
                 Picker("Reasoning effort", selection: $model.preferences.ai.reasoningEffort) {
                     ForEach(XAIReasoningEffort.allCases, id: \.self) { Text($0.rawValue.capitalized).tag($0) }
                 }.disabled(model.running || model.preparing)
@@ -282,10 +299,14 @@ private struct AISettingsView: View {
                     .disabled(model.running || model.preparing)
                 Stepper("Maximum request starts per minute: \(model.preferences.ai.requestsPerMinute)", value: $model.preferences.ai.requestsPerMinute, in: 1...120)
                     .disabled(model.running || model.preparing)
+                if !model.usesGrokBuild {
                 Stepper("Normal output token cap: \(model.preferences.ai.normalOutputTokens)", value: $model.preferences.ai.normalOutputTokens, in: 256...32_768, step: 256)
                     .disabled(model.running || model.preparing)
                 Stepper("Detailed output token cap: \(model.preferences.ai.detailedOutputTokens)", value: $model.preferences.ai.detailedOutputTokens, in: 256...32_768, step: 256)
                     .disabled(model.running || model.preparing)
+                } else {
+                    Text("Grok Build manages its output token budget. Freely limits each received answer to 128 KiB and cancels requests when you end the session.").font(.caption).foregroundStyle(.secondary)
+                }
                 Text("Answers, retries and summaries share the request cap. Cancelled requests may still incur provider charges. No cost estimate is shown without current authoritative pricing.").font(.caption).foregroundStyle(.secondary)
             }
             Section("Experimental") {
@@ -350,12 +371,13 @@ private struct AudioSettingsView: View {
                     Button(model.modelReady ? "Repair model" : "Download and verify model") { model.installModel() }
                         .disabled(model.modelInstalling || model.running || model.preparing)
                     if model.modelInstalling { Button("Cancel download") { model.cancelModelInstall() } }
-                    Button("Run local sanity check") { Task { await model.sanityCheck() } }.disabled(!model.modelReady || model.running || model.preparing)
+                    Button("Run local sanity check") { Task { await model.sanityCheck() } }.disabled(!model.modelReady || model.modelInstalling || model.sanityChecking || model.running || model.preparing)
                 }
                 Text(model.localSanity).font(.caption).foregroundStyle(.secondary)
                 Text("Models are never updated during a meeting. A corrupt or incomplete installation is not loaded; Repair preserves the last verified version until replacement succeeds.").font(.caption).foregroundStyle(.secondary)
             }
         }.formStyle(.grouped)
+            .task { await model.refreshApplications() }
     }
 }
 
@@ -474,12 +496,14 @@ private struct PrivacySettingsView: View {
     }
 }
 
-private struct DiagnosticsView: View {
+struct DiagnosticsOverview: View {
     @Bindable var model: ApplicationModel
     var body: some View {
         Form {
             Section("Session") {
                 LabeledContent("State", value: model.status)
+                LabeledContent("Session ID", value: model.session.sessionID?.uuidString ?? "No active session").textSelection(.enabled)
+                LabeledContent("Owned session tasks", value: model.diagnosticState["ownedSessionTasks"]?.text ?? "0")
                 LabeledContent("Retained transcript", value: "\(model.session.transcript.count) segments")
                 LabeledContent("Explicit audio gaps", value: "\(model.session.gapCount)")
                 LabeledContent("Summary coverage", value: model.session.summaryCoverage)
@@ -502,6 +526,7 @@ private struct DiagnosticsView: View {
             Section("Grok") {
                 LabeledContent("Configured model", value: model.preferences.ai.model)
                 LabeledContent("Generation", value: model.generationDiagnostics.status)
+                LabeledContent("Request ID", value: model.generationDiagnostics.requestID?.uuidString ?? "No request").textSelection(.enabled)
                 LabeledContent("Estimated text input", value: "\(model.generationDiagnostics.inputEstimate) tokens (conservative estimate)")
                 LabeledContent("Submission to first text", value: duration(model.generationDiagnostics.firstTextSeconds))
                 LabeledContent("Question end to first text", value: duration(model.generationDiagnostics.endToVisibleSeconds))
@@ -510,7 +535,7 @@ private struct DiagnosticsView: View {
                 LabeledContent("Cached input tokens", value: model.generationDiagnostics.usage?.cachedInputTokens.map(String.init) ?? "Not reported")
                 Text("Window processing delay is not reference-aligned speech latency. First text is not automatically a useful answer. Benchmarks report those measurements separately; no internet p95 guarantee is implied.").font(.caption).foregroundStyle(.secondary)
             }
-            Section("Recent redacted errors (maximum 30)") {
+            Section("Recent user-facing errors · excluded from report") {
                 if model.recentErrors.isEmpty { Text("None").foregroundStyle(.secondary) }
                 ForEach(Array(model.recentErrors.enumerated()), id: \.offset) { _, error in Text(error).font(.caption).textSelection(.enabled) }
             }

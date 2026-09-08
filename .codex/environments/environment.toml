@@ -6,3 +6,8 @@ script = ""
 name = "Run"
 icon = "run"
 command = "./script/build_and_run.sh"
+
+[[actions]]
+name = "Debug console"
+icon = "run"
+command = "./script/build_and_run.sh --diagnostics"

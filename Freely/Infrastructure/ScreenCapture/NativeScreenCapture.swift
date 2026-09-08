@@ -108,7 +108,7 @@ actor NativeScreenCapture: ScreenContextCapturing {
     func configure(mode: ScreenContextMode, selection: ScreenSelection?) {
         guard !Task.isCancelled, self.mode != mode || self.selection != selection else { return }
         self.mode = mode; self.selection = selection; epoch &+= 1; latest = nil
-        FreelyLog.screen.info("Visual consent/selection changed; enabled=\(mode != .off), epoch=\(self.epoch)")
+        FreelyLog.record(.screenChanged, fields: [.enabled: .flag(mode != .off), .epoch: .int(epoch)])
     }
     func select(_ selection: ScreenSelection?) {
         guard self.selection != selection else { return }
@@ -132,7 +132,7 @@ actor NativeScreenCapture: ScreenContextCapturing {
             sourceName: selection.source.name, width: image.width, height: image.height,
             contentHash: SHA256.hash(data: image.png).map { String(format: "%02x", $0) }.joined(), png: image.png)
         latest = result
-        FreelyLog.screen.info("Selected screenshot prepared; id=\(result.id.uuidString, privacy: .public), width=\(result.width), height=\(result.height)")
+        FreelyLog.record(.screenCaptured, fields: [.width: .int(result.width), .height: .int(result.height)])
         return result
     }
 

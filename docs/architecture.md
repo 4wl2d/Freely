@@ -1,5 +1,7 @@
 # Architecture and source ledger
 
+The default subscription path uses `GrokBuildConnection` and `GrokBuildProvider`, composed through `SelectedLLMProvider`. The optional API/native-registration route retains `XAILLMProvider`. Both implement `LLMProviding`; the conversation engine and session coordinator retain their cancellation and context ownership. [Connection contract](oauth-evidence.md).
+
 Freely is one Swift 6 macOS application, packaged from a checked-in SwiftPM executable target. `Packages/FreelyCore` contains platform-independent value types, actors, bounded domain algorithms and tests. No bot, cloud backend, meeting SDK, Python inference server, event bus or DI framework is shipped.
 
 ## Ownership and flow

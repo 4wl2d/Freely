@@ -88,6 +88,8 @@ private actor SurfaceSourceGate {
     @Test func shutdownPermanentlyRejectsNewSessionAndMutationCommands() async throws {
         let directory = directory(), model = model(directory: directory)
         model.ready = true; model.modelReady = true; model.transcriptionOnly = true
+        model.preferences.audio.microphoneEnabled = false
+        model.preferences.audio.systemScope = .allSystemAudio
         #expect(model.canStart)
         await model.shutdown()
         #expect(!model.canStart && model.isShuttingDown)
@@ -145,4 +147,24 @@ private actor SurfaceSourceGate {
         #expect(!FileManager.default.fileExists(atPath: directory.appendingPathComponent("preferences.json").path))
         try cleanup(directory)
     }
+    @Test func startRequiresAudioSelectionAndOnlyEnabledMicrophonePermission() async throws {
+        let directory = directory(), model = model(directory: directory)
+        model.ready = true; model.modelReady = true; model.transcriptionOnly = true
+        model.microphonePermission = .denied
+        model.preferences.audio.microphoneEnabled = true
+        model.preferences.audio.systemAudioEnabled = false
+        #expect(!model.canStart)
+        #expect(model.startRequirement == "Allow microphone access in Audio / STT")
+        model.preferences.audio.microphoneEnabled = false
+        model.preferences.audio.systemAudioEnabled = true
+        model.preferences.audio.systemScope = .application
+        model.preferences.audio.applicationBundleID = nil
+        #expect(!model.canStart)
+        #expect(model.startRequirement == "Choose a meeting application in Audio / STT")
+        model.preferences.audio.applicationBundleID = "local.freely.capture-fixture"
+        #expect(model.canStart)
+        #expect(model.startRequirement == nil)
+        await model.shutdown(); try cleanup(directory)
+    }
+
 }
