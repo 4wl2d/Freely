@@ -1,8 +1,13 @@
 version = 1
-name = "MeetingCopilot"
+name = "Freely"
 [setup]
 script = ""
 [[actions]]
 name = "Run"
 icon = "run"
 command = "./script/build_and_run.sh"
+
+[[actions]]
+name = "Debug console"
+icon = "run"
+command = "./script/build_and_run.sh --diagnostics"

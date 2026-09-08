@@ -1,9 +1,9 @@
 import AppKit
-import CopilotCore
+import FreelyCore
 import Foundation
 import ScreenCaptureKit
 import Testing
-@testable import MeetingCopilot
+@testable import Freely
 
 private actor AppSurfaceCredentials: CredentialStoring {
     private(set) var writes = 0
@@ -19,7 +19,7 @@ private actor SurfaceSourceGate {
 }
 
 @MainActor struct ApplicationModelTests {
-    private func directory() -> URL { FileManager.default.temporaryDirectory.appendingPathComponent("MeetingCopilotSurfaceTests-\(UUID().uuidString)", isDirectory: true) }
+    private func directory() -> URL { FileManager.default.temporaryDirectory.appendingPathComponent("FreelySurfaceTests-\(UUID().uuidString)", isDirectory: true) }
     private func model(directory: URL, loader: @escaping @Sendable () async throws -> [VisualSource] = { [] }) -> ApplicationModel {
         ApplicationModel(store: PreferencesStore(directory: directory), credentials: AppSurfaceCredentials(),
             subscription: SubscriptionAuthentication(tokens: OAuthTokenClient(store: MemoryOAuthTokenStore())), fetchVisualSources: loader)
@@ -88,6 +88,8 @@ private actor SurfaceSourceGate {
     @Test func shutdownPermanentlyRejectsNewSessionAndMutationCommands() async throws {
         let directory = directory(), model = model(directory: directory)
         model.ready = true; model.modelReady = true; model.transcriptionOnly = true
+        model.preferences.audio.microphoneEnabled = false
+        model.preferences.audio.systemScope = .allSystemAudio
         #expect(model.canStart)
         await model.shutdown()
         #expect(!model.canStart && model.isShuttingDown)
@@ -145,4 +147,41 @@ private actor SurfaceSourceGate {
         #expect(!FileManager.default.fileExists(atPath: directory.appendingPathComponent("preferences.json").path))
         try cleanup(directory)
     }
+    @Test func startRequiresAudioSelectionAndOnlyEnabledMicrophonePermission() async throws {
+        let directory = directory(), model = model(directory: directory)
+        model.ready = true; model.modelReady = true; model.transcriptionOnly = true
+        model.microphonePermission = .denied
+        model.preferences.audio.microphoneEnabled = true
+        model.preferences.audio.systemAudioEnabled = false
+        #expect(!model.canStart)
+        #expect(model.startRequirement == "Allow microphone access in Audio / STT")
+        model.preferences.audio.microphoneEnabled = false
+        model.preferences.audio.systemAudioEnabled = true
+        model.preferences.audio.systemScope = .application
+        model.preferences.audio.applicationBundleID = nil
+        #expect(!model.canStart)
+        #expect(model.startRequirement == "Choose a meeting application in Audio / STT")
+        model.preferences.audio.applicationBundleID = "local.freely.capture-fixture"
+        #expect(model.canStart)
+        #expect(model.startRequirement == nil)
+        await model.shutdown(); try cleanup(directory)
+    }
+
+    @Test func setupAcknowledgesGrantedPermissionsBeforeFirstCapture() async throws {
+        let directory = directory(), model = model(directory: directory)
+        model.preferences.audio.microphoneEnabled = true
+        model.preferences.audio.systemAudioEnabled = true
+        model.microphonePermission = .authorized
+        model.screenPixelPermission = true
+        model.systemPermissionStatus = "Not exercised"
+        #expect(model.capturePermissionsReady)
+        model.screenPixelPermission = false
+        #expect(!model.capturePermissionsReady)
+        model.preferences.audio.systemAudioEnabled = false
+        #expect(model.capturePermissionsReady)
+        model.microphonePermission = .denied
+        #expect(!model.capturePermissionsReady)
+        await model.shutdown(); try cleanup(directory)
+    }
+
 }

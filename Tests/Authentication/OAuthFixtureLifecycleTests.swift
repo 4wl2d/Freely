@@ -1,7 +1,7 @@
 import Foundation
 import Synchronization
 import Testing
-@testable import MeetingCopilot
+@testable import Freely
 
 private final class OAuthFixtureClientRecorder: NSObject, URLProtocolClient, Sendable {
     private let notifications = Mutex(0)

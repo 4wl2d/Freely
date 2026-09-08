@@ -1,6 +1,6 @@
 import Foundation
 import Testing
-@testable import MeetingCopilot
+@testable import Freely
 
 private actor VisualCaptureGate {
     private var continuation: CheckedContinuation<Void, Never>?

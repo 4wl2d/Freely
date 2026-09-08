@@ -6,43 +6,65 @@ fi
 TASK_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$TASK_ROOT"
 MODE="${1:-run}"
-case "$MODE" in run|--verify|--build-only|--release|--logs|--telemetry|--debug) ;; *) echo "Usage: $0 [--verify|--build-only|--release|--logs|--telemetry|--debug]" >&2; exit 2;; esac
-CONFIGURATION="${MEETINGCOPILOT_CONFIGURATION:-debug}"
+case "$MODE" in run|--verify|--build-only|--release|--logs|--telemetry|--debug|--diagnostics) ;; *) echo "Usage: $0 [--verify|--build-only|--release|--logs|--telemetry|--debug|--diagnostics]" >&2; exit 2;; esac
+CONFIGURATION="${FREELY_CONFIGURATION:-debug}"
 if [[ "$MODE" == --release ]]; then CONFIGURATION=release; fi
 case "$CONFIGURATION" in debug|release) ;; *) echo "Configuration must be debug or release." >&2; exit 2;; esac
-if pgrep -x MeetingCopilot >/dev/null; then
-  pkill -TERM -x MeetingCopilot
-  for _ in {1..30}; do if ! pgrep -x MeetingCopilot >/dev/null; then break; fi; sleep 0.1; done
-  if pgrep -x MeetingCopilot >/dev/null; then echo "MeetingCopilot is still stopping; retry when it exits." >&2; exit 1; fi
+if [[ "$MODE" == --debug && "$CONFIGURATION" != debug ]]; then
+  echo "LLDB requires a debug build. Release bundles never receive get-task-allow." >&2; exit 2
 fi
-swift build -c "$CONFIGURATION" --arch arm64 --product MeetingCopilot
+if pgrep -x Freely >/dev/null; then
+  pkill -TERM -x Freely
+  for _ in {1..30}; do if ! pgrep -x Freely >/dev/null; then break; fi; sleep 0.1; done
+  if pgrep -x Freely >/dev/null; then echo "Freely is still stopping; retry when it exits." >&2; exit 1; fi
+fi
+swift build -c "$CONFIGURATION" --arch arm64 --product Freely
 BIN_DIR="$(swift build -c "$CONFIGURATION" --arch arm64 --show-bin-path)"
-APP_BUNDLE="$TASK_ROOT/dist/MeetingCopilot.app"
+APP_BUNDLE="$TASK_ROOT/dist/Freely.app"
 mkdir -p "$APP_BUNDLE/Contents/MacOS" "$APP_BUNDLE/Contents/Resources"
-cp "$BIN_DIR/MeetingCopilot" "$APP_BUNDLE/Contents/MacOS/MeetingCopilot"
+cp "$BIN_DIR/Freely" "$APP_BUNDLE/Contents/MacOS/Freely"
 cp Resources/Info.plist "$APP_BUNDLE/Contents/Info.plist"
-cp MeetingCopilot/Resources/model-manifest.json "$APP_BUNDLE/Contents/Resources/model-manifest.json"
+BUILD_REVISION="$(git rev-parse --short=12 HEAD)"
+BUILD_TREE=clean
+if [[ -n "$(git status --porcelain --untracked-files=normal)" ]]; then BUILD_TREE=modified; fi
+/usr/libexec/PlistBuddy -c "Add :FreelyBuildRevision string $BUILD_REVISION" "$APP_BUNDLE/Contents/Info.plist"
+/usr/libexec/PlistBuddy -c "Add :FreelyBuildWorkingTree string $BUILD_TREE" "$APP_BUNDLE/Contents/Info.plist"
+cp Freely/Resources/model-manifest.json "$APP_BUNDLE/Contents/Resources/model-manifest.json"
 cp Resources/AppIcon.icns "$APP_BUNDLE/Contents/Resources/AppIcon.icns"
 ditto Resources/Licenses "$APP_BUNDLE/Contents/Resources/Licenses"
-if [[ -n "${MEETINGCOPILOT_BUNDLE_ID:-}" ]]; then
-  /usr/libexec/PlistBuddy -c "Set :CFBundleIdentifier $MEETINGCOPILOT_BUNDLE_ID" "$APP_BUNDLE/Contents/Info.plist"
+if [[ -n "${FREELY_BUNDLE_ID:-}" ]]; then
+  /usr/libexec/PlistBuddy -c "Set :CFBundleIdentifier $FREELY_BUNDLE_ID" "$APP_BUNDLE/Contents/Info.plist"
 fi
-if [[ -n "${MEETINGCOPILOT_OAUTH_CLIENT_ID:-}" ]]; then
-  /usr/libexec/PlistBuddy -c "Add :MeetingCopilotOAuthClientID string $MEETINGCOPILOT_OAUTH_CLIENT_ID" "$APP_BUNDLE/Contents/Info.plist"
+if [[ -n "${FREELY_OAUTH_CLIENT_ID:-}" ]]; then
+  /usr/libexec/PlistBuddy -c "Add :FreelyOAuthClientID string $FREELY_OAUTH_CLIENT_ID" "$APP_BUNDLE/Contents/Info.plist"
 fi
 # The app's own required resources use Bundle.main in the standard Resources directory.
 # FluidAudio's optional TTS resources are retained for license/completeness; the ASR path
 # loads only the explicitly verified model directory and does not access Bundle.module.
 shopt -s nullglob
 for bundle in "$BIN_DIR"/FluidAudio_*.bundle; do ditto "$bundle" "$APP_BUNDLE/Contents/Resources/$(basename "$bundle")"; done
-codesign --force --sign "${MEETINGCOPILOT_SIGN_IDENTITY:--}" --options runtime --entitlements Resources/MeetingCopilot.entitlements "$APP_BUNDLE"
+SIGNING_ENTITLEMENTS=Resources/Freely.entitlements
+if [[ "$MODE" == --debug ]]; then
+  SIGNING_ENTITLEMENTS="$(mktemp -t freely-debug-entitlements)"
+  trap 'rm -f "$SIGNING_ENTITLEMENTS"' EXIT
+  cp Resources/Freely.entitlements "$SIGNING_ENTITLEMENTS"
+  /usr/libexec/PlistBuddy -c 'Add :com.apple.security.get-task-allow bool true' "$SIGNING_ENTITLEMENTS"
+fi
+codesign --force --sign "${FREELY_SIGN_IDENTITY:--}" --options runtime --entitlements "$SIGNING_ENTITLEMENTS" "$APP_BUNDLE"
 codesign --verify --strict "$APP_BUNDLE"
 plutil -lint "$APP_BUNDLE/Contents/Info.plist"
 if [[ "$MODE" == --build-only ]]; then echo "$APP_BUNDLE"; exit 0; fi
-/usr/bin/open -n "$APP_BUNDLE"
+if [[ "$MODE" == --debug ]]; then
+  lldb -o run -- "$APP_BUNDLE/Contents/MacOS/Freely" --diagnostics --diagnostic-verbose
+  exit $?
+fi
+if [[ "$MODE" == --diagnostics || "$MODE" == --telemetry ]]; then
+  /usr/bin/open -n "$APP_BUNDLE" --args --diagnostics --diagnostic-verbose
+else
+  /usr/bin/open -n "$APP_BUNDLE"
+fi
 case "$MODE" in
-  --verify) sleep 1; pgrep -x MeetingCopilot ;;
-  --logs) /usr/bin/log stream --info --style compact --predicate 'process == "MeetingCopilot"' ;;
-  --telemetry) /usr/bin/log stream --info --style compact --predicate 'subsystem == "local.meetingcopilot.app"' ;;
-  --debug) lldb -n MeetingCopilot ;;
+  --verify) sleep 1; pgrep -x Freely ;;
+  --logs) /usr/bin/log stream --info --style compact --predicate 'process == "Freely"' ;;
+  --telemetry) /usr/bin/log stream --level debug --style compact --predicate 'subsystem == "local.freely.app"' ;;
 esac

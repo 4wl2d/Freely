@@ -1,7 +1,7 @@
 import AVFoundation
 import Foundation
 import Testing
-@testable import MeetingCopilot
+@testable import Freely
 
 struct AudioAdapterTests {
     @Test func ingressBoundsAndMeasuresEveryDroppedNewestFrame() {

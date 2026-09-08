@@ -1,7 +1,7 @@
 import AppKit
 import SwiftUI
 import Testing
-@testable import MeetingCopilot
+@testable import Freely
 
 @MainActor struct NativeAnswerLayoutTests {
     private func textView(in view: NSView) -> NSTextView? {

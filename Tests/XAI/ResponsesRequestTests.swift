@@ -1,6 +1,6 @@
 import Foundation
 import Testing
-@testable import MeetingCopilot
+@testable import Freely
 
 struct ResponsesRequestTests {
     private func request(image: LLMImage? = nil, tokens: Int = 100, detailed: Bool = false) -> LLMRequest {

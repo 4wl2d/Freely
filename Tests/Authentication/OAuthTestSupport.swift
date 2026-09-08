@@ -1,7 +1,7 @@
 import AuthenticationServices
 import Foundation
 import Synchronization
-@testable import MeetingCopilot
+@testable import Freely
 
 final class MemoryOAuthTokenStore: OAuthTokenStoring {
     private struct State { var tokens: OAuthStoredTokens?; var saves = 0; var deleteFails = false }
@@ -112,7 +112,7 @@ enum OAuthFixtures {
         case requestStartTimeout(expected: Int, observed: Int)
         case requestStopTimeout(expected: Int, observed: Int)
     }
-    static var configuration: SubscriptionClientConfiguration { .init(clientID: "meetingcopilot-test-only") }
+    static var configuration: SubscriptionClientConfiguration { .init(clientID: "freely-test-only") }
     static let discoveryData = Data("""
     {"issuer":"https://auth.x.ai","authorization_endpoint":"https://auth.x.ai/oauth2/authorize","token_endpoint":"https://auth.x.ai/oauth2/token","revocation_endpoint":"https://auth.x.ai/oauth2/revoke","scopes_supported":["api:access","offline_access"],"code_challenge_methods_supported":["S256"],"token_endpoint_auth_methods_supported":["none"],"grant_types_supported":["authorization_code","refresh_token"],"response_types_supported":["code"]}
     """.utf8)

@@ -2,7 +2,7 @@ import Foundation
 import Observation
 import Synchronization
 import Testing
-@testable import MeetingCopilot
+@testable import Freely
 
 private final class PresentationInvalidations: Sendable {
     let count = Mutex(0)

@@ -1,5 +1,7 @@
 # History and provenance
 
+On 2026-09-08 the repository and active project were renamed to **Freely**. Swift targets, app identity, resources, paths, scripts and current documentation use the new name. Names inside original release assets and historical measurement records remain unchanged so their hashes and provenance stay valid. The new app imports legacy settings and model files without deleting their originals.
+
 Before its first public import, MeetingCopilot's initial implementation was reorganized into logical, reviewable commits. Those commits present a completed local implementation and its evidence by topic. Their order is not a reconstruction of when each subsystem was written, and no development chronology has been invented or backdated.
 
 The original local Git history is preserved separately. Public import commits may therefore have different identifiers from the snapshots named in build and benchmark records. A historical SHA in an evidence file identifies that original snapshot; it does not imply that a GitHub commit URL with the same SHA will exist in the reorganized public history.
@@ -16,11 +18,11 @@ These are provenance references, not a fabricated series of earlier public miles
 
 ## Preserved release materials
 
-The [v0.1.0-preview release](https://github.com/4wl2d/MeetingCopilot/releases/tag/v0.1.0-preview) preserves:
+The [v0.1.0-preview release](https://github.com/4wl2d/Freely/releases/tag/v0.1.0-preview) preserves:
 
-- [MeetingCopilot-original-history.bundle](https://github.com/4wl2d/MeetingCopilot/releases/download/v0.1.0-preview/MeetingCopilot-original-history.bundle) and its [SHA-256 file](https://github.com/4wl2d/MeetingCopilot/releases/download/v0.1.0-preview/MeetingCopilot-original-history.bundle.sha256): the original Git history before public-import reorganization.
-- [MeetingCopilot-verification-evidence.tar.gz](https://github.com/4wl2d/MeetingCopilot/releases/download/v0.1.0-preview/MeetingCopilot-verification-evidence.tar.gz) and its [SHA-256 file](https://github.com/4wl2d/MeetingCopilot/releases/download/v0.1.0-preview/MeetingCopilot-verification-evidence.tar.gz.sha256): selected verification logs and canonical benchmark traces. The release publication manifest describes its contents.
-- [MeetingCopilot-1.0.0-macOS-arm64.zip](https://github.com/4wl2d/MeetingCopilot/releases/download/v0.1.0-preview/MeetingCopilot-1.0.0-macOS-arm64.zip) and its [SHA-256 file](https://github.com/4wl2d/MeetingCopilot/releases/download/v0.1.0-preview/MeetingCopilot-1.0.0-macOS-arm64.zip.sha256): the verified local app artifact. The public release tag is `v0.1.0-preview`; the preserved app's bundle version is `1.0.0`.
+- [MeetingCopilot-original-history.bundle](https://github.com/4wl2d/Freely/releases/download/v0.1.0-preview/MeetingCopilot-original-history.bundle) and its [SHA-256 file](https://github.com/4wl2d/Freely/releases/download/v0.1.0-preview/MeetingCopilot-original-history.bundle.sha256): the original Git history before public-import reorganization.
+- [MeetingCopilot-verification-evidence.tar.gz](https://github.com/4wl2d/Freely/releases/download/v0.1.0-preview/MeetingCopilot-verification-evidence.tar.gz) and its [SHA-256 file](https://github.com/4wl2d/Freely/releases/download/v0.1.0-preview/MeetingCopilot-verification-evidence.tar.gz.sha256): selected verification logs and canonical benchmark traces. The release publication manifest describes its contents.
+- [MeetingCopilot-1.0.0-macOS-arm64.zip](https://github.com/4wl2d/Freely/releases/download/v0.1.0-preview/MeetingCopilot-1.0.0-macOS-arm64.zip) and its [SHA-256 file](https://github.com/4wl2d/Freely/releases/download/v0.1.0-preview/MeetingCopilot-1.0.0-macOS-arm64.zip.sha256): the verified local app artifact. The public release tag is `v0.1.0-preview`; the preserved app's bundle version is `1.0.0`.
 
 After downloading the Git bundle, restore it into a separate directory to inspect an original snapshot:
 

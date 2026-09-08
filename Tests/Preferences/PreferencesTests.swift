@@ -1,9 +1,9 @@
 import Foundation
 import Testing
-@testable import MeetingCopilot
+@testable import Freely
 
 struct PreferencesTests {
-    private func directory() -> URL { FileManager.default.temporaryDirectory.appendingPathComponent("MeetingCopilotPreferencesTest-\(UUID().uuidString)", isDirectory: true) }
+    private func directory() -> URL { FileManager.default.temporaryDirectory.appendingPathComponent("FreelyPreferencesTest-\(UUID().uuidString)", isDirectory: true) }
     private func cleanup(_ directory: URL) throws {
         if FileManager.default.fileExists(atPath: directory.path) { try FileManager.default.removeItem(at: directory) }
     }
