@@ -199,3 +199,17 @@ import Testing
     #expect(RetryPolicy.decision(status: nil, attempt: 0, hasVisibleOutput: false, cancelled: true, now: 0, deadline: 60) == .stop)
     #expect(RetryPolicy.decision(status: 429, attempt: 0, hasVisibleOutput: false, cancelled: false, retryAfter: 61, now: 0, deadline: 60) == .stop)
 }
+
+@Test func resumingSessionWaitsForNativeCaptureAcknowledgement() throws {
+    var lifecycle = SessionLifecycle()
+    let epoch = try #require(lifecycle.start())
+    lifecycle.setSource(.localUser, status: .stopped, epoch: epoch)
+    lifecycle.setSource(.systemAudio, status: .running, epoch: epoch)
+    #expect(lifecycle.ready(epoch: epoch))
+    #expect(lifecycle.pause())
+    #expect(lifecycle.resume())
+    #expect(lifecycle.sources[.localUser] == .stopped)
+    #expect(lifecycle.sources[.systemAudio] == .paused)
+    lifecycle.setSource(.systemAudio, status: .running, epoch: epoch)
+    #expect(lifecycle.sources[.systemAudio] == .running)
+}

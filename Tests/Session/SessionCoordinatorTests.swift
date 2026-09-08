@@ -257,4 +257,19 @@ struct SessionCoordinatorTests {
         #expect(await provider.requests[0].detailed)
         await coordinator.stop()
     }
+    @Test @MainActor func sessionResumeNeverReportsDisabledMicrophoneAsCapturing() async throws {
+        let microphone = CoordinatorCapture(), system = CoordinatorCapture()
+        let (coordinator, recorder) = makeSessionFixture(microphone: microphone, system: system)
+        coordinator.start(preferences: coordinatorPreferences(microphone: false, system: true), sessionNotes: "", pinnedFacts: "", transcriptionOnly: true)
+        try await coordinatorEventually { recorder.latest.sources[.systemAudio] == .running }
+        #expect(recorder.latest.sources[.localUser] == .stopped)
+        coordinator.pauseOrResume()
+        #expect(recorder.latest.sources[.localUser] == .stopped)
+        coordinator.pauseOrResume()
+        try await coordinatorEventually { recorder.latest.sources[.systemAudio] == .running }
+        #expect(recorder.latest.sources[.localUser] == .stopped)
+        #expect(await microphone.starts == 0)
+        await coordinator.stop()
+    }
+
 }

@@ -393,7 +393,9 @@ final class SessionCoordinator {
         }
         guard lifecycle.pause() else { return }
         generation?.cancelForeground()
-        for source in AudioSource.allCases { requestSourceState(source, running: false) }
+        for source in AudioSource.allCases where lifecycle.sources[source] != .stopped {
+            requestSourceState(source, running: false)
+        }
         startMonitoring(epoch: lifecycle.epoch)
         publish()
     }
