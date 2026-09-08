@@ -1,7 +1,7 @@
 import Foundation
 import Synchronization
 import Testing
-@testable import MeetingCopilot
+@testable import Freely
 
 /// A shared reference gives noncopyable atomic storage one stable owner across test tasks.
 private final class IngressStressSignal: Sendable {

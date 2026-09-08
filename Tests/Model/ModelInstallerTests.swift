@@ -1,7 +1,7 @@
 import CryptoKit
 import Foundation
 import Testing
-@testable import MeetingCopilot
+@testable import Freely
 
 private actor ModelFetchGate {
     private(set) var started = false
@@ -10,7 +10,7 @@ private actor ModelFetchGate {
 
 struct ModelInstallerTests {
     private let content = Data("pinned test model bytes\n".utf8)
-    private func root() -> URL { FileManager.default.temporaryDirectory.appendingPathComponent("MeetingCopilotModelTest-\(UUID().uuidString)", isDirectory: true) }
+    private func root() -> URL { FileManager.default.temporaryDirectory.appendingPathComponent("FreelyModelTest-\(UUID().uuidString)", isDirectory: true) }
     private func manifest(path: String = "weights.bin", data: Data? = nil) -> ModelManifest {
         let data = data ?? content
         let revision = String(repeating: "a", count: 40)

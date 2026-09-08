@@ -1,7 +1,7 @@
-import CopilotCore
+import FreelyCore
 import Foundation
 import Testing
-@testable import MeetingCopilot
+@testable import Freely
 
 struct GenerationCoordinatorTests {
     @Test @MainActor func synchronousScreenIntentFencesBeforeDeferredNativeCommitAndOldCommitsCannotRollBack() async throws {

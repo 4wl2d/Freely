@@ -1,7 +1,7 @@
 import AVFoundation
 import CoreMedia
 import Testing
-@testable import MeetingCopilot
+@testable import Freely
 
 struct NativePCMTests {
     @Test func copiesFloatStereoBeforeNativeBufferIsReleased() throws {

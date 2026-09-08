@@ -12,10 +12,10 @@ Access date for the source ledger: 2026-09-07. These are documentation checks, i
 | [Responses streaming event schema](https://platform.openai.com/docs/api-reference/responses-streaming) | Compatibility schema for `response.completed`, `response.incomplete`, `response.failed`, error envelopes, sequence numbers and output deltas. | Primary compatibility reference; this is not a substitute for actual xAI terminal-event recordings. |
 | [Image understanding](https://docs.x.ai/developers/model-capabilities/images/understanding) | PNG/JPEG inline `input_image.image_url` data URLs; no public upload. Provider limit 20 MiB; application accepts at most 5 MiB and an estimated 8,000-token image allocation. | Image allocation is a conservative application allowance, not measured provider tokenization; UI must enforce crop/dimensions and session consent. |
 | [API billing](https://docs.x.ai/developers/faq/billing) | API requests consume prepaid credits or invoiced API usage; consumer subscription ownership is not treated as this application's API entitlement. | Actual team balances/spending limits are not read. |
-| [Official OpenCode integration](https://x.ai/news/grok-opencode) | Subscription-backed OAuth is supported for the named integration. Following user steering, MeetingCopilot now offers its own registered-client OAuth path as primary and API keys as optional, without borrowing another client's identity. | Own-client registration and custom-application subscription inference remain unverified; see [OAuth evidence](oauth-evidence.md). |
+| [Official OpenCode integration](https://x.ai/news/grok-opencode) | Subscription-backed OAuth is supported for the named integration. Following user steering, Freely now offers its own registered-client OAuth path as primary and API keys as optional, without borrowing another client's identity. | Own-client registration and custom-application subscription inference remain unverified; see [OAuth evidence](oauth-evidence.md). |
 | [API data/privacy](https://docs.x.ai/developers/faq/security) | Provider documentation states default 30-day abuse-audit retention, independent team-level ZDR, and `x-zero-data-retention` response header. Header is exposed as true/false/unknown without inference. | This application's user/team retention policy has not been inspected. |
 
-Implementation is in `MeetingCopilot/Infrastructure/XAI` and `Keychain`. Requests use an ephemeral Foundation `URLSession`, no URL cache/cookie/credential store, reject redirects, and read `AsyncBytes` while the response is arriving. No provider body, credential, observed context, screenshot or reasoning trace enters error descriptions. Missing/denied keys, 429, HTTP errors, network errors, malformed streams and incomplete answers retain distinct states.
+Implementation is in `Freely/Infrastructure/XAI` and `Keychain`. Requests use an ephemeral Foundation `URLSession`, no URL cache/cookie/credential store, reject redirects, and read `AsyncBytes` while the response is arriving. No provider body, credential, observed context, screenshot or reasoning trace enters error descriptions. Missing/denied keys, 429, HTTP errors, network errors, malformed streams and incomplete answers retain distinct states.
 
 The parser frames bytes before strict UTF-8 decoding, handles LF/CRLF/CR, BOM, multiline data, comments, unknown additive events and split Unicode, and requires a typed terminal response. Early EOF and a legacy `[DONE]` without completion remain interrupted. The buffer holds at most 256 application events; overflow fails visibly instead of silently dropping text. SSE lines/events are capped at 256 KiB and each response at 4 MiB. At most two transport producers can be owned simultaneously.
 
@@ -30,7 +30,7 @@ Keychain operations are serialized, use a service/account generic-password item,
 Executed on 2026-09-07:
 
 ```sh
-DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer MEETINGCOPILOT_KEYCHAIN_TEST=1 \
+DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer FREELY_KEYCHAIN_TEST=1 \
   swift test --filter 'SSEParserTests|ResponsesRequestTests|XAITransportTests|KeychainTests'
 ```
 

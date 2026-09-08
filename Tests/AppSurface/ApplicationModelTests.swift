@@ -1,9 +1,9 @@
 import AppKit
-import CopilotCore
+import FreelyCore
 import Foundation
 import ScreenCaptureKit
 import Testing
-@testable import MeetingCopilot
+@testable import Freely
 
 private actor AppSurfaceCredentials: CredentialStoring {
     private(set) var writes = 0
@@ -19,7 +19,7 @@ private actor SurfaceSourceGate {
 }
 
 @MainActor struct ApplicationModelTests {
-    private func directory() -> URL { FileManager.default.temporaryDirectory.appendingPathComponent("MeetingCopilotSurfaceTests-\(UUID().uuidString)", isDirectory: true) }
+    private func directory() -> URL { FileManager.default.temporaryDirectory.appendingPathComponent("FreelySurfaceTests-\(UUID().uuidString)", isDirectory: true) }
     private func model(directory: URL, loader: @escaping @Sendable () async throws -> [VisualSource] = { [] }) -> ApplicationModel {
         ApplicationModel(store: PreferencesStore(directory: directory), credentials: AppSurfaceCredentials(),
             subscription: SubscriptionAuthentication(tokens: OAuthTokenClient(store: MemoryOAuthTokenStore())), fetchVisualSources: loader)

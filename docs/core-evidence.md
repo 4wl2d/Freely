@@ -1,15 +1,15 @@
-# CopilotCore evidence
+# FreelyCore evidence
 
-CopilotCore contains platform-independent conversation/session value types and actor-owned state. The separate `CopilotCoreBenchmarks` executable uses macOS task accounting to measure its own resident memory. It is not part of the application product and does not load speech models, access audio devices, or make API requests.
+FreelyCore contains platform-independent conversation/session value types and actor-owned state. The separate `FreelyCoreBenchmarks` executable uses macOS task accounting to measure its own resident memory. It is not part of the application product and does not load speech models, access audio devices, or make API requests.
 
 ## Reproduction
 
 The verified toolchain is Xcode 26.6 (`17F113`), Swift 6.3.3, macOS 26.6.2 (`25G83`), Apple Silicon. Application-owned core code uses Swift 6 language mode and complete concurrency checking.
 
 ```sh
-DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer swift test --package-path Packages/CopilotCore
-DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer swift test -c release --package-path Packages/CopilotCore
-DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer swift run -c release --package-path Packages/CopilotCore CopilotCoreBenchmarks --seconds 14400 --output Benchmarks/results/core-replay-4h.json
+DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer swift test --package-path Packages/FreelyCore
+DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer swift test -c release --package-path Packages/FreelyCore
+DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer swift run -c release --package-path Packages/FreelyCore FreelyCoreBenchmarks --seconds 14400 --output Benchmarks/results/core-replay-4h.json
 ```
 
 Debug and Release each passed 47 Swift Testing tests. The XCTest compatibility runner prints “0 tests”; the subsequent Swift Testing summary is the authoritative count. No test requires a microphone, permission prompt, download, or API credential.

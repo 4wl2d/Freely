@@ -1,19 +1,19 @@
 import Foundation
 import Testing
-@testable import MeetingCopilot
+@testable import Freely
 
 struct KeychainTests {
     @Test func invalidCredentialRejectedBeforeKeychainWrite() async {
-        let store = KeychainCredentialStore(service: "com.meetingcopilot.invalid-test.\(UUID().uuidString)")
+        let store = KeychainCredentialStore(service: "com.freely.invalid-test.\(UUID().uuidString)")
         for value in ["", "   ", "contains newline\ninside", String(repeating: "x", count: 4_097)] {
             do { try await store.save(value); Issue.record("Expected invalid credential") }
             catch { #expect(error is CredentialStoreError) }
         }
     }
 
-    @Test(.enabled(if: ProcessInfo.processInfo.environment["MEETINGCOPILOT_KEYCHAIN_TEST"] == "1"))
+    @Test(.enabled(if: ProcessInfo.processInfo.environment["FREELY_KEYCHAIN_TEST"] == "1"))
     func isolatedKeychainRoundtrip() async throws {
-        let store = KeychainCredentialStore(service: "com.meetingcopilot.roundtrip-test.\(UUID().uuidString)")
+        let store = KeychainCredentialStore(service: "com.freely.roundtrip-test.\(UUID().uuidString)")
         #expect(try await store.load() == nil)
         do {
             try await store.save("synthetic-roundtrip-only")

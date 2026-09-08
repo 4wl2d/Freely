@@ -2,25 +2,25 @@
 import PackageDescription
 
 let package = Package(
-    name: "MeetingCopilot",
+    name: "Freely",
     platforms: [.macOS(.v15)],
-    products: [.executable(name: "MeetingCopilot", targets: ["MeetingCopilot"])],
+    products: [.executable(name: "Freely", targets: ["Freely"])],
     dependencies: [
-        .package(path: "Packages/CopilotCore"),
+        .package(path: "Packages/FreelyCore"),
         .package(url: "https://github.com/FluidInference/FluidAudio.git", exact: "0.15.6")
     ],
     targets: [
         .executableTarget(
-            name: "MeetingCopilot",
+            name: "Freely",
             dependencies: [
-                .product(name: "CopilotCore", package: "CopilotCore"),
+                .product(name: "FreelyCore", package: "FreelyCore"),
                 .product(name: "FluidAudio", package: "FluidAudio")
             ],
-            path: "MeetingCopilot",
+            path: "Freely",
             exclude: ["Resources"],
             swiftSettings: [.swiftLanguageMode(.v6)]
         ),
-        .testTarget(name: "MeetingCopilotTests", dependencies: ["MeetingCopilot"], path: "Tests", exclude: ["Fixtures"])
+        .testTarget(name: "FreelyTests", dependencies: ["Freely"], path: "Tests", exclude: ["Fixtures"])
     ],
     swiftLanguageModes: [.v6]
 )

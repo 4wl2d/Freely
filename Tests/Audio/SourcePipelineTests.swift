@@ -1,8 +1,8 @@
-import CopilotCore
+import FreelyCore
 import Foundation
 import Synchronization
 import Testing
-@testable import MeetingCopilot
+@testable import Freely
 
 private actor PipelineFixtureTranscriber: SpeechTranscribing {
     private(set) var calls = 0
