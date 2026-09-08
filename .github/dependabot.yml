@@ -1,0 +1,27 @@
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '07:00'
+      timezone: Europe/Belgrade
+    open-pull-requests-limit: 5
+    groups:
+      github-actions:
+        patterns: ['*']
+  - package-ecosystem: swift
+    directories:
+      - /
+      - /Benchmarks/STT
+    schedule:
+      interval: weekly
+      day: monday
+      time: '07:00'
+      timezone: Europe/Belgrade
+    open-pull-requests-limit: 5
+    groups:
+      swift-patch-and-minor:
+        patterns: ['*']
+        update-types: [minor, patch]
