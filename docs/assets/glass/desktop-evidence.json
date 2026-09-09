@@ -1,0 +1,9 @@
+{
+  "darkInteriorMean" : 23,
+  "date" : "2026-09-09T08:45:42Z",
+  "kind" : "ScreenCaptureKit display crop of production panel over public solid light\/dark test windows",
+  "lightInteriorMean" : 59,
+  "presentationContentIdenticalAcrossBackgrounds" : true,
+  "reduceMotionAtCapture" : false,
+  "reduceTransparencyAtCapture" : false
+}

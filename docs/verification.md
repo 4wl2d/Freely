@@ -1,6 +1,8 @@
 # Freely verification
 
-The current installation, connection and first-meeting checks are documented in [first-meeting-ux.md](first-meeting-ux.md). It distinguishes automated regression checks, live subscription requests, native capture and remaining distribution/compatibility limits.
+The graphite glass and Actions update has a separate [verification ledger](glass-verification.md), including native keyboard/compositor tests and the outstanding receiver matrix. The preceding unified-panel results remain in the [earlier ledger](redesign-verification.md).
+
+The earlier installation, connection and first-meeting checks are documented in [first-meeting-ux.md](first-meeting-ux.md). It distinguishes automated regression checks, live subscription requests, native capture and remaining distribution/compatibility limits.
 
 ## Current commands
 

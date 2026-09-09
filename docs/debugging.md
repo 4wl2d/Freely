@@ -1,6 +1,6 @@
 # Debugging Freely
 
-Open **Debug console…** from the menu bar, press **⌥⌘D** while Freely is active, or select **Diagnostics** in the main window. The standalone console can stay open beside the meeting UI. The Codex **Debug console** action builds and opens it with detailed events enabled.
+Open **Actions → Diagnostics** or use Command–K to search for Diagnostics. Overview, Events, Timings and Environment live inside the same panel. Expand enlarges that panel. The Codex **Diagnostics** action builds and opens this page with detailed events enabled.
 
 ```bash
 ./script/build_and_run.sh --diagnostics  # build, launch, open console, enable debug detail

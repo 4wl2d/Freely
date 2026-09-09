@@ -2,11 +2,12 @@ import FreelyCore
 import Foundation
 
 public struct AppPreferences: Codable, Equatable, Sendable {
-    public static let currentSchemaVersion = 2
+    public static let currentSchemaVersion = 3
     public var schemaVersion = currentSchemaVersion
     public var ai = AIPreferences()
     public var audio = AudioPreferences()
     public var overlay = OverlayPreferences()
+    public var panel = PanelPreferences()
     public var shortcuts = ShortcutBinding.defaults
     public var profiles: [UserProfile] = []
     public var selectedProfileID: UUID?
@@ -17,7 +18,7 @@ public struct AppPreferences: Codable, Equatable, Sendable {
     public init() {}
 
     private enum CodingKeys: String, CodingKey {
-        case schemaVersion, ai, audio, overlay, shortcuts, profiles, selectedProfileID, onboardingCompleted
+        case schemaVersion, ai, audio, overlay, panel, shortcuts, profiles, selectedProfileID, onboardingCompleted
         case connectionMethod, subscriptionClientID, grokBuildConnected
     }
     public init(from decoder: Decoder) throws {
@@ -28,7 +29,14 @@ public struct AppPreferences: Codable, Equatable, Sendable {
         ai = try values.decode(AIPreferences.self, forKey: .ai)
         audio = try values.decode(AudioPreferences.self, forKey: .audio)
         overlay = try values.decode(OverlayPreferences.self, forKey: .overlay)
+        panel = try values.decodeIfPresent(PanelPreferences.self, forKey: .panel) ?? PanelPreferences()
         shortcuts = try values.decode([ShortcutBinding].self, forKey: .shortcuts)
+        if version < 3 {
+            // Preserve every old binding, including disabled and conflicting assignments.
+            for binding in ShortcutBinding.defaults where !shortcuts.contains(where: { $0.action == binding.action }) {
+                shortcuts.append(binding)
+            }
+        }
         profiles = try values.decode([UserProfile].self, forKey: .profiles)
         selectedProfileID = try values.decodeIfPresent(UUID.self, forKey: .selectedProfileID)
         onboardingCompleted = try values.decode(Bool.self, forKey: .onboardingCompleted)
@@ -58,11 +66,53 @@ public struct AppPreferences: Codable, Equatable, Sendable {
               profiles.count <= 20, Set(profiles.map(\.id)).count == profiles.count,
               shortcuts.count == HotkeyAction.allCases.count,
               Set(shortcuts.map(\.action)) == Set(HotkeyAction.allCases) else { throw PreferencesError.invalidConfiguration }
+        guard panel.lastDisplayUUID.map({ UUID(uuidString: $0) != nil }) ?? true, panel.geometries.count <= 32, Set(panel.geometries.map(\.id)).count == panel.geometries.count,
+              panel.geometries.allSatisfy({ $0.isValid }) else { throw PreferencesError.invalidConfiguration }
         // Conflicting valid shortcuts are persisted so users can see and repair them in Settings.
         guard shortcuts.allSatisfy({ $0.chord?.isValid ?? true }) else { throw PreferencesError.invalidShortcut }
         for profile in profiles { try profile.validate() }
         guard selectedProfileID == nil || selectedProfile != nil else { throw PreferencesError.missingSelectedProfile }
         return self
+    }
+}
+
+public struct PanelPreferences: Codable, Equatable, Sendable {
+    public var positionLocked = true
+    public var translucentBackground = true
+    public var geometries: [PanelGeometry] = []
+    public var lastDisplayID: UInt32?
+    public var lastDisplayUUID: String?
+    public init() {}
+    private enum CodingKeys: String, CodingKey {
+        case positionLocked, translucentBackground, geometries, lastDisplayID, lastDisplayUUID
+    }
+    public init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        positionLocked = try values.decodeIfPresent(Bool.self, forKey: .positionLocked) ?? true
+        translucentBackground = try values.decodeIfPresent(Bool.self, forKey: .translucentBackground) ?? true
+        geometries = try values.decodeIfPresent([PanelGeometry].self, forKey: .geometries) ?? []
+        lastDisplayID = try values.decodeIfPresent(UInt32.self, forKey: .lastDisplayID)
+        lastDisplayUUID = try values.decodeIfPresent(String.self, forKey: .lastDisplayUUID)
+    }
+    public func geometry(displayID: UInt32, displayUUID: String?, expanded: Bool) -> PanelGeometry? {
+        if let displayUUID, let saved = geometries.first(where: { $0.expanded == expanded && $0.displayUUID?.lowercased() == displayUUID.lowercased() }) { return saved }
+        return geometries.first { $0.expanded == expanded && $0.displayID == displayID && $0.displayUUID == nil }
+    }
+}
+
+public struct PanelGeometry: Codable, Equatable, Sendable, Identifiable {
+    public var displayID: UInt32
+    public var expanded: Bool
+    public var x: Double
+    public var y: Double
+    public var width: Double
+    public var height: Double
+    public var displayUUID: String? = nil
+    public var id: String { "\(displayUUID?.lowercased() ?? String(displayID)):\(expanded)" }
+    public var isValid: Bool {
+        (displayUUID.map { UUID(uuidString: $0) != nil } ?? true) &&
+        [x, y, width, height].allSatisfy(\.isFinite) && abs(x) <= 100_000 && abs(y) <= 100_000 &&
+        (1...16_384).contains(width) && (1...16_384).contains(height)
     }
 }
 

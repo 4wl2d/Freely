@@ -242,15 +242,7 @@ private final class SoakUITokens: OAuthTokenStoring {
 private struct SoakProductionViewTree: View {
     @Bindable var model: ApplicationModel
     var body: some View {
-        HStack(spacing: 0) {
-            SetupView(model: model).frame(width: 900, height: 680)
-            Divider()
-            VStack(alignment: .leading, spacing: 12) {
-                Text(model.question).font(.headline).lineLimit(5)
-                NativeAnswerView(text: model.answer, textSize: model.textSize, interactive: false)
-                Text(model.generationDiagnostics.status).font(.caption)
-            }.padding(16).frame(width: 420, height: 680)
-        }
+        ShellView(model: model).frame(width: 720, height: 520)
     }
 }
 private struct SoakUIReport: Codable {
@@ -260,6 +252,7 @@ private struct SoakUIReport: Codable {
     let stateUpdates: UInt64
     let answerUpdates: UInt64
     let layoutPasses: UInt64
+    let actionPanelLayouts: UInt64
     let maximumNativeTextViews: Int
     let maximumNativeTextBytes: Int
     let everVisible: Bool
@@ -285,6 +278,7 @@ private struct SoakUIReport: Codable {
     private var stateUpdates: UInt64 = 0
     private var answerUpdates: UInt64 = 0
     private var layoutPasses: UInt64 = 0
+    private var actionPanelLayouts: UInt64 = 0
     private var maximumNativeTextViews = 0
     private var maximumNativeTextBytes = 0
     private var everVisible = false, everKey = false, everMain = false
@@ -292,18 +286,19 @@ private struct SoakUIReport: Codable {
     private var temporaryStoreRemoved = false
     private var closed = false
 
-    init(preferences: AppPreferences) throws {
+    init(preferences: AppPreferences, presentation: PresentationCoordinator? = nil) throws {
         directory = FileManager.default.temporaryDirectory.appendingPathComponent("Freely-Soak-UI-\(UUID())", isDirectory: true)
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true, attributes: [.posixPermissions: 0o700])
         _ = NSApplication.shared // Creates AppKit infrastructure without activating the process.
         let model = ApplicationModel(store: PreferencesStore(directory: directory), credentials: credentials,
-            subscription: SubscriptionAuthentication(tokens: OAuthTokenClient(store: tokens)), fetchVisualSources: { [] })
+            subscription: SubscriptionAuthentication(tokens: OAuthTokenClient(store: tokens)), fetchVisualSources: { [] },
+            presentation: presentation ?? PresentationCoordinator(outputMode: .memory))
         model.preferences = preferences
         model.section = .session
         model.modelReady = true
         // ready remains false: preference observers and shutdown must never persist this UI fixture.
         self.model = model
-        let frame = NSRect(x: 0, y: 0, width: 1_321, height: 680)
+        let frame = NSRect(x: 0, y: 0, width: 720, height: 520)
         let window = SoakHiddenWindow(contentRect: frame, styleMask: [.borderless], backing: .buffered, defer: true)
         window.isReleasedWhenClosed = false
         window.isExcludedFromWindowsMenu = true
@@ -330,6 +325,7 @@ private struct SoakUIReport: Codable {
         hosting.layoutSubtreeIfNeeded()
         window.contentView?.layoutSubtreeIfNeeded()
         layoutPasses &+= 1
+        if model.shell.commandsVisible { actionPanelLayouts &+= 1 }
         let textViews = nativeTextViews(in: hosting)
         maximumNativeTextViews = max(maximumNativeTextViews, textViews.count)
         maximumNativeTextBytes = max(maximumNativeTextBytes, textViews.reduce(0) { $0 + $1.string.utf8.count })
@@ -340,14 +336,21 @@ private struct SoakUIReport: Codable {
         wrotePreferences = wrotePreferences || FileManager.default.fileExists(atPath: directory.appendingPathComponent("preferences.json").path)
     }
     var isolationHeld: Bool {
-        !everVisible && !everKey && !everMain && !initialized && !wrotePreferences &&
+        model?.presentation.window == nil && !everVisible && !everKey && !everMain && !initialized && !wrotePreferences &&
             credentials.accessCount == 0 && tokens.accessCount == 0
+    }
+    func presentationImage() -> CGImage? {
+        guard let hosting else { return nil }
+        hosting.layoutSubtreeIfNeeded()
+        guard let bitmap = hosting.bitmapImageRepForCachingDisplay(in: hosting.bounds) else { return nil }
+        hosting.cacheDisplay(in: hosting.bounds, to: bitmap)
+        return bitmap.cgImage
     }
     var renderedText: [String] { hosting.map { nativeTextViews(in: $0).map(\.string) } ?? [] }
     var textViewIdentities: Set<ObjectIdentifier> { Set(hosting.map { nativeTextViews(in: $0).map(ObjectIdentifier.init) } ?? []) }
     var report: SoakUIReport {
         .init(requested: true, active: !closed && window != nil && hosting != nil && model != nil, closed: closed,
-            stateUpdates: stateUpdates, answerUpdates: answerUpdates, layoutPasses: layoutPasses,
+            stateUpdates: stateUpdates, answerUpdates: answerUpdates, layoutPasses: layoutPasses, actionPanelLayouts: actionPanelLayouts,
             maximumNativeTextViews: maximumNativeTextViews, maximumNativeTextBytes: maximumNativeTextBytes,
             everVisible: everVisible, everKey: everKey, everMain: everMain, applicationInitialized: initialized,
             applicationCredentialAccesses: credentials.accessCount, oauthTokenStoreAccesses: tokens.accessCount,
@@ -441,7 +444,27 @@ struct IntegratedSoakTests {
         preferences.audio.systemScope = .allSystemAudio
         preferences.ai.experimentalSpeculation = false
         let uiRequested = environment["FREELY_SOAK_UI"] == "1"
-        if uiRequested { recorder.uiHost = try SoakUIHost(preferences: preferences) }
+        let presentationRequested = environment["FREELY_SOAK_PRESENTATION"] == "1"
+        let nativeCapture = environment["FREELY_SOAK_NATIVE_CAPTURE"] == "1"
+        let fixtureStream = presentationRequested && !nativeCapture ? try FixturePresentationStream(repeats: true) : nil
+        let output = fixtureStream?.coordinator() ?? PresentationCoordinator(outputMode: .memory)
+        if uiRequested { recorder.uiHost = try SoakUIHost(preferences: preferences, presentation: output) }
+        let presentation = presentationRequested ? recorder.uiHost?.model?.presentation : nil
+        if presentationRequested {
+            let presentation = try #require(presentation, "Presentation workload requires FREELY_SOAK_UI=1")
+            if nativeCapture {
+                await presentation.refreshSources()
+                let fixture = try #require(presentation.sources.first { $0.application == "local.freely.capture-fixture" && $0.name.contains("Freely capture fixture — public test content") }, "Native capture is opt-in and requires the public CaptureFixture window")
+                presentation.sourceID = fixture.id
+            }
+            presentation.loadPreview(); await presentation.waitForPendingOperations()
+            #expect(presentation.preview != nil)
+            presentation.panelImage = { [weak host = recorder.uiHost] in host?.presentationImage() }
+            presentation.setPanelVisible(true); presentation.setShowPanel(true)
+            presentation.prepare(); await presentation.waitForPendingOperations()
+            #expect(presentation.active)
+            #expect(presentation.window == nil, "A workload must never open an output window")
+        }
         var memory: [SoakMemorySample] = []
         var began: Double?
         var failure: SoakFailure?
@@ -471,6 +494,12 @@ struct IntegratedSoakTests {
                 recorder.uiHost?.layout()
                 guard recorder.uiHost?.isolationHeld != false else { throw SoakFailure.uiIsolationViolation }
                 let elapsed = ProcessInfo.processInfo.systemUptime - start
+                if let ui = recorder.uiHost?.model {
+                    ui.shell.commandsVisible = Int(elapsed) % 20 >= 10
+                    ui.shell.commandSearch = Int(elapsed) % 60 >= 40 ? "source" : ""
+                    if ui.shell.commandsVisible { ui.handlePopupKey(125) }
+                }
+                guard !presentationRequested || presentation?.active == true else { throw SoakFailure.sourceUnavailable }
                 guard coordinator.phase == .running,
                       AudioSource.allCases.allSatisfy({ recorder.latest.sources[$0] == .running }) else { throw SoakFailure.sourceUnavailable }
                 recorder.maxTasks = max(recorder.maxTasks, coordinator.ownedTaskCount)
@@ -480,7 +509,7 @@ struct IntegratedSoakTests {
                     if memory.count > 481 { memory.removeFirst() }
                 }
                 if elapsed >= nextLog {
-                    print("SOAK elapsed=\(Int(elapsed))s segments=\(recorder.latest.transcript.count) tasks=\(coordinator.ownedTaskCount) retainedGaps=\(recorder.latest.gapCount)")
+                    FileHandle.standardError.write(Data("SOAK elapsed=\(Int(elapsed))s segments=\(recorder.latest.transcript.count) tasks=\(coordinator.ownedTaskCount) retainedGaps=\(recorder.latest.gapCount) presentationActive=\(presentation?.active ?? false) publishedFrames=\(presentation?.publishedCount ?? 0)\n".utf8))
                     nextLog = (floor(elapsed / 60) + 1) * 60
                 }
                 try await clock.sleep(until: min(deadline, origin.advanced(by: .seconds(nextSecond))))
@@ -504,6 +533,17 @@ struct IntegratedSoakTests {
             (source.rawValue, recorder.latest.transcript.filter { $0.source == source }.count)
         })
         let finalThermal = ProcessInfo.processInfo.thermalState.rawValue
+        let presentationMetrics: [String: Any] = [
+            "requested": presentationRequested, "activeBeforeStop": presentation?.active ?? false,
+            "stateBeforeStop": presentation?.state ?? "Not requested",
+            "receivedFrames": presentation?.receivedCount ?? 0, "publishedFrames": presentation?.publishedCount ?? 0,
+            "maximumRenderSeconds": presentation?.maximumRenderSeconds ?? 0,
+            "source": nativeCapture ? "Explicit public CaptureFixture window; ScreenCaptureKit stream" : "Synthetic immutable in-memory frames; no ScreenCaptureKit or desktop access",
+            "outputWindowCreated": presentation?.window != nil,
+            "panelLayer": "Hidden production SwiftUI/AppKit workload host; test callback captures its native views"
+        ]
+        let presentationPassed = !presentationRequested || (presentation?.active == true && (presentation?.receivedCount ?? 0) > 0 && (presentation?.publishedCount ?? 0) > 0)
+        presentation?.sessionEnded()
         let stopStart = ProcessInfo.processInfo.systemUptime
         await coordinator.stop() // Runs after success, timeout, source failure, or task cancellation.
         let coordinatorStopSeconds = ProcessInfo.processInfo.systemUptime - stopStart
@@ -528,7 +568,7 @@ struct IntegratedSoakTests {
         let uiPassed = !uiRequested || (uiBeforeStop?.active == true && (uiBeforeStop?.layoutPasses ?? 0) > 0 &&
             (uiBeforeStop?.maximumNativeTextViews ?? 0) >= 2 && recorder.uiHost?.isolationHeld == true &&
             uiAfterStop?.closed == true && uiAfterStop?.temporaryStoreRemoved == true && uiAfterStop?.cleanupFailed == false)
-        let passed = failure == nil && completedDuration && recorder.errors.isEmpty && validSources && uiPassed &&
+        let passed = presentationPassed && failure == nil && completedDuration && recorder.errors.isEmpty && validSources && uiPassed &&
             recorder.maxRetainedGaps == 0 && recorder.maxSegments <= 2_000 && recorder.maxBytes <= 2 * 1_024 * 1_024 &&
             coordinator.ownedTaskCount == 0 && providerActive == 0 && stopSeconds < 2 &&
             (rssPeak.map { $0 <= 4 * 1_024 * 1_024 * 1_024 } ?? false) &&
@@ -579,6 +619,7 @@ struct IntegratedSoakTests {
             "rssGrowthBytes": json(growth), "rssAfterStopBytes": json(postStopRSS),
             "sampledRSSPeakBytes": json(rssPeak), "sampledPhysicalFootprintPeakBytes": json(footprintPeak),
             "preparationSampledRSSPeakBytes": json(preparationPeakRSS), "preparationSampledPhysicalFootprintPeakBytes": json(preparationPeakFootprint),
+            "presentation": presentationMetrics,
             "thermalStart": initialThermal, "thermalEndBeforeStop": finalThermal,
             "stopSeconds": stopSeconds, "ownedTasksAfterStop": coordinator.ownedTaskCount,
             "coordinatorStopSeconds": coordinatorStopSeconds, "uiCloseSeconds": json(uiCloseSeconds),
@@ -588,7 +629,7 @@ struct IntegratedSoakTests {
             "limits": ["maximumTranscriptSegments": 2_000, "maximumTranscriptBytes": 2_097_152,
                 "maximumRSSBytes": 4_294_967_296.0, "additionalGrowthBytes": growthLimit ?? 134_217_728,
                 "normalTeardownSeconds": 2, "maximumMemorySamples": 482],
-            "limitations": ["No live microphone, ScreenCaptureKit capture, Grok/OAuth connection, provider latency or semantic quality is exercised.",
+            "limitations": [presentationRequested ? "Paced synthetic PCM, real local STT and a recorded answer provider. Video uses synthetic frames unless native capture was explicitly selected. No live microphone, live Grok, recipient call or semantic-quality acceptance." : "No live microphone, ScreenCaptureKit capture, Grok/OAuth connection, provider latency or semantic quality is exercised.",
                 uiRequested ? "Production SetupView and NativeAnswerView retain actual coordinator state in a hidden NSWindow inside the test process; this is not a proper app-bundle launch, visible rendering/focus test, or UI interaction test." : "Memory is sampled in a test process running the production coordinators and STT without a UI host, not the native UI app bundle.",
                 "A warm immutable model cache remains resident after stop. Framework-internal housekeeping tasks are not enumerated.",
                 "Scheduler percentiles describe the latest2048 feed events per source; maximum covers the full run.",
@@ -597,7 +638,7 @@ struct IntegratedSoakTests {
         let directory = root.appendingPathComponent("Benchmarks/results")
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
         try JSONSerialization.data(withJSONObject: raw, options: [.prettyPrinted, .sortedKeys])
-            .write(to: directory.appendingPathComponent("integrated-soak-\(seconds)s.json"), options: .atomic)
+            .write(to: directory.appendingPathComponent(environment["FREELY_SOAK_RESULT_NAME"] ?? "\(presentationRequested ? "presentation" : "integrated")-soak-\(seconds)s.json"), options: .atomic)
         #expect(passed, "Inspect the redacted integrated-soak JSON; all owned services were stopped before evaluating acceptance.")
     }
     @MainActor private static func memorySample(seconds: Double, recorder: SoakRecorder, coordinator: SessionCoordinator) -> SoakMemorySample {
@@ -641,7 +682,7 @@ struct SoakFixtureReaderTests {
         host.record(state); host.record(answer, GenerationDiagnostics(status: "Streaming")); host.layout()
         do {
             for _ in 0..<10 { await Task.yield(); host.layout() }
-            #expect(host.renderedText.filter { $0 == "A synthetic answer" }.count >= 2)
+            #expect(host.renderedText.filter { $0 == "A synthetic answer" }.count == 1)
             let textViewIDs = host.textViewIdentities
             answer.append("\n```swift\nlet retained = true\n```", identity: identity)
             answer.finish(identity: identity, lifecycle: .completed)

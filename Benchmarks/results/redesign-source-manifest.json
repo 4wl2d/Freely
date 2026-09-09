@@ -1,0 +1,210 @@
+[
+  {
+    "path": "Freely/App/ApplicationModel.swift",
+    "sha256": "3cf3fb8749a9c364efd99fe1b0180d8a370d25ca72e6480340a6e43162923aa5"
+  },
+  {
+    "path": "Freely/App/FreelyApp.swift",
+    "sha256": "261f2e24987b4f242304b0866d82a1e264b0e3ab7dc97f42b41cda9ecc07be45"
+  },
+  {
+    "path": "Freely/App/GenerationCoordinator.swift",
+    "sha256": "c5e1ffb62b756f600b141a188a2e2dbad7934dc52d5325844b694cb26690cec7"
+  },
+  {
+    "path": "Freely/App/SessionCoordinator.swift",
+    "sha256": "ae1ad3d532b3a04738d18bd876a005af427e454772415a8d810f6d74f02be818"
+  },
+  {
+    "path": "Freely/Infrastructure/Audio/AudioIngress.swift",
+    "sha256": "3b82968da78682f47807c74f6a00b2b2f503b8f91f21506f8a5237f1c0a416ae"
+  },
+  {
+    "path": "Freely/Infrastructure/Audio/NativeAudioCapture.swift",
+    "sha256": "8ba2fe74652b6b0566ba6d99f9c9e47ab21a8dc9c4113b2a3ca41dcf41f0868d"
+  },
+  {
+    "path": "Freely/Infrastructure/Authentication/SubscriptionOAuth.swift",
+    "sha256": "3b9d7b80e19f1a5fdf1c9622462f63f7314346ea15e07d7bad80989ee7f4ac99"
+  },
+  {
+    "path": "Freely/Infrastructure/Diagnostics/DiagnosticReport.swift",
+    "sha256": "f383615b1b0e4b206389ce09adf2da89858b673889f83f82c5c849de734dc531"
+  },
+  {
+    "path": "Freely/Infrastructure/Diagnostics/FreelyLog.swift",
+    "sha256": "38363e006efe67ee51833b753609086e868e002d07f02098d104572c673c2bf2"
+  },
+  {
+    "path": "Freely/Infrastructure/GrokBuild/GrokBuildConnection.swift",
+    "sha256": "6b3ac448273d3cff1f1ef65a4118d1ac597d76702caf864d866e7ddcc4c1504b"
+  },
+  {
+    "path": "Freely/Infrastructure/GrokBuild/GrokBuildProvider.swift",
+    "sha256": "1ad3935b3c9a665c6717f1441df6d5d94ac1bcbce8e8b776dcaa84312500012e"
+  },
+  {
+    "path": "Freely/Infrastructure/GrokBuild/GrokBuildRuntime.swift",
+    "sha256": "5996520f69d441dafabb9608b001bd02d53aa6b88f74e67147f3a3a7be0a8a48"
+  },
+  {
+    "path": "Freely/Infrastructure/GrokBuild/GrokBuildStreamParser.swift",
+    "sha256": "65fae474ceef90b706dd1513e894548ba214c1aa54d65053400badb0c8ef6e0e"
+  },
+  {
+    "path": "Freely/Infrastructure/Keychain/KeychainCredentialStore.swift",
+    "sha256": "db0c7c919c8ded046e6661cc97c8be57953a2b18be85156a79c6cd57b8009f83"
+  },
+  {
+    "path": "Freely/Infrastructure/ModelDistribution/ModelInstaller.swift",
+    "sha256": "347d6b8d5a0af73f3c8524bd55fde2d09ccda6f9ee4e00fa430a90d379aafc27"
+  },
+  {
+    "path": "Freely/Infrastructure/Persistence/AppPreferences.swift",
+    "sha256": "e75197f5118d7c25aa7cf18e81d0adaec4c1f59b252452774922822a07416c0b"
+  },
+  {
+    "path": "Freely/Infrastructure/Persistence/LegacyDataMigration.swift",
+    "sha256": "640eff5634427b18ff021bf4d7e1bff9a4ca1a502b1fe03c1e1df422167f641e"
+  },
+  {
+    "path": "Freely/Infrastructure/Persistence/PreferencesStore.swift",
+    "sha256": "48175c5c698899d08a4e922d84ed3d4186feddaf36f771da63e870f574370ddd"
+  },
+  {
+    "path": "Freely/Infrastructure/ScreenCapture/NativeScreenCapture.swift",
+    "sha256": "69df92e707ae637fef40108f80b823e944394e6c72fa36656691768ad64d7703"
+  },
+  {
+    "path": "Freely/Infrastructure/Shortcuts/HotkeyController.swift",
+    "sha256": "5aed94da17dda6e053062ed8764e8064698da81e4a4393b712e14ea4bac53c2a"
+  },
+  {
+    "path": "Freely/Infrastructure/Shortcuts/ShortcutTypes.swift",
+    "sha256": "4f95a8ef0af6ae86ccee4938ec893cbc0cb08a03a61af68b31017e2b0d7b69ca"
+  },
+  {
+    "path": "Freely/Infrastructure/SpeechRecognition/LocalSpeechModel.swift",
+    "sha256": "6044b77b3f4e99c15a6b14ebaaf827288b9c4645d127bf94972f0c5b284471fc"
+  },
+  {
+    "path": "Freely/Infrastructure/SpeechRecognition/SourcePipeline.swift",
+    "sha256": "5c018052561e40ebcb6d314f3c899c0621085ce0a8fcf6c0c626603e3fb365d2"
+  },
+  {
+    "path": "Freely/Infrastructure/XAI/LLMTypes.swift",
+    "sha256": "85d8d1a7372e4de3c50bf75313a15f1d0ac9712a448ac92f7466406eeaa48b02"
+  },
+  {
+    "path": "Freely/Infrastructure/XAI/ResponsesRequest.swift",
+    "sha256": "e23f9278bff88c38f802dcd7761fd579ffe71e54b98776e9d2694228dd37faf9"
+  },
+  {
+    "path": "Freely/Infrastructure/XAI/SSEParser.swift",
+    "sha256": "9a70a2b57675a60fc20e1b36767bec8049e5e89e1215f7717d62062e9fed6563"
+  },
+  {
+    "path": "Freely/Infrastructure/XAI/XAILLMProvider.swift",
+    "sha256": "0d81c05b2d24af812bad0529c0898af210877d81bbf047baee1d6e76e4f280b7"
+  },
+  {
+    "path": "Freely/Presentation/Diagnostics/DiagnosticsView.swift",
+    "sha256": "a0f7a876f3c72254d8acd23d05e9c75d41f04e8e310bbfdb898222c572631633"
+  },
+  {
+    "path": "Freely/Presentation/Overlay/NativeAnswerView.swift",
+    "sha256": "faf91abcf3a28105a45b2be9fb137fa0ff8d9e80fdc8c9f2466c4ab9617e91cc"
+  },
+  {
+    "path": "Freely/Presentation/Presentation/PresentationCoordinator.swift",
+    "sha256": "d5142da3b79f8fe289a5a7fc66ba3b437b5757c7f6c0cff6372513234cae5b47"
+  },
+  {
+    "path": "Freely/Presentation/Settings/SettingsView.swift",
+    "sha256": "75134542abefeaafb8747fd1ba95ad0323f2b0a6395031173a92e960c1fa28e6"
+  },
+  {
+    "path": "Freely/Presentation/Shell/ContextPages.swift",
+    "sha256": "702f26f9f654650c61beaa587f620d7e5f860309053148d31c558045cdff5ff3"
+  },
+  {
+    "path": "Freely/Presentation/Shell/NativeSelection.swift",
+    "sha256": "0bda23001794be3b15f76777dc212bb6c5ce2fa27da66005bb68466f4709795c"
+  },
+  {
+    "path": "Freely/Presentation/Shell/PanelPicker.swift",
+    "sha256": "032449711c8bd3405c14c3ea75dc1528c2893893954160db20e231d6b34f0032"
+  },
+  {
+    "path": "Freely/Presentation/Shell/QuestionInput.swift",
+    "sha256": "7fcc63957dbb9f04659f3a939af173b64b585690e49ccd5341174cd88ba320b4"
+  },
+  {
+    "path": "Freely/Presentation/Shell/RegionEditor.swift",
+    "sha256": "85027b815dedebe73a5c4ba91d74590a84f5bed501fc7b159b24b31e25fd8355"
+  },
+  {
+    "path": "Freely/Presentation/Shell/RetainedPage.swift",
+    "sha256": "556a03e877bc35c554c3700ce83529d3448d9f2b00dd351a70270addd84023a6"
+  },
+  {
+    "path": "Freely/Presentation/Shell/ShellState.swift",
+    "sha256": "ba45265b09cdd53ea9d39ba09a8e33c9ce1cebe9a6374117d4f4221345e2f3df"
+  },
+  {
+    "path": "Freely/Presentation/Shell/ShellView.swift",
+    "sha256": "77d96f909cdb910eaac5a9b286e46169abc98d27c1e9f2a9119f3746b895d659"
+  },
+  {
+    "path": "Freely/Presentation/Shell/ShellWindowController.swift",
+    "sha256": "48d304e7506811976e8f99edf13b9f2db5e2cf869227490b3506573c9c7f8d4b"
+  },
+  {
+    "path": "Freely/Presentation/Shell/TranscriptExcerpt.swift",
+    "sha256": "8e751a7e2d1e2e7354bbece4d1988325ae6b9025869f9b78a4ba3f8be042a71f"
+  },
+  {
+    "path": "Package.resolved",
+    "sha256": "d60c779749fb33c33dbc5fc4b89b5e9258085c27dd032d7a2d50f28edab3ba02"
+  },
+  {
+    "path": "Package.swift",
+    "sha256": "ef493a3c411e015efbb484404b22d750a80f7e195219ddc19cb251156591bbcc"
+  },
+  {
+    "path": "Packages/FreelyCore/Sources/FreelyCore/Context.swift",
+    "sha256": "9cf113733aa9c6c77d972ac5bd449ca6b5bf1d6c0357d6aa42945d8422582d2f"
+  },
+  {
+    "path": "Packages/FreelyCore/Sources/FreelyCore/ConversationEngine.swift",
+    "sha256": "bde455b263ee46f5cbb0821d8caced1539eaee82eb806a7101fd302c932e30b6"
+  },
+  {
+    "path": "Packages/FreelyCore/Sources/FreelyCore/Diagnostics.swift",
+    "sha256": "8b4faaa7a6ca04e65b9e7e67b7c8439d35a5662c78afde9e9e8c2a9f3c67050c"
+  },
+  {
+    "path": "Packages/FreelyCore/Sources/FreelyCore/Domain.swift",
+    "sha256": "8e865a75373e9e881727664cdf7aa6e1c71c081fe53a7d7285a09b2564817a36"
+  },
+  {
+    "path": "Packages/FreelyCore/Sources/FreelyCore/Lifecycle.swift",
+    "sha256": "a723230bf5c6bea07d7a55716324a6aca01a7624d38591d02b7e2df2f5278c74"
+  },
+  {
+    "path": "Packages/FreelyCore/Sources/FreelyCore/Questions.swift",
+    "sha256": "461fd963195c8a382811ba2d4556b68bac5f9a97d6b54da63116a9f0475214a4"
+  },
+  {
+    "path": "Packages/FreelyCore/Sources/FreelyCore/Transcript.swift",
+    "sha256": "632fb4ecd4eb5a37ac3736d0d15f8d4e451459376bd66b8a1ec1c02f86134ae8"
+  },
+  {
+    "path": "Packages/FreelyCore/Sources/FreelyCore/Visual.swift",
+    "sha256": "93c2abab5fbde16ac73899862f60748cbb0f571ec6dafb7bb00a02bf5c0e7568"
+  },
+  {
+    "path": "Packages/FreelyCore/Sources/FreelyCoreBenchmarks/main.swift",
+    "sha256": "139b6f8fefd2d807955c2968044af8cccb0111205c9fc51edc7e28f7619e1ebd"
+  }
+]

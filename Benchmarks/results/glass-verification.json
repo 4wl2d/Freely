@@ -1,0 +1,95 @@
+{
+  "backgroundHarness": "harness-verification.json",
+  "baseCommit": "bc130289b47d6dba929753369cbf8701b3d1fbd9",
+  "checks": {
+    "accessibility": {
+      "collected": 1,
+      "executed": 1,
+      "log": ".cache/glass-accessibility.log",
+      "logSHA256": "72c2c03c516f6307140280d1ccd07420c6871de697ed2969a7d98bfdde212678",
+      "seconds": 0.308,
+      "skipped": 0
+    },
+    "coreDebug": {
+      "collected": 49,
+      "executed": 49,
+      "log": ".cache/glass-core-debug.log",
+      "logSHA256": "e5cc88d9317e691c9576569644dfe313a2aa549a31b1e5544ef07bb0ea27d99b",
+      "seconds": 0.252,
+      "skipped": 0
+    },
+    "coreRelease": {
+      "collected": 49,
+      "executed": 49,
+      "log": ".cache/glass-core-release.log",
+      "logSHA256": "992c7c7410f58c3e596151c16d6e0b50e1e2bcb98d9e3ad2c61df99434dbdac1",
+      "seconds": 0.08,
+      "skipped": 0
+    },
+    "debug": {
+      "collected": 199,
+      "executed": 184,
+      "log": ".cache/glass-tests-debug.log",
+      "logSHA256": "9e455f475327b7b8924bd4fe0c3184e99922f959c4f4b7c5654abfced7e9be0a",
+      "seconds": 9.435,
+      "skipped": 15
+    },
+    "native": {
+      "collected": 10,
+      "executed": 10,
+      "log": ".cache/glass-final-native.log",
+      "logSHA256": "a370163afcbd44c32ed46ce0aaa1c40c292c44a6d74d5888fb6fbd3794a0549f",
+      "seconds": 26.763,
+      "skipped": 0
+    },
+    "nativeKeyboard": {
+      "collected": 5,
+      "executed": 5,
+      "log": ".cache/glass-native-focus.log",
+      "logSHA256": "aa9cff63dd4fa9b5ba33e5aaf07ec2997fc398751fdc09aa431e05ae3d21284c",
+      "seconds": 3.295,
+      "skipped": 0
+    },
+    "release": {
+      "collected": 199,
+      "executed": 184,
+      "log": ".cache/glass-tests-release.log",
+      "logSHA256": "83881e92a0644a31d6722b064571673fba1d54dcded2971f3c7cf9072ea78f5d",
+      "seconds": 8.782,
+      "skipped": 15
+    }
+  },
+  "date": "2026-09-09T09:07:25.165308+00:00",
+  "package": {
+    "buildLogSHA256": "287478a412a3a81ddc549f18cd135682456fb3db62e7530789aac74d5a6f0f90",
+    "configuration": "release",
+    "executableSHA256": "bcbacf6a5f73e338524fe3faf42d66a129e26d13d98c3b8e8296870617d69356",
+    "path": "dist/Freely.app",
+    "signature": "ad hoc; codesign --verify --strict passed"
+  },
+  "packagedUI": {
+    "inputMethod": "CUA accessibility value for search plus individual physical keystrokes; typeText transport was unreliable in the active input layout",
+    "liveMeetingStarted": false,
+    "verified": [
+      "Actions button focuses search",
+      "Command K closes and reopens Actions",
+      "search and Enter navigation",
+      "Up changes visible highlight",
+      "Enter on unavailable action keeps panel open",
+      "Shift Enter newline",
+      "rejected Enter preserves draft",
+      "Escape restores editor and typing continues",
+      "Command W hide and reopen restore Answer page"
+    ]
+  },
+  "receiverAcceptance": "not conducted: Meet, Zoom, Teams",
+  "soak": {
+    "completedRequestedDuration": false,
+    "elapsedProcessSeconds": 900,
+    "inputs": "glass-soak-inputs.json",
+    "reason": "Interactive test output disrupted desktop work; replacing with a headless harness",
+    "status": "cancelled by user"
+  },
+  "sourceManifest": "glass-source-manifest.json",
+  "validationBoundary": "Glass UI Release/native results precede the subsequent headless capture adapter extraction; the extraction passed the new Debug harness."
+}

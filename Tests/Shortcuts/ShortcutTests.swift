@@ -6,11 +6,11 @@ import Testing
 struct ShortcutTests {
     @Test func everyRequiredActionHasDistinctValidDefault() {
         let defaults = ShortcutBinding.defaults
-        #expect(defaults.count == 10)
+        #expect(defaults.count == HotkeyAction.allCases.count)
         #expect(Set(defaults.map(\.action)) == Set(HotkeyAction.allCases))
-        #expect(Set(defaults.compactMap(\.chord)).count == 10)
-        #expect(defaults.allSatisfy { $0.chord?.isValid == true })
-        #expect(HotkeyController.validate(defaults).values.allSatisfy { $0 == .registered })
+        #expect(Set(defaults.compactMap(\.chord)).count == 11)
+        #expect(defaults.allSatisfy { $0.chord?.isValid ?? true })
+        #expect(HotkeyController.validate(defaults).allSatisfy { $0.key == .togglePresentationUI ? $0.value == .disabled : $0.value == .registered })
     }
 
     @Test func duplicateActionsAndChordsAreConflictsWithoutBlindRegistration() {

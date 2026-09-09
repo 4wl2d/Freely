@@ -18,8 +18,14 @@ if pgrep -x Freely >/dev/null; then
   for _ in {1..30}; do if ! pgrep -x Freely >/dev/null; then break; fi; sleep 0.1; done
   if pgrep -x Freely >/dev/null; then echo "Freely is still stopping; retry when it exits." >&2; exit 1; fi
 fi
-swift build -c "$CONFIGURATION" --arch arm64 --product Freely
-BIN_DIR="$(swift build -c "$CONFIGURATION" --arch arm64 --show-bin-path)"
+# The original mode is already held in MODE. Positional arguments safely represent
+# an empty option list even in macOS Bash 3.2 with nounset enabled.
+set --
+if [[ -n "${FREELY_SWIFT_SCRATCH_PATH:-}" ]]; then
+  set -- --scratch-path "$FREELY_SWIFT_SCRATCH_PATH"
+fi
+swift build "$@" -c "$CONFIGURATION" --arch arm64 --product Freely
+BIN_DIR="$(swift build "$@" -c "$CONFIGURATION" --arch arm64 --show-bin-path)"
 APP_BUNDLE="$TASK_ROOT/dist/Freely.app"
 mkdir -p "$APP_BUNDLE/Contents/MacOS" "$APP_BUNDLE/Contents/Resources"
 cp "$BIN_DIR/Freely" "$APP_BUNDLE/Contents/MacOS/Freely"
