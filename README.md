@@ -13,35 +13,37 @@
 
 [![macOS CI](https://github.com/4wl2d/Freely/actions/workflows/ci.yml/badge.svg)](https://github.com/4wl2d/Freely/actions/workflows/ci.yml)
 
-Freely is a native SwiftUI/AppKit meeting companion. It transcribes audio locally, keeps a bounded conversation context, and streams Grok suggestions into a passive companion panel. You choose the audio sources and the context that may leave your Mac.
+Freely is a native SwiftUI/AppKit meeting companion. It transcribes audio locally, keeps a bounded conversation context, and streams Grok suggestions into one floating panel. You choose the audio sources and the context that may leave your Mac.
 
 > [!IMPORTANT]
 > **Freely is a native macOS preview.** Connect your Grok subscription through the official **Grok Build** client, or explicitly choose an xAI API key with separate billing. No OAuth client registration is needed for the ordinary subscription connection. Local transcription also works without an AI connection.
 
-For development, open **Debug console…** (⌥⌘D) for live events, pipeline health, timing distributions, and safe JSON reports. See the [debugging guide](docs/debugging.md) for reproduction, LLDB, and crash/hang capture workflows.
+This branch contains the unified panel redesign. See the [panel and presentation guide](docs/unified-panel.md) and its [verification ledger](docs/glass-verification.md). The published 0.2.0 preview predates this redesign.
+
+For development, open **Actions → Diagnostics** for live events, pipeline health, timing distributions, and safe JSON reports. See the [debugging guide](docs/debugging.md) for reproduction, LLDB, and crash/hang capture workflows.
 
 ## Built around the conversation
 
 | Local speech | Deliberate context | Native controls |
 | --- | --- | --- |
-| On-device Parakeet TDT v3 recognition, with independent microphone and meeting-audio pipelines. | Selected profile, retained conversation, session notes and pinned facts. Screen context starts off. | Menu-bar controls, per-source pause, configurable shortcuts, and a panel that stays passive until you choose **Interact**. |
+| On-device Parakeet TDT v3 recognition, with independent microphone and meeting-audio pipelines. | Selected profile, retained conversation, session notes and pinned facts. Screen context starts off. | Menu-bar controls, per-source pause, configurable shortcuts, and one panel that stays passive until you click its text or fields. |
 
 - **Audio stays on your Mac.** The production pipeline does not save or upload it. Selected text, and an explicitly permitted image when used, go to xAI for generation.
 - **Corrections invalidate stale answers.** Material changes to selected context fence the old stream and reject late chunks.
 - **Capture scope is explicit.** Select a meeting application, or separately choose all system audio. Browser capture covers the application, not one tab.
 - **Ending a session clears volatile meeting data.** Capture, decoding and generation are cancelled; a bounded speech-model cache may stay warm.
 
-The app does not join calls, identify individual speakers, or type into another application. Capture visibility varies by sharing software; there is no universal “invisible overlay” claim. [Privacy and permission details →](docs/privacy-and-permissions.md)
+The app does not join calls, identify individual speakers, or type into another application. The optional controlled presentation output has its own source and interface visibility control; receiver compatibility is tracked separately. [Privacy and permission details →](docs/privacy-and-permissions.md)
 
 ## Get started
 
 **Target:** macOS 15.0 or later, Apple Silicon. The verified runtime host is macOS 26.6.2; macOS 15 execution has not been tested separately.
 
 1. Download [Freely 0.2.0 preview](https://github.com/4wl2d/Freely/releases/tag/v0.2.0-preview), unzip it, and move **Freely.app** to **Applications**.
-2. Open **Audio / STT**. Enable the sources you need, choose your meeting application, request microphone access if enabled, and download the approximately **483 MB** speech model. macOS may require **Quit & Reopen** after you enable Screen & System Audio Recording.
-3. Open **AI → Connect Grok**. Freely reuses an existing [official Grok Build](https://docs.x.ai/build/overview) sign-in or opens its browser sign-in. The button runs a short subscription test and reports the result. Install Grok Build first if the app shows **Install Grok Build**. An API key or **Transcription-only session** are alternative choices.
-4. Optionally add a profile or notes in **Context**, then press **Start session**. Speak or play meeting audio, wait for the transcript, and use **Answer now** when needed. Direct questions in meeting audio can trigger answers automatically.
-5. **Pause** suspends capture; **End session** stops capture and requests, and clears the retained transcript and answers.
+2. Open **Settings → Audio & Speech**. Enable the sources you need, choose your meeting application, request microphone access if enabled, and download the approximately **483 MB** speech model. macOS may require **Quit & Reopen** after you enable Screen & System Audio Recording.
+3. Open **Settings → Connections → Connect Grok**. Freely reuses an existing [official Grok Build](https://docs.x.ai/build/overview) sign-in or opens its browser sign-in. The button runs a short subscription test and reports the result. Install Grok Build first if the app shows **Install Grok Build**. An API key or **Transcription-only session** are alternative choices.
+4. Optionally add a profile or notes in **Context**, then press **Start session**. Speak or play meeting audio, wait for the transcript, and type a question and press **Ask** when needed. Direct questions in meeting audio can trigger answers automatically.
+5. **Actions → Pause all sources** suspends capture; **Actions → End session** confirms the end and clears retained session data. **Hide Freely** keeps capture running.
 
 The first Freely launch copies existing settings and speech models from the former app when no Freely copy exists. It preserves the originals. macOS permissions belong to the new app identity and must be granted again.
 
@@ -103,3 +105,5 @@ The [Freely preview](https://github.com/4wl2d/Freely/releases/tag/v0.2.0-preview
 ## License
 
 Original project code is available under the [Apache License 2.0](LICENSE). Dependencies, model weights and benchmark data keep their own licenses and attribution; see [third-party notices](THIRD_PARTY_NOTICES.md).
+
+For routine checks without visible windows, use `./script/harness.py start`; `status` shows progress and `stop` cancels only the harness. See the [background test guide](docs/testing-harness.md).

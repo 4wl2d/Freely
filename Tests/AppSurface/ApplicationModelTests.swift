@@ -154,13 +154,13 @@ private actor SurfaceSourceGate {
         model.preferences.audio.microphoneEnabled = true
         model.preferences.audio.systemAudioEnabled = false
         #expect(!model.canStart)
-        #expect(model.startRequirement == "Allow microphone access in Audio / STT")
+        #expect(model.startRequirement == "Allow microphone access in Audio & Speech")
         model.preferences.audio.microphoneEnabled = false
         model.preferences.audio.systemAudioEnabled = true
         model.preferences.audio.systemScope = .application
         model.preferences.audio.applicationBundleID = nil
         #expect(!model.canStart)
-        #expect(model.startRequirement == "Choose a meeting application in Audio / STT")
+        #expect(model.startRequirement == "Choose a meeting application in Audio & Speech")
         model.preferences.audio.applicationBundleID = "local.freely.capture-fixture"
         #expect(model.canStart)
         #expect(model.startRequirement == nil)

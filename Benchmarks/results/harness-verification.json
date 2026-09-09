@@ -1,0 +1,66 @@
+{
+  "date": "2026-09-09T09:38:38.876631+00:00",
+  "debug": {
+    "status": "passed",
+    "secondsIncludingIncrementalBuild": 13.171,
+    "run": ".cache/harness/20260909-112855-4f64f9bb/result.json",
+    "counts": {
+      "core": {
+        "collected": 49,
+        "executed": 49,
+        "skipped": 0,
+        "seconds": 0.258
+      },
+      "regression": {
+        "collected": 200,
+        "executed": 185,
+        "skipped": 15,
+        "seconds": 8.977
+      }
+    }
+  },
+  "cancellation": {
+    "run": "20260909-113507-3295c607",
+    "phaseWhenStopped": "regression",
+    "ownedTreeBefore": [
+      [
+        "8982",
+        "8939",
+        "8982",
+        "SNs",
+        "10"
+      ],
+      [
+        "8985",
+        "8982",
+        "8985",
+        "RN",
+        "10"
+      ]
+    ],
+    "status": "cancelled",
+    "runningOwnedPIDsAfter": [],
+    "FreelyPIDsBefore": [
+      "6027"
+    ],
+    "FreelyPIDsAfter": [
+      "6027"
+    ],
+    "passed": true
+  },
+  "visibleWindowsCreatedByHeadlessTest": false,
+  "nativeCaptureInDefaultHarness": false,
+  "sourceSHA256": {
+    "script/harness.py": "14b91254bc7239b14cd9464586effb79fe54bc0ab8c7dd21c2c7c5bbf0c73244",
+    "script/test.sh": "2278c43cb981f93b5adaf3b0a01d58d10f4918ccb9f7cbb79dbaf759576d8d9a",
+    "Freely/Presentation/Presentation/PresentationCoordinator.swift": "1e13d3932bbb0a7f5b54eb92354686eb67598268cd36834d11ca05114c2ecce6",
+    "Freely/App/ApplicationModel.swift": "146e45539b40e1f5ba5d787c2481459a1eb445f975a58050e993128e644c6b79",
+    "Tests/Shell/HeadlessPresentationTests.swift": "6e3dff752deb364a0ddb43a12fe9c3372bc5a296a076fec4814f7aa64b93c06c",
+    "Tests/Soak/IntegratedSoakTests.swift": "2deeff1046520361de55376673aa47568dbe3a02a543f69e2614332801be9073",
+    "Tests/Shell/PresentationRuntimeTests.swift": "44a95e95d7474366c9733fe0982fe6d3db09f331217ccd7d1a4936a96761edd9"
+  },
+  "limits": [
+    "Release and real capture were not rerun after the headless adapter extraction.",
+    "The prior 30-minute workload was stopped at user request and is not a pass."
+  ]
+}

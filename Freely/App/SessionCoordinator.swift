@@ -8,12 +8,14 @@ struct SessionViewState: Sendable {
     var sessionID: UUID?
     var elapsedSeconds = 0.0
     var phase = SessionPhase.idle
+    var preparationStage: String?
     var sources: [AudioSource: SourceStatus] = [:]
     var metrics: [AudioSource: SourceProcessingMetrics] = [:]
     var transcript: [TranscriptSegment] = []
     var turns: [ConversationTurn] = []
     var contextLimited = false
     var gapCount = 0
+    var gaps: [AudioDiscontinuity] = []
     var summaryCoverage = "None"
     var lastQuestion: QuestionState?
     var error: String?
@@ -145,6 +147,7 @@ final class SessionCoordinator {
             var prepared: [AudioSource: any SpeechTranscribing] = [:]
             for source in AudioSource.allCases where enabled(source) {
                 do {
+                    state.preparationStage = "Loading speech model for \(source.label.lowercased())"; publish()
                     let transcriber = try await makeTranscriber(source)
                     guard lifecycle.accepts(epoch), !Task.isCancelled else { await transcriber.stop(); break }
                     prepared[source] = transcriber
@@ -157,9 +160,11 @@ final class SessionCoordinator {
             }
             for source in AudioSource.allCases {
                 guard let transcriber = prepared[source] else { continue }
+                state.preparationStage = "Starting \(source.label.lowercased())"; publish()
                 await startSource(source, transcriber: transcriber, epoch: epoch)
             }
             guard lifecycle.accepts(epoch), !Task.isCancelled else { return }
+            state.preparationStage = nil
             _ = lifecycle.ready(epoch: epoch)
             if !lifecycle.sources.values.contains(.running) {
                 _ = lifecycle.recovering(epoch: epoch)
@@ -258,7 +263,7 @@ final class SessionCoordinator {
     private func apply(_ update: ConversationUpdate) {
         if let contextID = update.invalidatedContextID { generation?.contextInvalidated(contextID) }
         state.transcript = update.segments; state.turns = update.turns
-        state.contextLimited = update.contextLimited; state.gapCount = update.gaps.count
+        state.contextLimited = update.contextLimited; state.gapCount = update.gaps.count; state.gaps = update.gaps
         for questionID in update.invalidatedQuestionIDs { generation?.questionInvalidated(questionID) }
         if !transcriptionOnly { generation?.observeTranscript(update, now: elapsed) }
         if let question = update.newQuestion {

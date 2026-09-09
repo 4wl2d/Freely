@@ -1,0 +1,119 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-09-09T00:18:30.362679+00:00",
+  "branch": "feature/unified-panel-presentation",
+  "baseCommit": "bc130289b47d6dba929753369cbf8701b3d1fbd9",
+  "workingTreeModified": true,
+  "toolchain": {
+    "xcode": "26.6 (17F113)",
+    "swift": "6.3.3",
+    "os": "26.6.2"
+  },
+  "applicationTests": {
+    "debug": {
+      "status": "passed",
+      "reportedTests": 188,
+      "passedTests": 179,
+      "skippedTests": 9,
+      "skippedNames": [
+        "realSubscriptionRespondsAndCleansTemporaryData()",
+        "realTimeDualSourceLocalProcessing()",
+        "isolatedKeychainRoundtrip()",
+        "syntheticTokenSetRotatesAtomicallyInAnIsolatedKeychainItem()",
+        "explicitQuestionFocusSurvivesNavigationAndHide()",
+        "passiveStreamDoesNotActivateTheApplication()",
+        "nativeOutputExcludesMarkersAfterHideSourceChangeAndSystemPause()",
+        "everyScreenAtBothSizes()",
+        "nativeRegistrationConflictReconfigureAndCleanup()"
+      ]
+    },
+    "release": {
+      "status": "passed",
+      "reportedTests": 188,
+      "passedTests": 179,
+      "skippedTests": 9,
+      "skippedNames": [
+        "realSubscriptionRespondsAndCleansTemporaryData()",
+        "realTimeDualSourceLocalProcessing()",
+        "isolatedKeychainRoundtrip()",
+        "syntheticTokenSetRotatesAtomicallyInAnIsolatedKeychainItem()",
+        "explicitQuestionFocusSurvivesNavigationAndHide()",
+        "passiveStreamDoesNotActivateTheApplication()",
+        "nativeOutputExcludesMarkersAfterHideSourceChangeAndSystemPause()",
+        "everyScreenAtBothSizes()",
+        "nativeRegistrationConflictReconfigureAndCleanup()"
+      ]
+    }
+  },
+  "coreTests": {
+    "debug": {
+      "status": "passed",
+      "tests": 49
+    },
+    "release": {
+      "status": "passed",
+      "reportedTests": 49,
+      "passedTests": 49,
+      "skippedTests": 0,
+      "skippedNames": []
+    }
+  },
+  "focusedNativeChecks": {
+    "status": "passed",
+    "reportedTests": 13,
+    "passedTests": 13,
+    "skippedTests": 0,
+    "skippedNames": []
+  },
+  "packagedLaunch": {
+    "debug": {
+      "status": "passed",
+      "processIDAtVerification": 74772,
+      "bundleSignatureVerifiedByScript": true,
+      "infoPlistVerifiedByScript": true
+    },
+    "release": {
+      "status": "passed",
+      "processIDAtVerification": 75728,
+      "bundleSignatureVerifiedByScript": true,
+      "infoPlistVerifiedByScript": true
+    }
+  },
+  "packagedReleaseSHA256": "8dcad8db07cd0b4781820e6e036a3a9c86c356e5e877c6c17975dd9f558571fb",
+  "screenshots": {
+    "count": 46,
+    "sizes": [
+      [
+        720,
+        520
+      ],
+      [
+        960,
+        700
+      ]
+    ],
+    "content": "Synthetic fixture data",
+    "index": "docs/assets/shell/README.md"
+  },
+  "presentationSoak": {
+    "isolated": "Benchmarks/results/presentation-soak-1800s.json",
+    "firstInterrupted": "Benchmarks/results/presentation-soak-1800s-first-interrupted.json",
+    "sourceIdentity": "Benchmarks/results/presentation-soak-inputs.json",
+    "status": "passed on isolated rerun",
+    "limits": "Synthetic paced speech, real local STT, recorded provider and public window capture; not a live provider or recipient meeting"
+  },
+  "packagedUIObservations": [
+    "Release readiness and Audio & Speech were readable through the desktop UI driver",
+    "Command-K opened the internal action list",
+    "User changed settings during observation; the driver blocked some actions between state refreshes",
+    "No session or paid generation was started by the agent"
+  ],
+  "notConducted": [
+    "Meet/Chrome receiver recording",
+    "Zoom receiver recording",
+    "Teams receiver recording",
+    "Physical multi-display disconnect, Spaces and fullscreen matrix",
+    "Full VoiceOver journey",
+    "Live 30-minute microphone/system-audio/Grok/receiver meeting"
+  ]
+}
