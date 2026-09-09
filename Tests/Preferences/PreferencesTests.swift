@@ -18,7 +18,7 @@ struct PreferencesTests {
         #expect(value.audio.microphoneDeviceUID == nil)
         #expect(value.audio.systemScope == .application)
         #expect(value.ai.experimentalSpeculation == false)
-        #expect(value.shortcuts.count == 10)
+        #expect(value.shortcuts.count == HotkeyAction.allCases.count)
         #expect(!FileManager.default.fileExists(atPath: store.fileURL.path))
         let object = try #require(JSONSerialization.jsonObject(with: JSONEncoder().encode(value)) as? [String: Any])
         for absent in ["apiKey", "credential", "transcript", "screenConsent", "visualSnapshot", "sessionNotes"] { #expect(object[absent] == nil) }

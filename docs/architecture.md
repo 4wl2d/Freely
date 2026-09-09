@@ -28,7 +28,8 @@ flowchart LR
 - `LocalSpeechModelCache` holds at most two independently loaded immutable model sets. Session-owned managers/decoder states are not cached. Loading uses only verified local files; SDK automatic model download paths are not used.
 - `ConversationEngine` reconciles timestamp-ordered revisions, constructs turns, detects questions, commits revision-fenced summaries and builds bounded snapshots. Generated suggestions retain separate provenance and are never represented as speech.
 - `GenerationCoordinator` owns one foreground generation and one newest pending intent, summary priority/cooldown, speculation admission and final UI fences. The provider owns native URLSession producers and retry deadlines. Teardown awaits both consumers and transports.
-- `ApplicationModel` is the MainActor composition/presentation owner. AppKit panel/menu/region selection remain in small native controllers. Ordinary output mutations never call application activation.
+- `ApplicationModel` composes the existing session/generation owners. `ShellWindowController` owns the only user panel. `ShellState` retains navigation, shared popup selection and focus bookmarks; native retained page hosts preserve text/scroll state. `PanelDialogCoordinator` owns attached file sheets and their invalidation fence. Actions overlays the current retained page and exclusively owns keyboard input while open. The local `PanelBackdrop` and transparent SwiftUI content host are siblings; only the content host is cached for presentation, over an opaque graphite backing. Ordinary output mutations never activate the application.
+- `PresentationCoordinator` independently owns ScreenCaptureKit capture, one newest source-frame slot, synchronous revision-checked composition, a bounded panel bitmap cache and a non-key output window. System UI and source failure neutralize that output before asynchronous cleanup. See [panel architecture and behavior](unified-panel.md).
 - OAuth and API-key credentials are separate Keychain owners. Subscription OAuth is preferred; a router never silently substitutes a stored API key when subscription authentication fails.
 
 ## Invariants and limits
@@ -48,8 +49,8 @@ Summary construction is asynchronous and lower priority than answers. Commits ch
 - AVFoundation selects an explicit microphone UID or follows default without changing the global device. ScreenCaptureKit microphone capture is disabled to avoid duplication.
 - System audio registers an audio output only; the app receives no screen frames for audio-only capture. This does not assert that macOS performs no internal display work.
 - ScreenCaptureKit screenshot APIs are on-demand, SDR/sRGB, source/crop/selection-fenced, maximum 2048-pixel long edge and 4 MiB. Own application windows are excluded. No public image hosting or OCR prerequisite exists.
-- Carbon hotkeys provide ten configurable actions without blanket keyboard observation or Accessibility permission.
-- `NSPanel` uses ordinary floating level, nonactivating read mode and explicit interaction. `sharingType=.none` is best effort, not a universal capture guarantee.
+- Carbon hotkeys provide twelve configurable actions without blanket keyboard observation or Accessibility permission. The presentation-visibility action has no default global binding.
+- `NSPanel` stays at ordinary floating level and becomes key only after interaction. Hosting views do not determine window size. No `sharingType` guarantee is used; own-process exclusion belongs to the controlled ScreenCaptureKit output. Native selectable text is included through AppKit bitmap caching.
 
 ## Source ledger
 

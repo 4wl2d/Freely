@@ -90,7 +90,7 @@ actor NativeScreenCapture: ScreenContextCapturing {
                 width: $0.frame.width, height: $0.frame.height)
         }
         let windows = content.windows.filter {
-            $0.owningApplication?.processID != ProcessInfo.processInfo.processIdentifier &&
+            $0.owningApplication != nil && $0.owningApplication?.processID != ProcessInfo.processInfo.processIdentifier &&
                 $0.windowLayer == 0 && $0.frame.width > 32 && $0.frame.height > 32
         }.map {
             VisualSource(id: "window:\($0.windowID)", kind: .window, nativeID: $0.windowID,
@@ -138,6 +138,14 @@ actor NativeScreenCapture: ScreenContextCapturing {
 
     private func permitsCapture(epoch expected: UInt64) -> Bool { expected == epoch && mode != .off }
 
+    /// A local editor preview has no provider, retained visual snapshot or session consent side effect.
+    static func localPreview(_ source: VisualSource) async throws -> CGImage {
+        let result = try await captureNative(ScreenSelection(source: source, region: nil), stillAuthorized: { !Task.isCancelled })
+        guard let imageSource = CGImageSourceCreateWithData(result.png as CFData, nil),
+              let image = CGImageSourceCreateImageAtIndex(imageSource, 0, nil) else { throw ScreenCaptureFailure.encoding }
+        return image
+    }
+
     private static func captureNative(_ selection: ScreenSelection, stillAuthorized: @Sendable () async -> Bool) async throws -> PreparedScreenImage {
         try Task.checkCancellation()
         let content = try await SCShareableContent.excludingDesktopWindows(true, onScreenWindowsOnly: true)
@@ -156,7 +164,7 @@ actor NativeScreenCapture: ScreenContextCapturing {
             bounds = CGRect(origin: .zero, size: display.frame.size)
         case .window:
             guard let window = content.windows.first(where: { $0.windowID == selection.source.nativeID }),
-                  window.owningApplication?.processID != ProcessInfo.processInfo.processIdentifier,
+                  let owner = window.owningApplication, owner.processID != ProcessInfo.processInfo.processIdentifier,
                   window.isOnScreen else { throw ScreenCaptureFailure.unavailable }
             filter = SCContentFilter(desktopIndependentWindow: window)
             bounds = CGRect(origin: .zero, size: window.frame.size)

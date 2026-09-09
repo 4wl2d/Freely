@@ -1,0 +1,29 @@
+{
+  "run": "20260909-113507-3295c607",
+  "phaseWhenStopped": "regression",
+  "ownedTreeBefore": [
+    [
+      "8982",
+      "8939",
+      "8982",
+      "SNs",
+      "10"
+    ],
+    [
+      "8985",
+      "8982",
+      "8985",
+      "RN",
+      "10"
+    ]
+  ],
+  "status": "cancelled",
+  "runningOwnedPIDsAfter": [],
+  "FreelyPIDsBefore": [
+    "6027"
+  ],
+  "FreelyPIDsAfter": [
+    "6027"
+  ],
+  "passed": true
+}

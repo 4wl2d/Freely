@@ -1,0 +1,15 @@
+{
+  "inputs": {
+    ".build/arm64-apple-macosx/debug/FreelyPackageTests.xctest/Contents/MacOS/FreelyPackageTests": "54569a1eab9c61d817d976ced36448cde2e3ea896534cfe50d4ce71cd4cc312c",
+    ".build/arm64-apple-macosx/release/FreelyPackageTests.xctest/Contents/MacOS/FreelyPackageTests": "2efe456aa3724b8b4f6244ea1283e4e6bac0da27569e7f9bc632aec6e17546e7",
+    ".cache/redesign-soak-corpus/localUser.json": "1fb153edc7a096a1e55569e9468b318c7f18b6bb8d36162cfa64b6bd5be4255e",
+    ".cache/redesign-soak-corpus/systemAudio.json": "7b7706f7dc615b41f422f1557b2ceb24d827b2ad3f62690f4bad7b77c6756f96",
+    "Benchmarks/results/glass-source-manifest.json": "483be77c2f6e95ae6ca9344223f43b74e976ea3999db3f3d327322a80c1cb8ab",
+    "Freely/Resources/model-manifest.json": "1e35241d2164a82e3c0c573c0b551cc3ee26f42f78fa139242da3e8d61b8135d",
+    "dist/Freely.app/Contents/MacOS/Freely": "bcbacf6a5f73e338524fe3faf42d66a129e26d13d98c3b8e8296870617d69356"
+  },
+  "requestedSeconds": 1800,
+  "result": "glass-soak-1800s.json",
+  "sources": "Paced synthetic speech through both real local STT pipelines; recorded generation; exact public CaptureFixture window",
+  "startedAt": "2026-09-09T09:01:22.827465+00:00"
+}

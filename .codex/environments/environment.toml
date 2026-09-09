@@ -8,6 +8,16 @@ icon = "run"
 command = "./script/build_and_run.sh"
 
 [[actions]]
-name = "Debug console"
+name = "Diagnostics"
 icon = "run"
 command = "./script/build_and_run.sh --diagnostics"
+
+[[actions]]
+name = "Background tests"
+icon = "run"
+command = "./script/harness.py start"
+
+[[actions]]
+name = "Stop tests"
+icon = "run"
+command = "./script/harness.py stop"

@@ -3,19 +3,22 @@ import Foundation
 public enum HotkeyAction: String, CaseIterable, Codable, Sendable, Identifiable {
     case startStopSession, toggleOverlay, answerNow, captureAnalyze, expandCollapse, clearAnswer, pinUnpin
     case pauseResumeMicrophone, pauseResumeSystemAudio, endSession
+    case focusQuestion, togglePresentationUI
     public var id: String { rawValue }
     public var title: String {
         switch self {
         case .startStopSession: "Start / stop session"
-        case .toggleOverlay: "Show / hide overlay"
+        case .toggleOverlay: "Show / hide Freely"
         case .answerNow: "Answer now"
         case .captureAnalyze: "Capture and analyze"
         case .expandCollapse: "Expand / collapse answer"
         case .clearAnswer: "Clear answer"
-        case .pinUnpin: "Pin / unpin answer"
+        case .pinUnpin: "Freeze / unfreeze answer"
         case .pauseResumeMicrophone: "Pause / resume microphone"
         case .pauseResumeSystemAudio: "Pause / resume system audio"
         case .endSession: "End session"
+        case .focusQuestion: "Focus question"
+        case .togglePresentationUI: "Show / hide Freely in presentation"
         }
     }
 }
@@ -73,9 +76,13 @@ public struct ShortcutBinding: Codable, Equatable, Sendable, Identifiable {
     public init(action: HotkeyAction, chord: ShortcutChord?) { self.action = action; self.chord = chord }
     public static var defaults: [Self] {
         let keys: [ShortcutKey] = [.one, .two, .three, .four, .five, .six, .seven, .eight, .nine, .zero]
-        return zip(HotkeyAction.allCases, keys).map { action, key in
+        var bindings: [Self] = zip(HotkeyAction.allCases, keys).map { action, key in
             .init(action: action, chord: .init(key: key, modifiers: [.command, .control, .option]))
         }
+        bindings[1].chord = .init(key: .space, modifiers: [.control, .option])
+        bindings.append(.init(action: .focusQuestion, chord: .init(key: .return, modifiers: [.control, .option])))
+        bindings.append(.init(action: .togglePresentationUI, chord: nil))
+        return bindings
     }
 }
 

@@ -23,11 +23,14 @@ struct DiagnosticsView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             header
-            TabView(selection: $selectedTab) {
-                DiagnosticsOverview(model: model).tabItem { Label("Health & pipelines", systemImage: "waveform.path.ecg") }.tag(0)
-                eventTimeline.tabItem { Label("Events", systemImage: "list.bullet.rectangle") }.tag(1)
-                timingView.tabItem { Label("Timings", systemImage: "stopwatch") }.tag(2)
-                environmentView.tabItem { Label("Environment", systemImage: "desktopcomputer") }.tag(3)
+            Picker("Page", selection: $selectedTab) {
+                Text("Overview").tag(0); Text("Events").tag(1); Text("Timings").tag(2); Text("Environment").tag(3)
+            }.pickerStyle(.segmented)
+            switch selectedTab {
+            case 0: DiagnosticsOverview(model: model)
+            case 1: eventTimeline
+            case 2: timingView
+            default: environmentView
             }
             HStack {
                 Text("\(snapshot.events.count) / \(snapshot.capacity) events · \(snapshot.evicted) evicted · \(snapshot.suppressedDebug) debug events omitted")
@@ -40,7 +43,7 @@ struct DiagnosticsView: View {
             refresh()
             while !Task.isCancelled {
                 do { try await Task.sleep(for: .milliseconds(500)) } catch { break }
-                if live { refresh() }
+                if live && model.section == .diagnostics && model.overlayVisible { refresh() }
             }
         }
         .onDisappear { savePanel?.cancel(nil); savePanel = nil }
@@ -49,11 +52,12 @@ struct DiagnosticsView: View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
                 VStack(alignment: .leading, spacing: 3) {
-                    Text("Debug console").font(.title2.bold())
+                    Text("Diagnostics").font(.headline)
                     Text("Run \(snapshot.runID.uuidString.prefix(8)) · errors: \(snapshot.counts["error", default: 0]) · warnings: \(snapshot.counts["warning", default: 0])")
                         .font(.caption.monospaced()).foregroundStyle(.secondary)
                 }
                 Spacer()
+                Button(model.expanded ? "Compact" : "Expand") { model.toggleExpanded() }
                 Button("Copy report", systemImage: "doc.on.doc") { copyReport() }
                 Button("Export JSON…", systemImage: "square.and.arrow.up") { exportReport() }
                     .disabled(savePanel != nil || exportTask != nil)
@@ -68,19 +72,12 @@ struct DiagnosticsView: View {
             HStack {
                 TextField("Search event, field, session or request ID", text: $search)
                     .textFieldStyle(.roundedBorder).accessibilityLabel("Search diagnostic events")
-                Picker("Level", selection: $minimumLevel) {
-                    Text("All levels").tag(DiagnosticLevel.debug)
-                    Text("Info+").tag(DiagnosticLevel.info)
-                    Text("Warnings+").tag(DiagnosticLevel.warning)
-                    Text("Errors").tag(DiagnosticLevel.error)
-                }.labelsHidden().frame(width: 110).accessibilityLabel("Minimum event level")
-                Picker("Category", selection: $category) {
-                    Text("All categories").tag("")
-                    ForEach(Array(Set(DiagnosticName.allCases.map(\.category))).sorted(), id: \.self) { Text($0).tag($0) }
-                }.labelsHidden().frame(width: 130).accessibilityLabel("Event category")
+                PanelPicker("Level", selection: $minimumLevel, options: [("All", .debug), ("Info+", .info), ("Warnings+", .warning), ("Errors", .error)]).frame(width: 125)
+                PanelPicker("Category", selection: $category, options: [("All", "")] + Array(Set(DiagnosticName.allCases.map(\.category))).sorted().map { ($0, $0) }).frame(width: 160)
+
             }
             HStack {
-                Button(live ? "Pause events" : "Resume events", systemImage: live ? "pause" : "play") { live.toggle(); if live { refresh() } }
+                Button(live ? "Pause events" : "Resume events", systemImage: live ? "pause" : "play") { live.toggle(); if live && model.section == .diagnostics && model.overlayVisible { refresh() } }
                 Toggle("Debug detail", isOn: Binding(get: { snapshot.verbose }, set: { FreelyLog.recorder.setVerbose($0); refresh() }))
                     .toggleStyle(.checkbox).help("Records per-decode and final transcript metadata until turned off or the app exits. Never records text.")
                 Button("Add marker", systemImage: "flag") { FreelyLog.record(.debugMarker); refresh() }
@@ -101,7 +98,14 @@ struct DiagnosticsView: View {
             }
             if let selected = visibleEvents.first(where: { $0.id == selection }) {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("#\(selected.id)  \(selected.name.rawValue)").bold()
+                    HStack {
+                        Text("#\(selected.id)  \(selected.name.rawValue)").bold()
+                        Spacer()
+                        Button("Copy event") {
+                            NSPasteboard.general.clearContents()
+                            NSPasteboard.general.setString("#\(selected.id) \(selected.name.rawValue)\n\(selected.details)", forType: .string)
+                        }
+                    }
                     Text("Session: \(selected.scope.session?.uuidString ?? "—")    Request: \(selected.scope.request?.uuidString ?? "—")")
                     Text(selected.details.isEmpty ? "No additional fields" : selected.details)
                 }
@@ -129,23 +133,23 @@ struct DiagnosticsView: View {
         }.padding(12)
     }
     private var environmentView: some View {
-        Form {
-            Section("Build & runtime") {
+        ScrollView { VStack(alignment: .leading, spacing: 24) {
+            SettingsSection("Build & runtime") {
                 ForEach((report?.environment ?? [:]).keys.sorted(), id: \.self) { key in
                     LabeledContent(key, value: report?.environment[key] ?? "—").textSelection(.enabled)
                 }
                 LabeledContent("Run ID", value: snapshot.runID.uuidString).textSelection(.enabled)
             }
-            Section("Current state · updated every 0.5 seconds while live") {
+            SettingsSection("Current state · updated every 0.5 seconds while live") {
                 ForEach((report?.state ?? [:]).keys.sorted(), id: \.self) { key in
                     LabeledContent(key, value: report?.state[key] ?? "—").textSelection(.enabled)
                 }
             }
-            Section("Capture boundaries") {
+            SettingsSection("Capture boundaries") {
                 Text("Microphone permission and screen-pixel permission are separate from successfully starting system audio. A configured AI connection does not prove inference access. Resident memory includes the warm local model cache. Owned tasks cover session coordinator work, not framework internals.")
                 Text("Events are held in memory until cleared or the process exits. macOS manages unified-log retention separately. For a crash or hang, use script/diagnose.sh and the debugging guide.")
             }
-        }.formStyle(.grouped)
+        }.frame(maxWidth: .infinity, alignment: .leading).padding(16) }
     }
     private func refresh() {
         snapshot = FreelyLog.recorder.snapshot()
@@ -167,7 +171,7 @@ struct DiagnosticsView: View {
         panel.nameFieldStringValue = "Freely-diagnostics-\(snapshot.runID.uuidString.prefix(8)).json"
         panel.message = "Exports the state at the last refresh and all retained events. No meeting content or credentials are included."
         savePanel = panel
-        panel.begin { response in
+        model.dialogs.present(panel) { response in
             savePanel = nil
             guard response == .OK, let url = panel.url else { return }
             // The immutable report is captured before opening the sheet. Encoding and writing stay off MainActor.

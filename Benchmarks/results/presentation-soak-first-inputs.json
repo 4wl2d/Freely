@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "purpose": "Identity of the already loaded 1800-second presentation soak artifact and local input manifests",
+  "testExecutableWasNotRebuiltDuringRun": true,
+  "laterChanges": "Retained native page hosts, exact shell sizing, native bootstrap, further cleanup and UI fixes were compiled separately after this test binary started. This result is not attributed to those changes.",
+  "concurrentWork": "Separate Debug and Release compilation, native fixture/snapshot tests and packaged launch diagnostics on the same Mac.",
+  "inputs": [
+    {
+      "path": ".build/arm64-apple-macosx/debug/FreelyPackageTests.xctest/Contents/MacOS/FreelyPackageTests",
+      "sha256": "1a403151c4e812320bf6a6e1cf1bef04035efe187075ffd77ed8913522573fdf"
+    },
+    {
+      "path": "Freely/Resources/model-manifest.json",
+      "sha256": "1e35241d2164a82e3c0c573c0b551cc3ee26f42f78fa139242da3e8d61b8135d"
+    },
+    {
+      "path": ".cache/redesign-soak-corpus/localUser.json",
+      "sha256": "1fb153edc7a096a1e55569e9468b318c7f18b6bb8d36162cfa64b6bd5be4255e"
+    },
+    {
+      "path": ".cache/redesign-soak-corpus/systemAudio.json",
+      "sha256": "7b7706f7dc615b41f422f1557b2ceb24d827b2ad3f62690f4bad7b77c6756f96"
+    }
+  ],
+  "sourceManifests": {
+    "localUser.json": [
+      {
+        "file": "local.f32",
+        "duration": 30.361,
+        "sha256": "51a6c52cf4cea06c519ae38cb2d94d4ea1a8fd29c75cc3e359ea5d07f5bd6a9b"
+      }
+    ],
+    "systemAudio.json": [
+      {
+        "file": "remote.f32",
+        "duration": 34.1194375,
+        "sha256": "fcb67abcfc9a0772b69a3e3e64458f6d46870491b717f32587f0e51e4de038d6"
+      }
+    ]
+  },
+  "localApps": {
+    "Zoom": "7.1.5 (84650)",
+    "Teams": "26163.407.4839.8659",
+    "Chrome": "Not found in /Applications"
+  },
+  "receiverTests": "Not conducted; no recipient/test meetings supplied"
+}
