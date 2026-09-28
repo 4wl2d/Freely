@@ -1,5 +1,9 @@
 # Privacy, permissions and capture coverage
 
+## Controlled presentation output
+
+The redesigned panel can prepare a separate **Freely Presentation** window. Its own ScreenCaptureKit stream excludes the Freely process; the compositor adds the interface only when requested and visible. Hide removes that layer before acknowledging the published visibility revision. Source failure, system UI and session end neutralize the output. The source has no audio and does not enable AI image consent. See the [guide](unified-panel.md) and [receiver acceptance ledger](redesign-verification.md). The historical capture matrix below remains historical; it is not acceptance of this new output.
+
 ## Freely subscription transport
 
 The default subscription connection invokes official Grok Build with a private temporary workspace, tools/rules/hooks/memory disabled, and conversation writeback disabled. Its auth file remains owned by Grok Build. Selected text and any explicitly enabled image pass through that client's subscription route. Temporary request and CLI-history files are deleted after normal completion or cancellation; force quits can interrupt cleanup. Provider retention and subscription billing follow the account's policies. API-key requests continue to use the direct Responses route. See [connection details](oauth-evidence.md).
@@ -17,6 +21,7 @@ Freely processes microphone and meeting audio locally. It sends only selected, b
 | Selected text for an answer | Trusted instructions, the active question and necessary antecedents, selected profile/session context, relevant conversation, summaries and clearly identified prior AI suggestions form a bounded inference request. | Sent to the configured xAI inference endpoint. Direct API requests use `store:false`; Grok Build uses its subscription route. Provider retention is separate for both. |
 | Semantic summaries | Grok may summarize selected older conversation; the local engine validates the covered source revisions before accepting the result. | The selected summary input leaves the device. Summary state remains bounded and volatile; offline fallback is local and extractive. |
 | Screen image | On-demand ScreenCaptureKit screenshot of the selected display, window or display region, prepared as SDR/sRGB PNG. | Sent only for a request allowed by current session consent and source selection. At most one latest image is retained by the current adapter; it is cleared on revocation, selection change or session end. |
+| Presentation video | Local selected source plus optional panel bitmap; displayed in Freely Presentation. No audio. | One newest source-frame slot and current composed output; source failures and system UI replace content with a neutral frame. A meeting app may transmit the window only after the user selects it there. |
 | Profiles and preferences | Explicitly entered or imported profile text and nonsecret choices are stored locally. | Versioned `preferences.json` under `~/Library/Application Support/Freely`. Profile text is plaintext, not encrypted by this application. |
 | Session notes and pinned facts | Included only in selected session context. | Volatile and cleared at session end; not saved in preferences. Pinning an answer does not turn it into a recording. |
 | API key and optional registered OAuth token set | Native Keychain items hold the optional API key and the separate rotating OAuth access/refresh/expiry/client/scope set. | The items are configured as non-synchronizing and device-only. Token contents are absent from preferences and diagnostics. |

@@ -19,7 +19,7 @@ FREELY_KEYCHAIN_TEST=1 FREELY_HOTKEY_TEST=1 ./script/test.sh
 
 Keychain checks use unique synthetic test items. Hotkey registration is not proof of physical key delivery across applications. Model/corpus-dependent benchmarks and the four-hour soak have separate setup and workload limits in [docs/benchmarks.md](docs/benchmarks.md).
 
-`./script/build_and_run.sh` stages and launches the app. It stops running processes named `Freely`, including in `--build-only` mode; finish any active session first. Keep benchmark measurements tied to an exact source snapshot and artifact, and record concurrent host activity.
+`./script/build_and_run.sh` stages and launches the app. For an isolated build directory, set `FREELY_SWIFT_SCRATCH_PATH` to a project-local path; the ordinary Run action needs no extra options. It stops running processes named `Freely`, including in `--build-only` mode; finish any active session first. Keep benchmark measurements tied to an exact source snapshot and artifact, and record concurrent host activity.
 
 ## Focus a change
 
@@ -36,3 +36,5 @@ The [history note](docs/history.md) explains the logical first-public-import com
 ## License
 
 Contributions to the original project code are made under Apache-2.0. Preserve third-party notices and keep model/data licenses separate.
+
+For routine checks without visible windows, use `./script/harness.py start`; `status` shows progress and `stop` cancels only the harness. See the [background test guide](docs/testing-harness.md).

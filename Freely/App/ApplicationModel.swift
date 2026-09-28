@@ -12,7 +12,13 @@ final class ApplicationModel {
     var preferences = AppPreferences() {
         didSet { if preferences != oldValue { savePreferencesDebounced() } }
     }
-    var section = AppSection.setup
+    let shell = ShellState()
+    let dialogs = PanelDialogCoordinator()
+    let presentation: PresentationCoordinator
+    var section: AppSection {
+        get { shell.section }
+        set { shell.navigate(newValue) }
+    }
     var session = SessionViewState() { didSet { sessionPresentationChanged?() } }
     var answerPresentation = AnswerPresentation()
     var generationDiagnostics = GenerationDiagnostics()
@@ -30,6 +36,7 @@ final class ApplicationModel {
     var screenPixelPermission = CGPreflightScreenCaptureAccess()
     var systemPermissionStatus = "Not exercised"
     var errorMessage: String?
+    var errorRecoverySection: AppSection?
     var notice: String?
     var hasAPIKey = false
     var apiKeyDraft = ""
@@ -121,9 +128,12 @@ final class ApplicationModel {
     init(store: PreferencesStore = PreferencesStore(), credentials: any CredentialStoring = KeychainCredentialStore(),
          subscription: SubscriptionAuthentication = SubscriptionAuthentication(),
          grokBuild: GrokBuildConnection = GrokBuildConnection(),
-         fetchVisualSources: @escaping @Sendable () async throws -> [VisualSource] = NativeScreenCapture.sources) {
+         fetchVisualSources: @escaping @Sendable () async throws -> [VisualSource] = NativeScreenCapture.sources,
+         presentation: PresentationCoordinator = PresentationCoordinator()) {
         self.store = store; self.credentials = credentials; self.subscription = subscription; self.grokBuild = grokBuild
+        self.presentation = presentation
         self.fetchVisualSources = fetchVisualSources
+        dialogs.beforeSystemUI = { [weak self] in self?.presentation.suspend() }
     }
 
     var status: String {
@@ -135,7 +145,7 @@ final class ApplicationModel {
         if connectionUpdating, !transcriptionOnly { return "Updating Grok connection" }
         return switch session.phase {
         case .idle: canStart ? "Ready · capture is off" : (startRequirement ?? "Complete setup to start")
-        case .preparing: "Preparing local transcription"
+        case .preparing: session.preparationStage ?? "Preparing local transcription"
         case .running: transcriptionOnly ? "Transcription only · local audio" : "Listening · automatic answers \(preferences.ai.automaticAnswers ? "on" : "off")"
         case .paused: "Paused · resume explicitly"
         case .recovering: "Capture needs attention"
@@ -146,6 +156,17 @@ final class ApplicationModel {
     var preparing: Bool { stopping || session.phase == .preparing || session.phase == .stopping }
     var answer: String { answerPresentation.displayed?.text ?? "Start a session to see answers here." }
     var question: String { answerPresentation.displayed?.question.text ?? session.lastQuestion?.text ?? "Your meeting companion" }
+    var answerStateLabel: String {
+        guard let answer = answerPresentation.displayed else { return "Waiting for a question" }
+        switch answer.lifecycle {
+        case .waiting: return "Generating…"
+        case .streaming: return "Receiving answer…"
+        case .completed: return pinned ? "Frozen answer" : "Completed"
+        case .failed: return "Answer failed"
+        case .interrupted: return "Answer interrupted"
+        case .cancelled: return "Answer cancelled"
+        }
+    }
     var pinned: Bool { answerPresentation.isPinned }
     var expanded: Bool { preferences.overlay.expanded }
     var opacity: Double { preferences.overlay.opacity }
@@ -165,12 +186,20 @@ final class ApplicationModel {
             (!preferences.audio.systemAudioEnabled || preferences.audio.systemScope == .allSystemAudio || preferences.audio.applicationBundleID != nil)
     }
     var startRequirement: String? {
+        if isShuttingDown { return "Freely is closing" }
+        if maintenanceBusy { return "Wait for local data maintenance to finish" }
+        if stopping || session.phase == .stopping { return "Wait for the current session to end" }
+        if running || preparing { return "A session is already active" }
+        if modelInstalling { return "Wait for the speech model download, or cancel it in Audio & Speech" }
+        if sanityChecking { return "Wait for the local speech check to finish" }
+        if credentialBusy { return "Wait for the credential update to finish" }
+        if connectionUpdating && !transcriptionOnly { return "Wait for the Grok connection update to finish" }
         if !ready { return "Checking your setup…" }
-        if !modelReady { return "Download the speech model in Audio / STT" }
-        if !connectionReady && !transcriptionOnly { return "Connect Grok in AI settings, or choose transcription only" }
-        if !preferences.audio.microphoneEnabled && !preferences.audio.systemAudioEnabled { return "Choose at least one audio source in Audio / STT" }
-        if !audioSelectionReady { return "Choose a meeting application in Audio / STT" }
-        if preferences.audio.microphoneEnabled && microphonePermission != .authorized { return "Allow microphone access in Audio / STT" }
+        if !modelReady { return "Download the speech model in Audio & Speech" }
+        if !connectionReady && !transcriptionOnly { return "Connect Grok in Connections, or choose transcription only" }
+        if !preferences.audio.microphoneEnabled && !preferences.audio.systemAudioEnabled { return "Choose at least one audio source in Audio & Speech" }
+        if !audioSelectionReady { return "Choose a meeting application in Audio & Speech" }
+        if preferences.audio.microphoneEnabled && microphonePermission != .authorized { return "Allow microphone access in Audio & Speech" }
         return nil
     }
     var diagnosticState: [String: DiagnosticValue] {
@@ -185,7 +214,12 @@ final class ApplicationModel {
             "retainedSegments": .int(session.transcript.count), "audioGaps": .int(session.gapCount),
             "estimatedInputTokens": .int(generationDiagnostics.inputEstimate),
             "usesVisual": .flag(generationDiagnostics.usesVisual), "overlayVisible": .flag(overlayVisible),
-            "overlayInteractive": .flag(interactive), "recentErrorCount": .int(recentErrors.count)
+            "overlayInteractive": .flag(interactive), "recentErrorCount": .int(recentErrors.count),
+            "presentationActive": .flag(presentation.active), "presentationWindowOpen": .flag(presentation.window != nil),
+            "presentationShowPanelRequested": .flag(presentation.showPanel),
+            "presentationPublishedFrames": .int(presentation.publishedCount), "presentationReceivedFrames": .int(presentation.receivedCount),
+            "presentationMaximumRenderSeconds": .number(presentation.maximumRenderSeconds),
+            "presentationVisibilityPublished": .flag(presentation.revision == presentation.publishedRevision)
         ]
         if let value = session.teardownSeconds { result["lastTeardownSeconds"] = .number(value) }
         if let value = generationDiagnostics.firstTextSeconds { result["firstVisibleTextSeconds"] = .number(value) }
@@ -260,7 +294,7 @@ final class ApplicationModel {
                 coordinator = SessionCoordinator(modelCache: cache, credentials: connection, rateBudget: rateBudget,
                     onState: { [weak self] state in
                         self?.session = state
-                        if let message = state.error, self?.recentErrors.last != message { self?.showError(message) }
+                        if let message = state.error, self?.recentErrors.last != message { self?.showError(message, recovery: .audio) }
                         if state.sources[.systemAudio] == .running { self?.systemPermissionStatus = "Capture started successfully" }
                     }, onAnswer: { [weak self] answer, diagnostics in
                         self?.answerPresentation = answer; self?.generationDiagnostics = diagnostics
@@ -298,12 +332,13 @@ final class ApplicationModel {
         coordinator?.prepareScreenConsent(.off)
         coordinator?.prepareScreenSelection(nil)
         coordinator?.start(preferences: preferences, sessionNotes: sessionNotes, pinnedFacts: pinnedFacts, transcriptionOnly: transcriptionOnly, useGrokBuild: usesGrokBuild)
-        if preferences.overlay.initiallyVisible, !overlayVisible { toggleOverlay?() }
-        section = .session
+        shell.root(.session)
     }
     func stop() async {
         if stopping { await coordinator?.stop(); await screenTask?.value; await visualSourcesTask?.value; return }
         stopping = true
+        presentation.sessionEnded()
+        cancelPanelTransientWork()
         defer { stopping = false }
         sessionUIEpoch &+= 1; visualRevision &+= 1; visualSourcesRevision &+= 1
         let expected = sessionUIEpoch
@@ -316,7 +351,7 @@ final class ApplicationModel {
         coordinator?.prepareScreenSelection(nil)
         await coordinator?.stop()
         await screenTask?.value; await visualSourcesTask?.value
-        if expected == sessionUIEpoch { generationDiagnostics = .init(); answerPresentation = .init() }
+        if expected == sessionUIEpoch { generationDiagnostics = .init(); answerPresentation = .init(); shell.root(.setup) }
     }
     func pauseOrResume() { guard !isShuttingDown, !maintenanceBusy, !stopping else { return }; coordinator?.pauseOrResume() }
     func toggleSource(_ source: AudioSource) {
@@ -328,9 +363,10 @@ final class ApplicationModel {
         coordinator?.updateSourceSettings(preferences.audio)
         coordinator?.toggleSource(source)
     }
-    func pauseForSystemEvent() async { guard !isShuttingDown else { return }; await coordinator?.pauseAllForSystemEvent() }
+    func pauseForSystemEvent() async { guard !isShuttingDown else { return }; presentation.suspend("System paused. Output is neutral. Resume explicitly."); await coordinator?.pauseAllForSystemEvent() }
     func requestMicrophone() async {
         guard !isShuttingDown, !maintenanceBusy else { return }
+        presentation.suspend()
         _ = await NativeMicrophoneCapture.requestPermission()
         guard !isShuttingDown, !maintenanceBusy else { return }
         microphonePermission = NativeMicrophoneCapture.permission()
@@ -344,6 +380,7 @@ final class ApplicationModel {
         screenPixelPermission = CGPreflightScreenCaptureAccess()
     }
     func refreshApplications() async {
+        if !CGPreflightScreenCaptureAccess() { presentation.suspend() }
         guard !isShuttingDown, !maintenanceBusy else { return }
         if let applicationsTask { await applicationsTask.value; return }
         let task = Task { [weak self] in
@@ -374,6 +411,7 @@ final class ApplicationModel {
         await task.value
     }
     func refreshVisualSources() async {
+        if !CGPreflightScreenCaptureAccess() { presentation.suspend() }
         guard !isShuttingDown, !maintenanceBusy, !stopping else { return }
         guard running, screenMode != .off else { showError("Enable screen context for this session first."); return }
         visualSourcesRevision &+= 1
@@ -454,9 +492,10 @@ final class ApplicationModel {
     }
     func answerNow(captureVisual: Bool = false, detailed: Bool = false) {
         guard !isShuttingDown, !maintenanceBusy, !stopping else { return }
-        if !connectionReady { showError("Connect Grok in AI settings to request answers. Local transcription can continue."); section = .ai; return }
+        if let reason = answerUnavailableReason { showError(reason); return }
+        if !connectionReady { showError("Connect Grok in Connections to request answers. Local transcription can continue.", recovery: .ai); return }
         if captureVisual && screenMode == .off { showError("Enable screen context explicitly for this session before analyzing it."); return }
-        coordinator?.answerNow(text: typedQuestion, captureVisual: captureVisual, detailed: detailed)
+        coordinator?.answerNow(text: detailed ? (answerPresentation.displayed?.question.text ?? typedQuestion) : typedQuestion, captureVisual: captureVisual, detailed: detailed)
     }
     func setPinned(_ value: Bool) { guard !isShuttingDown, !maintenanceBusy else { return }; coordinator?.pinAnswer(value) }
     func toggleExpanded() { guard !isShuttingDown, !maintenanceBusy else { return }; preferences.overlay.expanded.toggle(); updateOverlay?(); savePreferencesDebounced() }
@@ -468,6 +507,7 @@ final class ApplicationModel {
         notice = "Answer copied"
     }
     func saveAPIKey() async {
+        presentation.suspend()
         guard !isShuttingDown, !maintenanceBusy, !running, !preparing, credentialTask == nil else { return }
         let key = apiKeyDraft.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !key.isEmpty else { showError(Self.message(XAIError.missingCredential)); return }
@@ -486,6 +526,7 @@ final class ApplicationModel {
         credentialTask = task; await task.value
     }
     func deleteAPIKey() async {
+        presentation.suspend()
         guard !isShuttingDown, !maintenanceBusy, !running, !preparing, credentialTask == nil else { return }
         validationRevision &+= 1; validationTask?.cancel()
         let task = Task { [weak self] in
@@ -642,7 +683,7 @@ final class ApplicationModel {
         panel.allowsMultipleSelection = false; panel.canChooseDirectories = false
         panel.message = "Import a text or Markdown copy into the selected profile. The source file is preserved."
         importPanel = panel
-        panel.begin { [weak self] response in
+        dialogs.present(panel) { [weak self] response in
             guard let self else { return }
             if importPanel === panel { importPanel = nil }
             guard response == .OK, let url = panel.url, revision == importRevision, !isShuttingDown, !maintenanceBusy else { return }
@@ -662,18 +703,19 @@ final class ApplicationModel {
     }
     func exportRetainedTranscript() {
         guard !isShuttingDown, !maintenanceBusy, exportPanel == nil else { return }
-        let retained = session.transcript
+        let retained = session.transcript, retainedGaps = session.gaps
         guard !retained.isEmpty else { showError("There is no retained transcript to export."); return }
         let panel = NSSavePanel()
         exportPanel = panel
         panel.allowedContentTypes = [.plainText]; panel.nameFieldStringValue = "Retained meeting excerpt.txt"
         let incomplete = session.contextLimited
-        panel.begin { [weak self] response in
+        let exportEpoch = sessionUIEpoch, dialogRevision = dialogs.revision + 1
+        dialogs.present(panel) { [weak self] response in
             guard let self else { return }
             if exportPanel === panel { exportPanel = nil }
-            guard response == .OK, let url = panel.url, !isShuttingDown, !maintenanceBusy else { return }
+            guard response == .OK, let url = panel.url, exportEpoch == sessionUIEpoch, dialogRevision == dialogs.revision, !isShuttingDown, !maintenanceBusy else { return }
             let header = "Retained meeting excerpt — \(incomplete ? "older context compacted/evicted" : "currently retained transcript; not a complete meeting recording")\n\n"
-            let text = header + retained.map { "[\($0.source.label)] \($0.text)" }.joined(separator: "\n")
+            let text = header + TranscriptExcerpt.body(segments: retained, gaps: retainedGaps)
             do { try text.write(to: url, atomically: true, encoding: .utf8) }
             catch { showError("The excerpt could not be exported. Choose a writable location.") }
         }
@@ -724,6 +766,7 @@ final class ApplicationModel {
     }
     func openPermissions(microphone: Bool = false) {
         guard !isShuttingDown, !maintenanceBusy else { return }
+        presentation.suspend()
         let pane = microphone ? "Privacy_Microphone" : "Privacy_ScreenCapture"
         if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?\(pane)") { NSWorkspace.shared.open(url) }
     }
@@ -731,6 +774,7 @@ final class ApplicationModel {
         if let shutdownTask { await shutdownTask.value; return }
         FreelyLog.record(.appStopping)
         isShuttingDown = true
+        cancelPanelTransientWork()
         importRevision &+= 1; validationRevision &+= 1; visualSourcesRevision &+= 1; visualRevision &+= 1
         hotkeys?.unregisterAll()
         importPanel?.cancel(nil); importPanel = nil; exportPanel?.cancel(nil); exportPanel = nil
@@ -740,6 +784,7 @@ final class ApplicationModel {
         let owned = [setupTask, installTask, validationTask, sanityTask, saveTask, credentialTask, importTask, applicationsTask, visualSourcesTask, screenTask, connectionTask, maintenanceTask].compactMap { $0 }
         for task in owned { task.cancel() }
         let task = Task { [self] in
+            await presentation.shutdown()
             await grokBuild.shutdown()
             await subscription.shutdown()
             await activeValidationProvider?.cancelAll()
@@ -757,6 +802,7 @@ final class ApplicationModel {
     }
     func connectSubscription() {
         guard !isShuttingDown, !maintenanceBusy, !running, !preparing else { showError("End the session before changing its Grok connection."); return }
+        presentation.suspend()
         if usesGrokBuild {
             grokBuild.connect(configuration: preferences.ai.transportConfiguration) { [weak self] connected in
                 guard let self, !isShuttingDown else { return }
@@ -764,7 +810,7 @@ final class ApplicationModel {
                 apiValidation = connected ? "Text streaming verified through your Grok subscription." : "Connection needs attention."
             }
         } else {
-            subscription.signIn(configuration: subscriptionConfiguration, anchor: NSApp.keyWindow)
+            subscription.signIn(configuration: subscriptionConfiguration, anchor: dialogs.window)
         }
     }
     func cancelSubscriptionConnection() {
@@ -811,15 +857,17 @@ final class ApplicationModel {
             }
         }
     }
-    func showError(_ message: String) {
+    func showError(_ message: String, recovery: AppSection? = nil) {
+        errorRecoverySection = recovery
         FreelyLog.record(.errorPresented, level: .warning)
         errorMessage = message
         if recentErrors.last != message { recentErrors.append(message) }
         if recentErrors.count > 30 { recentErrors.removeFirst(recentErrors.count - 30) }
     }
     private func handleHotkey(_ action: HotkeyAction) {
+        if overlayVisible && (shell.commandsVisible || shell.choice != nil) && action != .toggleOverlay { return }
         switch action {
-        case .startStopSession: if running || preparing { Task { await stop() } } else { start() }
+        case .startStopSession: if running || preparing { requestEndSession() } else { start() }
         case .toggleOverlay: toggleOverlay?()
         case .answerNow: answerNow()
         case .captureAnalyze: answerNow(captureVisual: true)
@@ -828,9 +876,26 @@ final class ApplicationModel {
         case .pinUnpin: setPinned(!pinned)
         case .pauseResumeMicrophone: toggleSource(.localUser)
         case .pauseResumeSystemAudio: toggleSource(.systemAudio)
-        case .endSession: Task { await stop() }
+        case .endSession: requestEndSession()
+        case .focusQuestion: focusQuestion?()
+        case .togglePresentationUI: presentation.setShowPanel(!presentation.showPanel)
         }
     }
+    func requestEndSession() {
+        guard running || preparing else { return }
+        shell.confirmation = .endSession
+        if !overlayVisible { toggleOverlay?() }
+    }
+    func cancelPanelTransientWork() {
+        NSApp?.mainMenu?.cancelTrackingWithoutAnimation()
+        shell.dismissTransient(); showClearConfirmation = false
+        dialogs.cancel()
+        importRevision &+= 1; importTask?.cancel()
+        importPanel?.cancel(nil); importPanel = nil
+        exportPanel?.cancel(nil); exportPanel = nil
+    }
+    func openExternal(_ url: URL) { presentation.suspend(); NSWorkspace.shared.open(url) }
+
     private static func diagnosticMessage(_ error: Error, operation: StaticString = #function) -> String {
         FreelyLog.record(.operationFailed, level: .error, fields: [.state: .state(operation), .failure: .failure(error)])
         return message(error)
@@ -850,16 +915,23 @@ final class ApplicationModel {
 }
 
 enum AppSection: String, CaseIterable, Identifiable {
-    case setup = "Setup", session = "Session", ai = "AI", audio = "Audio / STT", context = "Context", overlay = "Overlay / Shortcuts", privacy = "Privacy", diagnostics = "Diagnostics"
+    case setup = "Readiness", session = "Answer", transcript = "Transcript", context = "Context"
+    case screen = "Screen context", presentation = "Presentation", settings = "Settings"
+    case ai = "Connections", audio = "Audio & Speech", answers = "Answers", profiles = "Profiles"
+    case overlay = "Appearance & Shortcuts", privacy = "Privacy & Data", diagnostics = "Diagnostics"
     var id: String { rawValue }
     var icon: String {
         switch self {
         case .setup: "checklist"
-        case .session: "waveform"
-        case .ai: "sparkle"
+        case .session, .answers: "text.alignleft"
+        case .transcript: "waveform"
+        case .ai: "network"
         case .audio: "mic"
-        case .context: "person.text.rectangle"
-        case .overlay: "rectangle.on.rectangle"
+        case .context, .profiles: "person.text.rectangle"
+        case .screen: "viewfinder"
+        case .presentation: "rectangle.on.rectangle"
+        case .settings: "gearshape"
+        case .overlay: "keyboard"
         case .privacy: "hand.raised"
         case .diagnostics: "gauge.with.dots.needle.33percent"
         }
