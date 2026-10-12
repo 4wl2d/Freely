@@ -7,7 +7,7 @@ let package = Package(
     products: [.executable(name: "Freely", targets: ["Freely"])],
     dependencies: [
         .package(path: "Packages/FreelyCore"),
-        .package(url: "https://github.com/FluidInference/FluidAudio.git", exact: "0.17.4")
+        .package(url: "https://github.com/FluidInference/FluidAudio.git", exact: "0.17.7")
     ],
     targets: [
         .executableTarget(
